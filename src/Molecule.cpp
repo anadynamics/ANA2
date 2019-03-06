@@ -2,10 +2,10 @@
 
 namespace ANA {
 
-Molecule::Molecule(std::string const &filename, bool const atom_only) {
+Molecule::Molecule(std::string const &pdb_filename, bool const atom_only) {
 
     // Read PDB
-    chemfiles::Trajectory input_pdb_traj(filename);
+    chemfiles::Trajectory input_pdb_traj(pdb_filename);
     auto const input_pdb_frame = input_pdb_traj.read();
     auto const in_xyz = input_pdb_frame.positions();
     auto const input_pdb_top = input_pdb_frame.topology();

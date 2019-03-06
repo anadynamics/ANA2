@@ -25,6 +25,9 @@ int NDD_ANA(std::string const &in_filename, IncludedAreaOptions &IA_opts,
     ANA::write_PDB(CH, "hull.pdb");
     printf("Volumen:  %f\n", hueco._volume + hueco._outer_volume);
 
+    ANA::NDD::Modes modo(NDD_opts._modes_ndd_filename);
+    modo.calpha_to_full_atom(in_filename);
+
     return 0;
 }
 

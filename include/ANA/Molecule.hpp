@@ -12,7 +12,7 @@ class Molecule {
 public:
     Molecule() = default;
 
-    Molecule(std::string const &filename, bool const atom_only);
+    Molecule(std::string const &pdb_filename, bool const atom_only);
 
     int _natoms, _nres;
     std::vector<std::pair<CPoint, VertexInfo>> _data;
