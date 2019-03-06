@@ -2,60 +2,7 @@
 
 namespace ANA {
 
-void draw(Point const &punto, FILE *out_file, int &idx, int const resid,
-    std::string const &name) {
-    fmt::print(out_file,
-        "{: <6}{: >5} {: <4s} {:3} {:1}{: >4}    "
-        "{:8.3f}{:8.3f}{:8.3f}{:6.2f}{:6.2f}          {: >2s}\n",
-        "HETATM", idx++, "H", name, "A", resid, punto[0], punto[1], punto[2],
-        1.0, 0.0, "H");
-    return;
-}
-
-void draw_lines(CPoint const &punto, FILE *out_file, int const idx,
-    int const resid, std::string const &name) {
-    fmt::print(out_file,
-        "{: <6}{: >5} {: <4s} {:3} {:1}{: >4}    "
-        "{:8.3f}{:8.3f}{:8.3f}{:6.2f}{:6.2f}          {: >2s}\n",
-        "HETATM", idx, "H", name, "A", resid, punto.x(), punto.y(), punto.z(),
-        1.0, 0.0, "H");
-    return;
-}
-
-void draw_lines(CTriangle const &t, FILE *out_file, int &idx, int &resid) {
-
-    auto const i = idx++;
-    auto const j = idx++;
-    auto const k = idx++;
-
-    draw_lines(t.vertex(0), out_file, i, resid, " IA");
-    draw_lines(t.vertex(1), out_file, j, resid, " IA");
-    draw_lines(t.vertex(2), out_file, k, resid, " IA");
-    ++resid;
-    return;
-}
-
-void draw_lines(Triangle const &t, FILE *out_file, int &idx, int &resid) {
-
-    draw(t[0], out_file, idx, resid, " IA");
-    draw(t[1], out_file, idx, resid, " IA");
-    draw(t[2], out_file, idx, resid, " IA");
-    ++resid;
-    return;
-}
-
-void draw_lines(
-    Finite_cells_iterator const cell, FILE *out_file, int &idx, int &resid) {
-
-    draw_lines(cell->vertex(0)->point(), out_file, idx++, resid, "CEL");
-    draw_lines(cell->vertex(1)->point(), out_file, idx++, resid, "CEL");
-    draw_lines(cell->vertex(2)->point(), out_file, idx++, resid, "CEL");
-    draw_lines(cell->vertex(3)->point(), out_file, idx++, resid, "CEL");
-    ++resid;
-    return;
-}
-
-void draw_lines(CConvexHull const &CH, std::string const &filename) {
+void write_PDB(CConvexHull const &CH, std::string const &filename) {
 
     FILE *out_file = std::fopen(filename.c_str(), "w");
     if (out_file) {
@@ -72,7 +19,7 @@ void draw_lines(CConvexHull const &CH, std::string const &filename) {
     return;
 }
 
-void draw_lines(CCavity const &hueco, std::string const &filename) {
+void write_PDB(CCavity const &hueco, std::string const &filename) {
     FILE *out_file = std::fopen(filename.c_str(), "w");
     if (out_file) {
         int idx = 1, resid = 1;
@@ -81,12 +28,12 @@ void draw_lines(CCavity const &hueco, std::string const &filename) {
         }
 
         for (auto const &tetra : hueco._tetra_border) {
-            draw_polyhedron_lines(tetra, out_file, idx, resid);
+            draw_polyhedron(tetra, out_file, idx, resid);
         }
 
         int const pre_penta = resid + 1;
         for (auto const &penta : hueco._penta_border) {
-            draw_polyhedron_lines(penta, out_file, idx, resid);
+            draw_polyhedron(penta, out_file, idx, resid);
         }
 
         connect_tetrahedra(out_file, 1, pre_penta);
@@ -95,6 +42,55 @@ void draw_lines(CCavity const &hueco, std::string const &filename) {
         printf("Could not open %s.\n", filename.c_str());
     }
     std::fclose(out_file);
+    return;
+}
+
+void draw(Point const &punto, FILE *out_file, int &idx, int const resid,
+    std::string const &name) {
+    fmt::print(out_file,
+        "{: <6}{: >5} {: <4s} {:3} {:1}{: >4}    "
+        "{:8.3f}{:8.3f}{:8.3f}{:6.2f}{:6.2f}          {: >2s}\n",
+        "HETATM", idx++, "H", name, "A", resid, punto[0], punto[1], punto[2],
+        1.0, 0.0, "H");
+    return;
+}
+
+void draw(CPoint const &punto, FILE *out_file, int &idx, int const resid,
+    std::string const &name) {
+    fmt::print(out_file,
+        "{: <6}{: >5} {: <4s} {:3} {:1}{: >4}    "
+        "{:8.3f}{:8.3f}{:8.3f}{:6.2f}{:6.2f}          {: >2s}\n",
+        "HETATM", idx++, "H", name, "A", resid, punto.x(), punto.y(), punto.z(),
+        1.0, 0.0, "H");
+    return;
+}
+
+void draw_lines(CTriangle const &t, FILE *out_file, int &idx, int &resid) {
+
+    draw(t.vertex(0), out_file, idx, resid, " IA");
+    draw(t.vertex(1), out_file, idx, resid, " IA");
+    draw(t.vertex(2), out_file, idx, resid, " IA");
+    ++resid;
+    return;
+}
+
+void draw_lines(Triangle const &t, FILE *out_file, int &idx, int &resid) {
+
+    draw(t[0], out_file, idx, resid, " IA");
+    draw(t[1], out_file, idx, resid, " IA");
+    draw(t[2], out_file, idx, resid, " IA");
+    ++resid;
+    return;
+}
+
+void draw_lines(
+    Finite_cells_iterator const cell, FILE *out_file, int &idx, int &resid) {
+
+    draw(cell->vertex(0)->point(), out_file, idx, resid, "CEL");
+    draw(cell->vertex(1)->point(), out_file, idx, resid, "CEL");
+    draw(cell->vertex(2)->point(), out_file, idx, resid, "CEL");
+    draw(cell->vertex(3)->point(), out_file, idx, resid, "CEL");
+    ++resid;
     return;
 }
 

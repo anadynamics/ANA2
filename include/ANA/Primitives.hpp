@@ -39,33 +39,6 @@ struct TetraInfo {
 public:
     TetraInfo() = default;
 
-    // TetraInfo(int const i) : _cnt(i) {
-    //     _index.reserve(_cnt);
-    //     _radius.reserve(_cnt);
-    //     _resn.reserve(_cnt);
-    //     _resi.reserve(_cnt);
-    // }
-
-    // void reserve(int const i) {
-    //     _cnt = i;
-    //     _index.reserve(_cnt);
-    //     _radius.reserve(_cnt);
-    //     _resn.reserve(_cnt);
-    //     _resi.reserve(_cnt);
-
-    //     return;
-    // }
-
-    // void push(int const index, double const radius, int const resn,
-    //     std::string const resi) {
-    //     _index.push_back(index);
-    //     _radius.push_back(radius);
-    //     _resn.push_back(resn);
-    //     _resi.push_back(resi);
-
-    //     return;
-    // }
-
     std::array<int, 4> _index;
     std::array<double, 4> _radius;
     // atom's residue number

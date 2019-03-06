@@ -80,9 +80,8 @@ double sphere_sector_vol(Point const &p0, Point const &p1, Point const &p2,
 }
 
 // Turns all the cell's info into a more convenient data structure.
-TetraInfo get_cell_info(Finite_cells_iterator const &cell) {
-
-    cell->vertex(0)->info()._index
-}
+// TetraInfo get_cell_info(Finite_cells_iterator const &cell) {
+//     cell->vertex(0)->info()
+// }
 
 } // namespace ANA
