@@ -1,0 +1,30 @@
+function(chfl_cpp_example _file_)
+    get_filename_component(_name_ ${_file_} NAME_WE)
+    add_executable(example-cpp-${_name_} ${_file_})
+    target_link_libraries(example-cpp-${_name_} chemfiles)
+endfunction()
+
+function(chfl_c_example _file_)
+    get_filename_component(_name_ ${_file_} NAME_WE)
+    add_executable(example-c-${_name_} ${_file_})
+    target_link_libraries(example-c-${_name_} chemfiles)
+    if(NOT MSVC)
+        target_link_libraries(example-c-${_name_} m)
+    endif()
+endfunction()
+
+
+file(GLOB cpp_examples cpp/*.cpp)
+foreach(example IN LISTS cpp_examples)
+    chfl_cpp_example(${example})
+endforeach()
+
+file(GLOB c_examples c/*.c)
+foreach(example IN LISTS c_examples)
+    chfl_c_example(${example})
+endforeach()
+
+CHECK_C_COMPILER_FLAG("-Wno-format" CC_SUPPORTS_WNO_FORMAT)
+if(CC_SUPPORTS_WNO_FORMAT)
+    target_compile_options(example-c-select PRIVATE "-Wno-format")
+endif()
