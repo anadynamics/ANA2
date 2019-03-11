@@ -121,25 +121,28 @@ if (amber_modes)
     try
         global in_modes, weights = JUMD.readPtrajModes(modes_filename)
     catch e
-        println("Error when reading Amber modes: ", modes_filename)
+        println("Error when reading modes: ", modes_filename)
+        println("Expected a ", aa_3, "x", nmodes, " size matrix.")
         error(e)
     end
 else
     try
-        global in_modes = convert(Array{Float64}(aa_3, nmodes), readdlm(modes_filename))
+        global in_modes = convert(Array{Float64, 2}, readdlm(modes_filename))
     catch e
         println("Error when reading modes: ", modes_filename)
+        println("Expected a ", aa_3, "x", nmodes, " size matrix.")
         error(e)
     end
     if weights_filename != "none"
         try
-            global weights = convert(Array{Float64}(nmodes), readdlm(weights_filename))
+            global weights = convert(Array{Float64, 2}, readdlm(weights_filename))
         catch e
             println("Error when reading weights: ", weights_filename)
+            println("Expected a ", nmodes, " long vector.")
             error(e)
         end
     else
-        global weights = convert(Array{Float64}(nmodes), fill(1., nmodes))
+        global weights = convert(Array{Float64, 1}, fill(1., nmodes))
     end
 end
 
