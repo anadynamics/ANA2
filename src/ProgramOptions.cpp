@@ -157,6 +157,13 @@ int get_parameters(int ac, char *av[], std::string &input_struct_filename,
     ("stop", PO::value<int>(&md_end)->default_value(0),
     "Frame to stop reading. If set to 0, read all. Default: 0.\n")
 
+    ("NDD_multiplier_min", PO::value<double>(&NDD_opts._min)->default_value(1.),
+    "Input vectors min multiplier for non Delaunay dynamics. Default: 1\n")
+    ("NDD_multiplier_max", PO::value<double>(&NDD_opts._max)->default_value(1.),
+    "Input vectors max multiplier for non Delaunay dynamics. Default: 1\n")
+    ("NDD_multiplier_step", PO::value<double>(&NDD_opts._step)->default_value(1.),
+    "Input vectors step size between multipliers for non Delaunay dynamics. Default: 1\n")
+
     ("min_vol_radius", PO::value<double>(&cell_opts._minVR)->default_value(1.4)
     ->composing(), "Radius of the sphere with the minimum volume to be taken "
     "into account. Default: 1.4.\n")
