@@ -8,31 +8,29 @@
 
 namespace ANA {
 
-void write_PDB(CConvexHull const &CH, std::string const &filename);
+void write_PDB(ConvexHull const &CH, std::string const &filename);
 
-void write_PDB(CCavity const &hueco, std::string const &filename);
+void write_PDB(Cavity const &hueco, std::string const &filename);
 
-void draw(Point const &punto, FILE *out_file, int &idx, int const resid,
-    std::string const &name);
+[[nodiscard]] auto draw(CPoint const &punto, FILE *out_file,
+    std::pair<int, int> idx_resid, std::string const &name) -> int;
 
-void draw(CPoint const &punto, FILE *out_file, int &idx, int const resid,
-    std::string const &name);
+[[nodiscard]] auto draw_lines(CTriangle const &t, FILE *out_file,
+    std::pair<int, int> idx_resid) -> std::pair<int, int>;
 
-void draw_lines(CTriangle const &t, FILE *out_file, int &idx, int &resid);
-
-void draw_lines(Triangle const &t, FILE *out_file, int &idx, int &resid);
-
-void draw_lines(
-    Finite_cells_iterator const cell, FILE *out_file, int &idx, int &resid);
+[[nodiscard]] auto draw_lines(Finite_cells_iterator const cell, FILE *out_file,
+    std::pair<int, int> idx_resid) -> std::pair<int, int>;
 
 template <class T>
-void draw_polyhedron(T const &poly, FILE *out_file, int &idx, int &resid) {
+[[nodiscard]] auto draw_polyhedron(T const &poly, FILE *out_file,
+    std::pair<int, int> idx_resid) -> std::pair<int, int> {
 
-    for (auto const &each : poly._data) {
-        draw(each, out_file, idx, resid, "POL");
+    for (auto const &punto : poly._data) {
+        idx_resid.first = draw(punto, out_file, idx_resid, "POL");
     }
-    ++resid;
-    return;
+    ++idx_resid.second;
+
+    return idx_resid;
 }
 
 void connect_triangle(FILE *out_file, int const first_t, int const last_t);
