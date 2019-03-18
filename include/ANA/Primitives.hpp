@@ -20,21 +20,6 @@ public:
     std::array<CPoint, 4> _data;
 };
 
-class CTriangularPrism {
-public:
-    CTriangularPrism() noexcept = default;
-
-    CTriangularPrism(CPoint const &p0, CPoint const &p1, CPoint const &p2,
-        CPoint const &p3, CPoint const &p4, CPoint const &p5) :
-        _data({p0, p1, p2, p3, p4, p5}) {}
-
-    CTriangularPrism(CPoint &&p0, CPoint &&p1, CPoint &&p2, CPoint &&p3,
-        CPoint &&p4, CPoint &&p5) :
-        _data({p0, p1, p2, p3, p4, p5}) {}
-
-    std::array<CPoint, 6> _data;
-};
-
 struct TetraInfo {
 public:
     TetraInfo() = default;
@@ -47,17 +32,36 @@ public:
     std::array<std::string, 4> _resi;
 };
 
+class CTriangularPrism {
+public:
+    CTriangularPrism() noexcept = default;
+
+    CTriangularPrism(CPoint const &p0, CPoint const &p1, CPoint const &p2,
+        CPoint const &p3, CPoint const &p4, CPoint const &p5) :
+        _data({p0, p1, p2, p3, p4, p5}) {}
+
+    CTriangularPrism(CPoint &&p0, CPoint &&p1, CPoint &&p2, CPoint &&p3,
+        CPoint &&p4, CPoint &&p5) :
+        _data({p0, p1, p2, p3, p4, p5}) {}
+
+    CPoint const &operator[](int const idx) const { return _data[idx]; }
+
+    CPoint &operator[](int const idx) { return _data[idx]; }
+
+    std::array<CPoint, 6> _data;
+};
+
 class Vector {
 public:
     Vector() = default;
 
     Vector(double const x, double const y, double const z) noexcept :
-        _vxyz{x, y, z}, _origin{0., 0., 0.} {}
+        _vxyz {x, y, z}, _origin {0., 0., 0.} {}
 
     Vector(double const x, double const y, double const z, double const ox,
         double const oy, double const oz) noexcept :
-        _vxyz{x, y, z},
-        _origin{ox, oy, oz} {}
+        _vxyz {x, y, z},
+        _origin {ox, oy, oz} {}
 
     Vector(CVector const v) :
         _vxyz({CGAL::to_double(v.x()), CGAL::to_double(v.y()),
@@ -121,10 +125,10 @@ class Point {
 public:
     Point() = default;
 
-    Point(double const x, double const y, double const z) : _xyz{x, y, z} {}
+    Point(double const x, double const y, double const z) : _xyz {x, y, z} {}
 
     Point(CPoint const p) :
-        _xyz{CGAL::to_double(p.x()), CGAL::to_double(p.y()),
+        _xyz {CGAL::to_double(p.x()), CGAL::to_double(p.y()),
             CGAL::to_double(p.z())} {}
 
     double operator[](int const idx) const { return _xyz[idx]; }
