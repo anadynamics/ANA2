@@ -11,6 +11,12 @@ namespace NDD {
     public:
         Modes(std::string const &modes_filename);
 
+        Modes(std::string const &modes_filename,
+            std::string const &pdb_filename) :
+            Modes(modes_filename) {
+            calpha_to_full_atom(pdb_filename);
+        }
+
         void get_modes_from_raw(std::string_view const texto);
 
         void calpha_to_full_atom(std::string const &pdb_filename);
@@ -38,6 +44,7 @@ namespace NDD {
         std::vector<std::vector<double>> _atm_evectors;
         std::vector<std::vector<double>> _evectors;
         std::vector<double> _evals;
+        std::vector<double> _normas_atm;
         size_t _i, _j, _iatm = 0;
     };
 }
