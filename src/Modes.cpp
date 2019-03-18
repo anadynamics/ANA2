@@ -113,20 +113,27 @@ namespace NDD {
 
         // Go eigenvector by eigenvector and repeat each of its elements
         // according to atoms_per_res. Store that into _atm_evectors.
+        // Also store each vector's norm.
         _atm_evectors.reserve(_j);
         for (size_t kk = 0; kk < _j; ++kk) {
             std::vector<double> atm_evectors;
             atm_evectors.reserve(_iatm);
             int res_number = 0;
 
+            _normas_atm.reserve(_j);
+            double sum = 0.;
+
             for (int const natoms : atoms_per_res) {
                 for (int k = 0; k < natoms; ++k) {
-                    atm_evectors.push_back(_evectors[kk][res_number]);
+                    double const elmt = _evectors[kk][res_number];
+                    atm_evectors.push_back(elmt);
+                    sum += elmt * elmt;
                 }
                 ++res_number;
             }
 
             _atm_evectors.push_back(std::move(atm_evectors));
+            _normas_atm.push_back(sqrt(sum));
         }
     }
 }
