@@ -3,7 +3,7 @@
 namespace ANA {
 
 // Discard voids outside the convex hull.
-void carve_CCH_into_cavity(CCavity &hueco, CConvexHull const &CH) {
+void carve_CCH_into_cavity(Cavity &hueco, ConvexHull const &CH) {
 
     for (auto const &cell : hueco._all_cells) {
         std::vector<int> vertices_out, vertices_in;
@@ -27,8 +27,7 @@ void carve_CCH_into_cavity(CCavity &hueco, CConvexHull const &CH) {
         auto const vertices_out_cnt = vertices_out.size();
         if (vertices_out_cnt == 0) {
             // cell is entirely contained in the included area.
-            hueco._volume = hueco._volume + volume(cell);
-            hueco._included_cells.push_back(cell);
+            hueco.add_inner_cell(cell);
         } else if (vertices_out_cnt == 4) {
             // cell is outside the included area.
             continue;
@@ -38,29 +37,30 @@ void carve_CCH_into_cavity(CCavity &hueco, CConvexHull const &CH) {
             // and the tetrahedron's segments that go from the inner
             // point(s) to the outer point(s). The polyhedron delimited by these
             // points will be added to the cavity.
+            hueco._outer_cells.push_back(cell);
             switch (vertices_out_cnt) {
             case 3: {
                 auto const [p_in_0, ip1, ip2, ip3, radius_0] =
-                    cget_vertices_3_out(cell, CH, vertices_in, vertices_out);
+                    get_vertices_3_out(cell, CH, vertices_in, vertices_out);
 
-                hueco.cadd_border_tetra(p_in_0, ip1, ip2, ip3, radius_0);
+                hueco.add_border_tetra(p_in_0, ip1, ip2, ip3, radius_0);
                 break;
             }
             case 2: {
                 auto const [p_in_0, p_in_1, ip1, ip2, ip3, ip4, radius_0,
                     radius_1] =
-                    cget_vertices_2_out(cell, CH, vertices_in, vertices_out);
+                    get_vertices_2_out(cell, CH, vertices_in, vertices_out);
 
-                hueco.cadd_border_penta(
+                hueco.add_border_penta(
                     p_in_0, p_in_1, ip1, ip2, ip3, ip4, radius_0, radius_1);
                 break;
             }
             case 1: {
                 auto const [p_in_0, p_in_1, p_in_2, ip1, ip2, ip3, radius_0,
                     radius_1, radius_2] =
-                    cget_vertices_1_out(cell, CH, vertices_in, vertices_out);
+                    get_vertices_1_out(cell, CH, vertices_in, vertices_out);
 
-                hueco.cadd_border_penta(p_in_0, p_in_1, p_in_2, ip1, ip2, ip3,
+                hueco.add_border_penta(p_in_0, p_in_1, p_in_2, ip1, ip2, ip3,
                     radius_0, radius_1, radius_2);
                 break;
             }
@@ -72,9 +72,8 @@ void carve_CCH_into_cavity(CCavity &hueco, CConvexHull const &CH) {
 }
 
 // Get intersection points between the cell and the included area.
-auto cget_vertices_3_out(Finite_cells_iterator const cell,
-    CConvexHull const &CH, std::vector<int> const &vertices_in,
-    std::vector<int> const &vertices_out)
+auto get_vertices_3_out(Finite_cells_iterator const cell, ConvexHull const &CH,
+    std::vector<int> const &vertices_in, std::vector<int> const &vertices_out)
     -> std::tuple<CPoint, CPoint, CPoint, CPoint, double> {
 
     auto const vtx_in_0{cell->vertex(vertices_in[0])};
@@ -93,10 +92,10 @@ auto cget_vertices_3_out(Finite_cells_iterator const cell,
 }
 
 // Get intersection points between the cell and the included area.
-auto cget_vertices_2_out(Finite_cells_iterator const cell,
-    CConvexHull const &CH, std::vector<int> const &vertices_in,
-    std::vector<int> const &vertices_out) -> std::tuple<CPoint, CPoint, CPoint,
-    CPoint, CPoint, CPoint, double, double> {
+auto get_vertices_2_out(Finite_cells_iterator const cell, ConvexHull const &CH,
+    std::vector<int> const &vertices_in, std::vector<int> const &vertices_out)
+    -> std::tuple<CPoint, CPoint, CPoint, CPoint, CPoint, CPoint, double,
+        double> {
 
     auto const vtx_in_0{cell->vertex(vertices_in[0])};
     double const radius_0 = vtx_in_0->info()._radius;
@@ -118,10 +117,10 @@ auto cget_vertices_2_out(Finite_cells_iterator const cell,
 }
 
 // Get intersection points between the cell and the included area.
-auto cget_vertices_1_out(Finite_cells_iterator const cell,
-    CConvexHull const &CH, std::vector<int> const &vertices_in,
-    std::vector<int> const &vertices_out) -> std::tuple<CPoint, CPoint, CPoint,
-    CPoint, CPoint, CPoint, double, double, double> {
+auto get_vertices_1_out(Finite_cells_iterator const cell, ConvexHull const &CH,
+    std::vector<int> const &vertices_in, std::vector<int> const &vertices_out)
+    -> std::tuple<CPoint, CPoint, CPoint, CPoint, CPoint, CPoint, double,
+        double, double> {
 
     auto const vtx_in_0{cell->vertex(vertices_in[0])};
     double const radius_0 = vtx_in_0->info()._radius;

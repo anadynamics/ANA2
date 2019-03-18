@@ -9,10 +9,10 @@
 namespace ANA {
 
 // Discard voids outside the convex hull.
-void carve_CCH_into_cavity(CCavity &hueco, CConvexHull const &CH);
+void carve_CCH_into_cavity(Cavity &hueco, ConvexHull const &CH);
 
 // Returns the intersection point between the segment and the convex hull.
-inline CPoint cget_intersection_point(Segment const &s, CConvexHull const &CH) {
+inline CPoint cget_intersection_point(Segment const &s, ConvexHull const &CH) {
 
     for (auto const &t : CH._triangles) {
         Object const inter_obj = CGAL::intersection(s, t);
@@ -26,22 +26,21 @@ inline CPoint cget_intersection_point(Segment const &s, CConvexHull const &CH) {
 }
 
 // Get intersection points between the cell and the included area.
-auto cget_vertices_3_out(Finite_cells_iterator const cell,
-    CConvexHull const &CH, std::vector<int> const &vertices_in,
-    std::vector<int> const &vertices_out)
+auto get_vertices_3_out(Finite_cells_iterator const cell, ConvexHull const &CH,
+    std::vector<int> const &vertices_in, std::vector<int> const &vertices_out)
     -> std::tuple<CPoint, CPoint, CPoint, CPoint, double>;
 
 // Get intersection points between the cell and the included area.
-auto cget_vertices_2_out(Finite_cells_iterator const cell,
-    CConvexHull const &CH, std::vector<int> const &vertices_in,
-    std::vector<int> const &vertices_out) -> std::tuple<CPoint, CPoint, CPoint,
-    CPoint, CPoint, CPoint, double, double>;
+auto get_vertices_2_out(Finite_cells_iterator const cell, ConvexHull const &CH,
+    std::vector<int> const &vertices_in, std::vector<int> const &vertices_out)
+    -> std::tuple<CPoint, CPoint, CPoint, CPoint, CPoint, CPoint, double,
+        double>;
 
 // Get intersection points between the cell and the included area.
-auto cget_vertices_1_out(Finite_cells_iterator const cell,
-    CConvexHull const &CH, std::vector<int> const &vertices_in,
-    std::vector<int> const &vertices_out) -> std::tuple<CPoint, CPoint, CPoint,
-    CPoint, CPoint, CPoint, double, double, double>;
+auto get_vertices_1_out(Finite_cells_iterator const cell, ConvexHull const &CH,
+    std::vector<int> const &vertices_in, std::vector<int> const &vertices_out)
+    -> std::tuple<CPoint, CPoint, CPoint, CPoint, CPoint, CPoint, double,
+        double, double>;
 
 // Check if p_test is on the same side v is pointing, with respect to p.
 inline bool is_vtx_inside(
