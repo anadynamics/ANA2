@@ -28,7 +28,7 @@ void Cavity::add_border_tetra(CPoint const &p0, CPoint const &ip1,
     CPoint const &ip2, CPoint const &ip3, double const vdw0) {
 
     double const vol =
-        volume(p0, ip1, ip2, ip3) - csphere_sector_vol(p0, ip1, ip2, ip3, vdw0);
+        volume(p0, ip1, ip2, ip3) - sphere_sector_vol(p0, ip1, ip2, ip3, vdw0);
     _outer_volume += vol;
 
     _tetra_border.emplace_back(p0, ip1, ip2, ip3);
@@ -40,14 +40,14 @@ void Cavity::add_border_penta(CPoint const &p0, CPoint const &p1,
     double const vdw0, double const vdw1) {
 
     double const vol1 = volume(p0, p1, ip2, ip3) -
-        csphere_sector_vol(p0, p1, ip2, ip3, vdw0) -
-        csphere_sector_vol(p1, p0, ip2, ip3, vdw1);
+        sphere_sector_vol(p0, p1, ip2, ip3, vdw0) -
+        sphere_sector_vol(p1, p0, ip2, ip3, vdw1);
 
     double const vol2 =
-        volume(p1, ip2, ip3, ip4) - csphere_sector_vol(p1, ip2, ip3, ip4, vdw1);
+        volume(p1, ip2, ip3, ip4) - sphere_sector_vol(p1, ip2, ip3, ip4, vdw1);
 
     double const vol3 =
-        volume(p1, ip3, ip4, ip5) - csphere_sector_vol(p1, ip3, ip4, ip5, vdw1);
+        volume(p1, ip3, ip4, ip5) - sphere_sector_vol(p1, ip3, ip4, ip5, vdw1);
     _outer_volume += vol1 + vol2 + vol3;
 
     _penta_border.emplace_back(p0, p1, ip2, ip3, ip4, ip5);
@@ -60,16 +60,16 @@ void Cavity::add_border_penta(CPoint const &p0, CPoint const &p1,
     double const vdw0, double const vdw1, double const vdw2) {
 
     double const vol1 = volume(p0, p1, p2, ip3) -
-        csphere_sector_vol(p0, p1, p2, ip3, vdw0) -
-        csphere_sector_vol(p1, p0, p2, ip3, vdw1) -
-        csphere_sector_vol(p2, p1, p0, ip3, vdw2);
+        sphere_sector_vol(p0, p1, p2, ip3, vdw0) -
+        sphere_sector_vol(p1, p0, p2, ip3, vdw1) -
+        sphere_sector_vol(p2, p1, p0, ip3, vdw2);
 
     double const vol2 = volume(p1, p2, ip3, ip4) -
-        csphere_sector_vol(p1, p2, ip3, ip4, vdw1) -
-        csphere_sector_vol(p2, p1, ip3, ip4, vdw2);
+        sphere_sector_vol(p1, p2, ip3, ip4, vdw1) -
+        sphere_sector_vol(p2, p1, ip3, ip4, vdw2);
 
     double const vol3 =
-        volume(p2, ip3, ip4, ip5) - csphere_sector_vol(p2, ip3, ip4, ip5, vdw2);
+        volume(p2, ip3, ip4, ip5) - sphere_sector_vol(p2, ip3, ip4, ip5, vdw2);
 
     _outer_volume += vol1 + vol2 + vol3;
 
@@ -90,10 +90,10 @@ double occupied_cell_vol(Finite_cells_iterator const cell_iterator) {
     CPoint const p_2 = cell_iterator->vertex(2)->point();
     CPoint const p_3 = cell_iterator->vertex(3)->point();
 
-    double const vtx_0_vol = csphere_sector_vol(p_0, p_1, p_2, p_3, rdW_0);
-    double const vtx_1_vol = csphere_sector_vol(p_3, p_0, p_1, p_2, rdW_3);
-    double const vtx_2_vol = csphere_sector_vol(p_2, p_3, p_0, p_1, rdW_2);
-    double const vtx_3_vol = csphere_sector_vol(p_1, p_2, p_3, p_0, rdW_1);
+    double const vtx_0_vol = sphere_sector_vol(p_0, p_1, p_2, p_3, rdW_0);
+    double const vtx_1_vol = sphere_sector_vol(p_3, p_0, p_1, p_2, rdW_3);
+    double const vtx_2_vol = sphere_sector_vol(p_2, p_3, p_0, p_1, rdW_2);
+    double const vtx_3_vol = sphere_sector_vol(p_1, p_2, p_3, p_0, rdW_1);
 
     return (vtx_0_vol + vtx_1_vol + vtx_2_vol + vtx_3_vol);
 }

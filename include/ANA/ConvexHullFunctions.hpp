@@ -12,17 +12,16 @@ namespace ANA {
 void carve_CCH_into_cavity(Cavity &hueco, ConvexHull const &CH);
 
 // Returns the intersection point between the segment and the convex hull.
-inline CPoint cget_intersection_point(Segment const &s, ConvexHull const &CH) {
+inline CPoint get_intersection_point(Segment const &s, ConvexHull const &CH) {
 
     for (auto const &t : CH._triangles) {
         Object const inter_obj = CGAL::intersection(s, t);
         if (CPoint const *inter_point = CGAL::object_cast<CPoint>(&inter_obj)) {
-
             return *inter_point;
         }
     }
-    throw("Fatal error, cget_intersection_point() could not find an "
-          "intersection.");
+    throw std::runtime_error("Fatal error, get_intersection_point() could not "
+                             "find an intersection.");
 }
 
 // Get intersection points between the cell and the included area.

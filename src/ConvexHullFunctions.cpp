@@ -76,7 +76,7 @@ auto get_vertices_3_out(Finite_cells_iterator const cell, ConvexHull const &CH,
     std::vector<int> const &vertices_in, std::vector<int> const &vertices_out)
     -> std::tuple<CPoint, CPoint, CPoint, CPoint, double> {
 
-    auto const vtx_in_0{cell->vertex(vertices_in[0])};
+    auto const vtx_in_0 {cell->vertex(vertices_in[0])};
     double const radius_0 = vtx_in_0->info()._radius;
     CPoint p_in_0(vtx_in_0->point());
 
@@ -84,9 +84,9 @@ auto get_vertices_3_out(Finite_cells_iterator const cell, ConvexHull const &CH,
     CPoint const p_out_2(cell->vertex(vertices_out[1])->point());
     CPoint const p_out_3(cell->vertex(vertices_out[2])->point());
 
-    CPoint const ip1 = cget_intersection_point(Segment(p_in_0, p_out_1), CH);
-    CPoint const ip2 = cget_intersection_point(Segment(p_in_0, p_out_2), CH);
-    CPoint const ip3 = cget_intersection_point(Segment(p_in_0, p_out_3), CH);
+    CPoint const ip1 = get_intersection_point(Segment(p_in_0, p_out_1), CH);
+    CPoint const ip2 = get_intersection_point(Segment(p_in_0, p_out_2), CH);
+    CPoint const ip3 = get_intersection_point(Segment(p_in_0, p_out_3), CH);
 
     return {p_in_0, ip1, ip2, ip3, radius_0};
 }
@@ -97,21 +97,21 @@ auto get_vertices_2_out(Finite_cells_iterator const cell, ConvexHull const &CH,
     -> std::tuple<CPoint, CPoint, CPoint, CPoint, CPoint, CPoint, double,
         double> {
 
-    auto const vtx_in_0{cell->vertex(vertices_in[0])};
+    auto const vtx_in_0 {cell->vertex(vertices_in[0])};
     double const radius_0 = vtx_in_0->info()._radius;
     CPoint p_in_0(vtx_in_0->point());
 
-    auto const vtx_in_1{cell->vertex(vertices_in[1])};
+    auto const vtx_in_1 {cell->vertex(vertices_in[1])};
     double const radius_1 = vtx_in_1->info()._radius;
     CPoint p_in_1(vtx_in_1->point());
 
     CPoint const p_out_2(cell->vertex(vertices_out[0])->point());
     CPoint const p_out_3(cell->vertex(vertices_out[1])->point());
 
-    CPoint const ip1 = cget_intersection_point(Segment(p_in_0, p_out_2), CH);
-    CPoint const ip2 = cget_intersection_point(Segment(p_in_0, p_out_3), CH);
-    CPoint const ip3 = cget_intersection_point(Segment(p_in_1, p_out_2), CH);
-    CPoint const ip4 = cget_intersection_point(Segment(p_in_1, p_out_3), CH);
+    CPoint const ip1 = get_intersection_point(Segment(p_in_0, p_out_2), CH);
+    CPoint const ip2 = get_intersection_point(Segment(p_in_0, p_out_3), CH);
+    CPoint const ip3 = get_intersection_point(Segment(p_in_1, p_out_2), CH);
+    CPoint const ip4 = get_intersection_point(Segment(p_in_1, p_out_3), CH);
 
     return {p_in_0, p_in_1, ip1, ip2, ip3, ip4, radius_0, radius_1};
 }
@@ -122,23 +122,23 @@ auto get_vertices_1_out(Finite_cells_iterator const cell, ConvexHull const &CH,
     -> std::tuple<CPoint, CPoint, CPoint, CPoint, CPoint, CPoint, double,
         double, double> {
 
-    auto const vtx_in_0{cell->vertex(vertices_in[0])};
+    auto const vtx_in_0 {cell->vertex(vertices_in[0])};
     double const radius_0 = vtx_in_0->info()._radius;
     CPoint p_in_0(vtx_in_0->point());
 
-    auto const vtx_in_1{cell->vertex(vertices_in[1])};
+    auto const vtx_in_1 {cell->vertex(vertices_in[1])};
     double const radius_1 = vtx_in_1->info()._radius;
     CPoint p_in_1(vtx_in_1->point());
 
-    auto const vtx_in_2{cell->vertex(vertices_in[2])};
+    auto const vtx_in_2 {cell->vertex(vertices_in[2])};
     double const radius_2 = vtx_in_2->info()._radius;
     CPoint p_in_2(vtx_in_2->point());
 
     CPoint const p_out_3(cell->vertex(vertices_out[0])->point());
 
-    CPoint const ip1 = cget_intersection_point(Segment(p_in_0, p_out_3), CH);
-    CPoint const ip2 = cget_intersection_point(Segment(p_in_1, p_out_3), CH);
-    CPoint const ip3 = cget_intersection_point(Segment(p_in_2, p_out_3), CH);
+    CPoint const ip1 = get_intersection_point(Segment(p_in_0, p_out_3), CH);
+    CPoint const ip2 = get_intersection_point(Segment(p_in_1, p_out_3), CH);
+    CPoint const ip3 = get_intersection_point(Segment(p_in_2, p_out_3), CH);
 
     return {
         p_in_0, p_in_1, p_in_2, ip1, ip2, ip3, radius_0, radius_1, radius_2};
