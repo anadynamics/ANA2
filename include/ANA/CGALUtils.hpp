@@ -34,7 +34,7 @@ inline double volume(
 
 // Get the volume ocuppied by the sector of the sphere inscribed in the
 // incident cell.
-double csphere_sector_vol(CPoint const &p_0, CPoint const &p_1,
+double sphere_sector_vol(CPoint const &p_0, CPoint const &p_1,
     CPoint const &p_2, CPoint const &p_3, double const radius);
 
 // Get the normal vector of the plane specified by p0, p1, p2.

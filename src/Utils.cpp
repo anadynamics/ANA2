@@ -647,17 +647,17 @@ double refine_cell_volume(
     CPoint const p_1 = cell_iterator->vertex(1)->point();
     CPoint const p_2 = cell_iterator->vertex(2)->point();
     CPoint const p_3 = cell_iterator->vertex(3)->point();
-    double const vertex_0_csphere_sector_vol =
-        csphere_sector_vol(p_0, p_1, p_2, p_3, rdW_0);
-    double const vertex_1_csphere_sector_vol =
-        csphere_sector_vol(p_3, p_0, p_1, p_2, rdW_3);
-    double const vertex_2_csphere_sector_vol =
-        csphere_sector_vol(p_2, p_3, p_0, p_1, rdW_2);
-    double const vertex_3_csphere_sector_vol =
-        csphere_sector_vol(p_1, p_2, p_3, p_0, rdW_1);
-    return (entire_cell_vol - vertex_0_csphere_sector_vol -
-        vertex_1_csphere_sector_vol - vertex_2_csphere_sector_vol -
-        vertex_3_csphere_sector_vol);
+    double const vertex_0_sphere_sector_vol =
+        sphere_sector_vol(p_0, p_1, p_2, p_3, rdW_0);
+    double const vertex_1_sphere_sector_vol =
+        sphere_sector_vol(p_3, p_0, p_1, p_2, rdW_3);
+    double const vertex_2_sphere_sector_vol =
+        sphere_sector_vol(p_2, p_3, p_0, p_1, rdW_2);
+    double const vertex_3_sphere_sector_vol =
+        sphere_sector_vol(p_1, p_2, p_3, p_0, rdW_1);
+    return (entire_cell_vol - vertex_0_sphere_sector_vol -
+        vertex_1_sphere_sector_vol - vertex_2_sphere_sector_vol -
+        vertex_3_sphere_sector_vol);
 }
 
 // Discard cells without a vertex inside the specified convex hull. Lo
@@ -854,7 +854,7 @@ double discard_CH_1(NA_Vector const &in_intersecting_cells,
 
                     // Substract the volume of the sphere sector
                     volume = volume -
-                        csphere_sector_vol(p0, i_points[0], i_points[1],
+                        sphere_sector_vol(p0, i_points[0], i_points[1],
                             i_points[2], VdW_radius_0);
                 }
             }
@@ -963,13 +963,13 @@ double discard_CH_1(NA_Vector const &in_intersecting_cells,
 
                             // Substract the volume of the sphere sector
                             volume = volume -
-                                csphere_sector_vol(p0, i_points[0], i_points[1],
+                                sphere_sector_vol(p0, i_points[0], i_points[1],
                                     p1, VdW_radius_0);
                             volume = volume -
-                                csphere_sector_vol(p1, i_points[0], i_points[1],
+                                sphere_sector_vol(p1, i_points[0], i_points[1],
                                     i_points[2], VdW_radius_1);
                             volume = volume -
-                                csphere_sector_vol(p1, i_points[1], i_points[2],
+                                sphere_sector_vol(p1, i_points[1], i_points[2],
                                     i_points[3], VdW_radius_1);
                         }
                     }
@@ -1094,24 +1094,24 @@ double discard_CH_1(NA_Vector const &in_intersecting_cells,
                                     // Substract the volume of the sphere sector
                                     // 1st tetra
                                     volume = volume -
-                                        csphere_sector_vol(p0, p1, p2,
+                                        sphere_sector_vol(p0, p1, p2,
                                             i_points[0], VdW_radius_0);
                                     volume = volume -
-                                        csphere_sector_vol(p1, p2, p0,
+                                        sphere_sector_vol(p1, p2, p0,
                                             i_points[0], VdW_radius_1);
                                     volume = volume -
-                                        csphere_sector_vol(p2, p0, p1,
+                                        sphere_sector_vol(p2, p0, p1,
                                             i_points[0], VdW_radius_2);
                                     // 2nd tetra
                                     volume = volume -
-                                        csphere_sector_vol(p0, p2, i_points[0],
+                                        sphere_sector_vol(p0, p2, i_points[0],
                                             i_points[1], VdW_radius_0);
                                     volume = volume -
-                                        csphere_sector_vol(p2, p0, i_points[0],
+                                        sphere_sector_vol(p2, p0, i_points[0],
                                             i_points[1], VdW_radius_2);
                                     // 3rd tetra
                                     volume = volume -
-                                        csphere_sector_vol(p2, i_points[0],
+                                        sphere_sector_vol(p2, i_points[0],
                                             i_points[1], i_points[2],
                                             VdW_radius_2);
                                 }

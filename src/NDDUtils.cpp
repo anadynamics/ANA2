@@ -80,16 +80,52 @@ void ndd_read_PDB_get_cells(std::string const &filename,
     return;
 }
 
-// Analytical NDD.
-void ndd(
-    CCavity &cavity_void_cells, CConvexHull &CH, NDDOptions const &NDD_opts) {
+// On-site NDD.
+void ndd(Molecule const &protein, Cavity const &hueco, ConvexHull const &CH,
+    IncludedAreaOptions const &IA_opts, NDDOptions const &NDD_opts,
+    std::string const &pdb_filename) {
 
     std::vector<double> output_volumes;
     std::vector<int> all_indices;
 
     // NDD_IVector const cells_indices = get_vertices(cavity_void_cells);
 
-    Modes const modes(NDD_opts._modes_ndd_filename);
+    Modes const modos(NDD_opts._modes_ndd_filename);
+
+    if (CH._included_resis.size() == 0) {
+        for (size_t j = 0; j < modos._j; ++j) {
+            Molecule prote_ndd = protein;
+            for (const auto nres : CH._included_resis) {
+                // nres is 1-indexed.
+                int const nres_3 = nres * 3 - 1;
+                prote_ndd._data[nres].first +
+                    CVector(modos._evectors[j][nres_3],
+                        modos._evectors[j][nres_3 + 1],
+                        modos._evectors[j][nres_3 + 2]);
+            }
+            ANA::ConvexHull const CH_ndd =
+                create_convex_hull(prote_ndd, IA_opts);
+
+            Cavity hueco_ndd;
+            hueco_ndd._all_cells.reserve(
+                hueco._inner_cells.size() + hueco._outer_cells.size());
+            for (const auto &cell : hueco._inner_cells) {
+                auto const p0_info = cell->vertex(0)->info();
+                auto const p1_info = cell->vertex(1)->info();
+                auto const p2_info = cell->vertex(2)->info();
+                auto const p3_info = cell->vertex(3)->info();
+
+                // _resn is 1-indexed.
+                int const nres_3 = p0_info._resn * 3 - 1;
+                cell->vertex(0)->point() +
+                    CVector(modos._evectors[j][nres_3],
+                        modos._evectors[j][nres_3 + 1],
+                        modos._evectors[j][nres_3 + 2]);
+            }
+        }
+    } else if (CH._included_atoms.size() == 0) {
+    } else {
+    }
 
     // ANA::NDD::ndd_write_out_file(output_volumes, out_file);
 
@@ -179,7 +215,7 @@ NDD_IVector get_vertices(NA_Vector const &cavity_void_cells) {
 
 // Get the volume ocuppied by the sector of the sphere inscribed in the
 // incident cell.
-double csphere_sector_vol(CPoint const &p_0, CPoint const &p_1,
+double sphere_sector_vol(CPoint const &p_0, CPoint const &p_1,
     CPoint const &p_2, CPoint const &p_3, double const radius) {
     // get 1st point of the mini tetrahedron
     CVector vec_1 = p_1 - p_0;
@@ -205,8 +241,8 @@ double csphere_sector_vol(CPoint const &p_0, CPoint const &p_1,
     // normalize the normal vector
     plane_normal = plane_normal /
         (std::sqrt(CGAL::to_double(plane_normal.squared_length())));
-    // get the distance between the delaunay vertex and the plane formed by p_1,
-    // p_2 and p_3
+    // get the distance between the delaunay vertex and the plane formed by
+    // p_1, p_2 and p_3
     double dist_to_plane = CGAL::to_double(plane_normal * vec_1);
     double h = radius - dist_to_plane;
     double spherical_cap_volume =
@@ -220,7 +256,7 @@ double csphere_sector_vol(CPoint const &p_0, CPoint const &p_1,
         std::abs(mini_tetrahedron_vol) + std::abs(spherical_cap_volume);
     if (isnan(volume)) {
         volume = 0;
-        //    std::cerr << "Warning: csphere_sector_vol gave NaN value. Void
+        //    std::cerr << "Warning: sphere_sector_vol gave NaN value. Void
         //    calculation "
         //                 "keeps going."
         //              << '\n';
@@ -387,7 +423,7 @@ double ndd_discard_CH_1(NDD_Vector const &in_intersecting_coords,
 
                     // Substract the volume of the sphere sector.
                     volume = volume -
-                        csphere_sector_vol(p0, i_points[0], i_points[1],
+                        sphere_sector_vol(p0, i_points[0], i_points[1],
                             i_points[2], VdW_radius_0);
                 }
             }
@@ -478,13 +514,13 @@ double ndd_discard_CH_1(NDD_Vector const &in_intersecting_coords,
 
                             // Substract the volume of the sphere sector
                             volume = volume -
-                                csphere_sector_vol(p0, i_points[0], i_points[1],
+                                sphere_sector_vol(p0, i_points[0], i_points[1],
                                     p1, VdW_radius_0);
                             volume = volume -
-                                csphere_sector_vol(p1, i_points[0], i_points[1],
+                                sphere_sector_vol(p1, i_points[0], i_points[1],
                                     i_points[2], VdW_radius_1);
                             volume = volume -
-                                csphere_sector_vol(p1, i_points[1], i_points[2],
+                                sphere_sector_vol(p1, i_points[1], i_points[2],
                                     i_points[3], VdW_radius_1);
                         }
                     }
@@ -590,24 +626,24 @@ double ndd_discard_CH_1(NDD_Vector const &in_intersecting_coords,
                                     // Substract the volume of the sphere
                                     // sector 1st tetra
                                     volume = volume -
-                                        csphere_sector_vol(p0, p1, p2,
+                                        sphere_sector_vol(p0, p1, p2,
                                             i_points[0], VdW_radius_0);
                                     volume = volume -
-                                        csphere_sector_vol(p1, p2, p0,
+                                        sphere_sector_vol(p1, p2, p0,
                                             i_points[0], VdW_radius_1);
                                     volume = volume -
-                                        csphere_sector_vol(p2, p0, p1,
+                                        sphere_sector_vol(p2, p0, p1,
                                             i_points[0], VdW_radius_2);
                                     // 2nd tetra
                                     volume = volume -
-                                        csphere_sector_vol(p0, p2, i_points[0],
+                                        sphere_sector_vol(p0, p2, i_points[0],
                                             i_points[1], VdW_radius_0);
                                     volume = volume -
-                                        csphere_sector_vol(p2, p0, i_points[0],
+                                        sphere_sector_vol(p2, p0, i_points[0],
                                             i_points[1], VdW_radius_2);
                                     // 3rd tetra
                                     volume = volume -
-                                        csphere_sector_vol(p2, i_points[0],
+                                        sphere_sector_vol(p2, i_points[0],
                                             i_points[1], i_points[2],
                                             VdW_radius_2);
                                 }
