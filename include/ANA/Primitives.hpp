@@ -56,12 +56,12 @@ public:
     Vector() = default;
 
     Vector(double const x, double const y, double const z) noexcept :
-        _vxyz {x, y, z}, _origin {0., 0., 0.} {}
+        _vxyz{x, y, z}, _origin{0., 0., 0.} {}
 
     Vector(double const x, double const y, double const z, double const ox,
         double const oy, double const oz) noexcept :
-        _vxyz {x, y, z},
-        _origin {ox, oy, oz} {}
+        _vxyz{x, y, z},
+        _origin{ox, oy, oz} {}
 
     Vector(CVector const v) :
         _vxyz({CGAL::to_double(v.x()), CGAL::to_double(v.y()),
@@ -125,10 +125,10 @@ class Point {
 public:
     Point() = default;
 
-    Point(double const x, double const y, double const z) : _xyz {x, y, z} {}
+    Point(double const x, double const y, double const z) : _xyz{x, y, z} {}
 
     Point(CPoint const p) :
-        _xyz {CGAL::to_double(p.x()), CGAL::to_double(p.y()),
+        _xyz{CGAL::to_double(p.x()), CGAL::to_double(p.y()),
             CGAL::to_double(p.z())} {}
 
     double operator[](int const idx) const { return _xyz[idx]; }
@@ -165,17 +165,17 @@ inline Vector point_to_vector(Point const &in_point) {
     return Vector(in_point[0], in_point[1], in_point[2]);
 }
 
-class Triangle {
+class TTriangle {
 public:
-    Triangle() noexcept = default;
+    TTriangle() noexcept = default;
 
-    Triangle(Point const &p0, Point const &p1, Point const &p2) :
+    TTriangle(Point const &p0, Point const &p1, Point const &p2) :
         _data({p0, p1, p2}) {}
 
-    Triangle(CPoint const &p0, CPoint const &p1, CPoint const &p2) :
+    TTriangle(CPoint const &p0, CPoint const &p1, CPoint const &p2) :
         _data({Point(p0), Point(p1), Point(p2)}) {}
 
-    Triangle(Point &&p0, Point &&p1, Point &&p2) : _data({p0, p1, p2}) {}
+    TTriangle(Point &&p0, Point &&p1, Point &&p2) : _data({p0, p1, p2}) {}
 
     Point const &operator[](int const idx) const { return _data[idx]; }
 
@@ -184,26 +184,26 @@ public:
     std::array<Point, 3> _data;
 };
 
-class Tetrahedron {
+class TTetrahedron {
 public:
-    Tetrahedron() noexcept = default;
+    TTetrahedron() noexcept = default;
 
-    Tetrahedron(
+    TTetrahedron(
         Point const &p0, Point const &p1, Point const &p2, Point const &p3) :
         _data({p0, p1, p2, p3}) {}
 
-    Tetrahedron(CPoint const &p0, CPoint const &p1, CPoint const &p2,
+    TTetrahedron(CPoint const &p0, CPoint const &p1, CPoint const &p2,
         CPoint const &p3) :
         _data({Point(p0), Point(p1), Point(p2), Point(p3)}) {}
 
-    Tetrahedron(Point &&p0, Point &&p1, Point &&p2, Point &&p3) :
+    TTetrahedron(Point &&p0, Point &&p1, Point &&p2, Point &&p3) :
         _data({p0, p1, p2, p3}) {}
 
-    Tetrahedron(CPoint const &&p0, CPoint const &&p1, CPoint const &&p2,
+    TTetrahedron(CPoint const &&p0, CPoint const &&p1, CPoint const &&p2,
         CPoint const &&p3) :
         _data({Point(p0), Point(p1), Point(p2), Point(p3)}) {}
 
-    Tetrahedron(Finite_cells_iterator const &cell) :
+    TTetrahedron(Finite_cells_iterator const &cell) :
         _data({cell->vertex(0)->point(), cell->vertex(1)->point(),
             cell->vertex(2)->point(), cell->vertex(3)->point()}) {}
 
@@ -214,24 +214,24 @@ public:
     std::array<Point, 4> _data;
 };
 
-class TriangularPrism {
+class TTriangularPrism {
 public:
-    TriangularPrism() noexcept = default;
+    TTriangularPrism() noexcept = default;
 
-    TriangularPrism(Point const &p0, Point const &p1, Point const &p2,
+    TTriangularPrism(Point const &p0, Point const &p1, Point const &p2,
         Point const &p3, Point const &p4, Point const &p5) :
         _data({p0, p1, p2, p3, p4, p5}) {}
 
-    TriangularPrism(Point &&p0, Point &&p1, Point &&p2, Point &&p3, Point &&p4,
+    TTriangularPrism(Point &&p0, Point &&p1, Point &&p2, Point &&p3, Point &&p4,
         Point &&p5) :
         _data({p0, p1, p2, p3, p4, p5}) {}
 
-    TriangularPrism(CPoint const &p0, CPoint const &p1, CPoint const &p2,
+    TTriangularPrism(CPoint const &p0, CPoint const &p1, CPoint const &p2,
         CPoint const &p3, CPoint const &p4, CPoint const &p5) :
         _data({Point(p0), Point(p1), Point(p2), Point(p3), Point(p4),
             Point(p5)}) {}
 
-    TriangularPrism(CPoint const &&p0, CPoint const &&p1, CPoint const &&p2,
+    TTriangularPrism(CPoint const &&p0, CPoint const &&p1, CPoint const &&p2,
         CPoint const &&p3, CPoint const &&p4, CPoint const &&p5) :
         _data({Point(p0), Point(p1), Point(p2), Point(p3), Point(p4),
             Point(p5)}) {}
@@ -280,7 +280,7 @@ inline double volume(
     return determinant(p1 - p0, p2 - p0, p3 - p0) / 6;
 }
 
-inline double volume(const Tetrahedron &t) {
+inline double volume(const TTetrahedron &t) {
     return volume(t[0], t[1], t[2], t[3]);
 }
 }
