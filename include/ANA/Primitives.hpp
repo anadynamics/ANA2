@@ -172,9 +172,6 @@ public:
     TTriangle(Point const &p0, Point const &p1, Point const &p2) :
         _data({p0, p1, p2}) {}
 
-    TTriangle(CPoint const &p0, CPoint const &p1, CPoint const &p2) :
-        _data({Point(p0), Point(p1), Point(p2)}) {}
-
     TTriangle(Point &&p0, Point &&p1, Point &&p2) : _data({p0, p1, p2}) {}
 
     Point const &operator[](int const idx) const { return _data[idx]; }
