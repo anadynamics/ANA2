@@ -18,7 +18,6 @@ Cavity::Cavity(Molecule const &molecule, CellFilteringOptions const cell_opts) {
 }
 
 void Cavity::add_inner_cell(Finite_cells_iterator const &cell) {
-
     _volume += volume(cell) - occupied_cell_vol(cell);
     _inner_cells.push_back(cell);
     return;

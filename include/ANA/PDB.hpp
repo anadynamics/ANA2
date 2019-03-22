@@ -7,7 +7,9 @@
 #include <ANA/Primitives.hpp>
 
 namespace ANA {
-
+//
+// Draw CGAL types
+//
 void write_PDB(ConvexHull const &CH, std::string const &filename);
 
 void write_PDB(Cavity const &hueco, std::string const &filename);
@@ -40,6 +42,15 @@ void connect_tetrahedra(
 
 void connect_pentahedra(
     FILE *out_file, int const first_penta, int const last_penta);
+
+//
+// Draw own types
+//
+[[nodiscard]] auto draw(Point const &punto, FILE *out_file,
+    std::pair<int, int> idx_resid, std::string const &name) -> int;
+
+[[nodiscard]] auto draw_lines(TTriangle const &t, FILE *out_file,
+    std::pair<int, int> idx_resid) -> std::pair<int, int>;
 
 } // namespace PDB
 // namespace ANA

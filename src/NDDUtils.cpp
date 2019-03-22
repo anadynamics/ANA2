@@ -92,40 +92,40 @@ void ndd(Molecule const &protein, Cavity const &hueco, ConvexHull const &CH,
 
     Modes const modos(NDD_opts._modes_ndd_filename);
 
-    if (CH._included_resis.size() == 0) {
-        for (size_t j = 0; j < modos._j; ++j) {
-            Molecule prote_ndd = protein;
-            for (const auto nres : CH._included_resis) {
-                // nres is 1-indexed.
-                int const nres_3 = nres * 3 - 1;
-                prote_ndd._data[nres].first +
-                    CVector(modos._evectors[j][nres_3],
-                        modos._evectors[j][nres_3 + 1],
-                        modos._evectors[j][nres_3 + 2]);
-            }
-            ANA::ConvexHull const CH_ndd =
-                create_convex_hull(prote_ndd, IA_opts);
+    // if (CH._included_resis.size() != 0) {
+    //     for (size_t j = 0; j < modos._j; ++j) {
+    //         Molecule prote_ndd = protein;
+    //         for (const auto nres : CH._included_resis) {
+    //             // nres is 1-indexed.
+    //             int const nres_3 = nres * 3 - 1;
+    //             prote_ndd._data[nres].first +
+    //                 CVector(modos._evectors[j][nres_3],
+    //                     modos._evectors[j][nres_3 + 1],
+    //                     modos._evectors[j][nres_3 + 2]);
+    //         }
+    //         ANA::ConvexHull const CH_ndd =
+    //             create_convex_hull(prote_ndd, IA_opts);
 
-            Cavity hueco_ndd;
-            hueco_ndd._all_cells.reserve(
-                hueco._inner_cells.size() + hueco._outer_cells.size());
-            for (const auto &cell : hueco._inner_cells) {
-                auto const p0_info = cell->vertex(0)->info();
-                auto const p1_info = cell->vertex(1)->info();
-                auto const p2_info = cell->vertex(2)->info();
-                auto const p3_info = cell->vertex(3)->info();
+    //         Cavity hueco_ndd;
+    //         hueco_ndd._all_cells.reserve(
+    //             hueco._inner_cells.size() + hueco._outer_cells.size());
+    //         for (const auto &cell : hueco._inner_cells) {
+    //             auto const p0_info = cell->vertex(0)->info();
+    //             auto const p1_info = cell->vertex(1)->info();
+    //             auto const p2_info = cell->vertex(2)->info();
+    //             auto const p3_info = cell->vertex(3)->info();
 
-                // _resn is 1-indexed.
-                int const nres_3 = p0_info._resn * 3 - 1;
-                cell->vertex(0)->point() +
-                    CVector(modos._evectors[j][nres_3],
-                        modos._evectors[j][nres_3 + 1],
-                        modos._evectors[j][nres_3 + 2]);
-            }
-        }
-    } else if (CH._included_atoms.size() == 0) {
-    } else {
-    }
+    //             // _resn is 1-indexed.
+    //             int const nres_3 = p0_info._resn * 3 - 1;
+    //             cell->vertex(0)->point() +
+    //                 CVector(modos._evectors[j][nres_3],
+    //                     modos._evectors[j][nres_3 + 1],
+    //                     modos._evectors[j][nres_3 + 2]);
+    //         }
+    //     }
+    // } else if (CH._included_atoms.size() != 0) {
+    // } else {
+    // }
 
     // ANA::NDD::ndd_write_out_file(output_volumes, out_file);
 

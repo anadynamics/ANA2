@@ -2,6 +2,10 @@
 
 namespace ANA {
 
+//
+// Draw CGAL types
+//
+
 void write_PDB(ConvexHull const &CH, std::string const &filename) {
 
     FILE *out_file = std::fopen(filename.c_str(), "w");
@@ -137,6 +141,31 @@ void connect_pentahedra(
         fmt::print(out_file, "CONECT {:>4} {:>4} {:>4} {:>4}\n", n, k, l, m);
     }
     return;
+}
+
+//
+// Draw own types
+//
+
+auto draw(Point const &punto, FILE *out_file, std::pair<int, int> idx_resid,
+    std::string const &name) -> int {
+    fmt::print(out_file,
+        "{: <6}{: >5} {: <4s} {:3} {:1}{: >4}    "
+        "{:8.3f}{:8.3f}{:8.3f}{:6.2f}{:6.2f}          {: >2s}\n",
+        "HETATM", idx_resid.first++, "H", name, "A", idx_resid.second, punto[0],
+        punto[1], punto[2], 1.0, 0.0, "H");
+    return idx_resid.first;
+}
+
+auto draw_lines(TTriangle const &t, FILE *out_file,
+    std::pair<int, int> idx_resid) -> std::pair<int, int> {
+
+    idx_resid.first = draw(t[0], out_file, idx_resid, " IA");
+    idx_resid.first = draw(t[1], out_file, idx_resid, " IA");
+    idx_resid.first = draw(t[2], out_file, idx_resid, " IA");
+    ++idx_resid.second;
+
+    return idx_resid;
 }
 
 } // namespace ANA

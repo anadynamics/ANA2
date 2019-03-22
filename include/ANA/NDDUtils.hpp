@@ -24,9 +24,10 @@ void ndd_read_PDB_get_cells(std::string const &filename,
     const std::vector<int> &include_CH_atoms, NDD_Vector &output_cells,
     Triang_Vector &CH_triangs);
 
-// Analytical NDD
-void ndd(
-    CCavity &cavity_void_cells, CConvexHull &CH, NDDOptions const &NDD_opts);
+// On-site NDD.
+void ndd(Molecule const &protein, Cavity const &hueco, ConvexHull const &CH,
+    IncludedAreaOptions const &IA_opts, NDDOptions const &NDD_opts,
+    std::string const &pdb_filename);
 
 // Perform Non Delaunay Dynamics.
 void ndd_nondelaunay_dynamics_old(NA_Vector const &cavity_void_cells,
@@ -38,7 +39,7 @@ NDD_IVector get_vertices(NA_Vector const &cavity_void_cells);
 
 // Get the volume occupied by the sector of the sphere inscribed in the
 // incident cell.
-double csphere_sector_vol(CPoint const &p_0, CPoint const &p_1,
+double sphere_sector_vol(CPoint const &p_0, CPoint const &p_1,
     CPoint const &p_2, CPoint const &p_3, double const radius);
 
 // Calc volume of the input cells. Reedited for array container.
@@ -57,16 +58,16 @@ inline double ndd_refine_cell_volume(
     CPoint const p_3 = cell[3].first;
 
     double const vtx_0_sphere_sector =
-        csphere_sector_vol(p_0, p_1, p_2, p_3, cell[0].second);
+        sphere_sector_vol(p_0, p_1, p_2, p_3, cell[0].second);
 
     double const vtx_1_sphere_sector =
-        csphere_sector_vol(p_3, p_0, p_1, p_2, cell[3].second);
+        sphere_sector_vol(p_3, p_0, p_1, p_2, cell[3].second);
 
     double const vtx_2_sphere_sector =
-        csphere_sector_vol(p_2, p_3, p_0, p_1, cell[2].second);
+        sphere_sector_vol(p_2, p_3, p_0, p_1, cell[2].second);
 
     double const vtx_3_sphere_sector =
-        csphere_sector_vol(p_1, p_2, p_3, p_0, cell[1].second);
+        sphere_sector_vol(p_1, p_2, p_3, p_0, cell[1].second);
 
     return (entire_cell_vol - vtx_0_sphere_sector - vtx_1_sphere_sector -
         vtx_2_sphere_sector - vtx_3_sphere_sector);
