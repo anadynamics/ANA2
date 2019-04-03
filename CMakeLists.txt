@@ -32,6 +32,7 @@ target_sources(ANA
         src/NDDUtils.cpp
         src/PDB.cpp
         src/ProgramOptions.cpp
+        src/PrimitivesUtils.cpp
         src/Read.cpp
         src/Static.cpp
         src/Utils.cpp
@@ -51,6 +52,7 @@ target_sources(ANA
         include/ANA/Options.hpp
         include/ANA/PDB.hpp
         include/ANA/Primitives.hpp
+        include/ANA/PrimitivesUtils.hpp
         include/ANA/ProgramOptions.hpp
         include/ANA/Read.hpp
         include/ANA/Static.hpp
