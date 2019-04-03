@@ -64,12 +64,12 @@ public:
     Vector() = default;
 
     Vector(double const x, double const y, double const z) noexcept :
-        _vxyz {x, y, z}, _origin {0., 0., 0.} {}
+        _vxyz{x, y, z}, _origin{0., 0., 0.} {}
 
     Vector(double const x, double const y, double const z, double const ox,
         double const oy, double const oz) noexcept :
-        _vxyz {x, y, z},
-        _origin {ox, oy, oz} {}
+        _vxyz{x, y, z},
+        _origin{ox, oy, oz} {}
 
     Vector(CVector const v) :
         _vxyz({CGAL::to_double(v.x()), CGAL::to_double(v.y()),
@@ -133,10 +133,10 @@ class Point {
 public:
     Point() = default;
 
-    Point(double const x, double const y, double const z) : _xyz {x, y, z} {}
+    Point(double const x, double const y, double const z) : _xyz{x, y, z} {}
 
     Point(CPoint const p) :
-        _xyz {CGAL::to_double(p.x()), CGAL::to_double(p.y()),
+        _xyz{CGAL::to_double(p.x()), CGAL::to_double(p.y()),
             CGAL::to_double(p.z())} {}
 
     double operator[](int const idx) const { return _xyz[idx]; }
@@ -154,6 +154,12 @@ inline Vector operator-(Point const &lhs, Point const &rhs) {
     return {lhs[0] - rhs[0], lhs[1] - rhs[1], lhs[2] - rhs[2], rhs[0], rhs[1],
         rhs[2]};
 }
+
+// Displaces the Point along the Vector.
+inline Point operator+(Point const &p0, Point const &p1) {
+    return Point(p0[0] + p1[0], p0[1] + p1[1], p0[2] + p1[2]);
+}
+
 // Displaces the Point along the Vector.
 inline Point operator+(Point const &p, Vector const &v) {
     return Point(p[0] + (v[0] - v._origin[0]), p[1] + (v[1] - v._origin[1]),
@@ -165,12 +171,16 @@ inline Point operator-(Point const &p, Vector const &v) {
         p[2] - (v[2] - v._origin[2]));
 }
 
-inline bool operator==(Point const &lhs, Point const &rhs) {
-    return (lhs[0] == rhs[0] && lhs[1] == rhs[1] && lhs[2] == rhs[2]);
+inline Point operator*(Point const &p, double const &rhs) {
+    return {p[0] * rhs, p[1] * rhs, p[2] * rhs};
 }
 
-inline Vector point_to_vector(Point const &in_point) {
-    return Vector(in_point[0], in_point[1], in_point[2]);
+inline Point operator*(double const &rhs, Point const &p) {
+    return {p[0] * rhs, p[1] * rhs, p[2] * rhs};
+}
+
+inline bool operator==(Point const &lhs, Point const &rhs) {
+    return (lhs[0] == rhs[0] && lhs[1] == rhs[1] && lhs[2] == rhs[2]);
 }
 
 class TTriangle {
