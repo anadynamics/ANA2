@@ -9,7 +9,7 @@
 #include <ANA/NDDUtils.hpp>
 #include <ANA/Options.hpp>
 #include <ANA/PDB.hpp>
-#include <ANA/Primitives.hpp>
+#include <ANA/PrimitivesUtils.hpp>
 #include <ANA/Read.hpp>
 #include <ANA/Utils.hpp>
 #include <ANA/Write.hpp>
