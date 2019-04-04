@@ -3,7 +3,7 @@
 #include <ANA/CGALUtils.hpp>
 #include <ANA/Includes.hpp>
 #include <ANA/Options.hpp>
-#include <ANA/Primitives.hpp>
+#include <ANA/PrimitivesUtils.hpp>
 #include <ANA/SoAPrimitives.hpp>
 
 namespace ANA {

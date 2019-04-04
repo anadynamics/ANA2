@@ -3,7 +3,7 @@
 #include <ANA/Cavity.hpp>
 #include <ANA/Includes.hpp>
 #include <ANA/Molecule.hpp>
-#include <ANA/Primitives.hpp>
+#include <ANA/PrimitivesUtils.hpp>
 #include <ANA/Utils.hpp>
 
 namespace ANA {

@@ -3,7 +3,7 @@
 #include <ANA/Cavity.hpp>
 #include <ANA/Includes.hpp>
 #include <ANA/Molecule.hpp>
-#include <ANA/Primitives.hpp>
+#include <ANA/PrimitivesUtils.hpp>
 
 namespace ANA {
 // Refine the provided list of amino acids. If its not present, then return an
