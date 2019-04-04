@@ -4,7 +4,7 @@
 #include <ANA/ConvexHull.hpp>
 #include <ANA/Includes.hpp>
 #include <ANA/Molecule.hpp>
-#include <ANA/Primitives.hpp>
+#include <ANA/PrimitivesUtils.hpp>
 
 namespace ANA {
 //
@@ -25,10 +25,11 @@ void write_PDB(Cavity const &hueco, std::string const &filename);
 
 template <class T>
 [[nodiscard]] auto draw_polyhedron(T const &poly, FILE *out_file,
-    std::pair<int, int> idx_resid) -> std::pair<int, int> {
+    std::pair<int, int> idx_resid, std::string const &resname)
+    -> std::pair<int, int> {
 
     for (auto const &punto : poly._data) {
-        idx_resid.first = draw(punto, out_file, idx_resid, "POL");
+        idx_resid.first = draw(punto, out_file, idx_resid, resname);
     }
     ++idx_resid.second;
 
@@ -46,12 +47,30 @@ void connect_pentahedra(
 //
 // Draw own types
 //
+// TODO: replace `std::string const &` with `std::string_view` as soon as a new
+// string_view supporting fmt version comes out.
+void write_PDB(TConvexHull const &CH, std::string const &filename);
+
+void write_PDB(TCavity const &hueco, std::string const &filename);
+
+[[nodiscard]] auto draw_lines(TTriangle const &t, FILE *out_file,
+    std::pair<int, int> idx_resid, std::string const &resname)
+    -> std::pair<int, int>;
+
+[[nodiscard]] auto draw_lines(TTetrahedron const cell, FILE *out_file,
+    std::pair<int, int> idx_resid, std::string const &resname)
+    -> std::pair<int, int>;
+
 [[nodiscard]] auto draw(Point const &punto, FILE *out_file,
     std::pair<int, int> idx_resid, std::string const &name) -> int;
 
-[[nodiscard]] auto draw_lines(TTriangle const &t, FILE *out_file,
-    std::pair<int, int> idx_resid) -> std::pair<int, int>;
+void connect_ttetrahedra(
+    FILE *out_file, int const first_atm, int const last_atm);
 
-} // namespace PDB
-// namespace ANA
+void connect_pentahedra_2_2(
+    FILE *out_file, int const first_atm, int const last_atm);
+
+void connect_pentahedra_3_1(
+    FILE *out_file, int const first_atm, int const last_atm);
+} // namespace ANA
 #endif
