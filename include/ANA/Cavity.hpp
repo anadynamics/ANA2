@@ -57,11 +57,11 @@ public:
     void add_border_tetra(Point const &p0, Point const &ip1, Point const &ip2,
         Point const &ip3, double const vdw0);
 
-    void add_border_penta(Point const &p0, Point const &p1, Point const &ip2,
-        Point const &ip3, Point const &ip4, Point const &ip5, double const vdw0,
-        double const vdw1);
+    void add_border_penta_2_2(Point const &p0, Point const &p1,
+        Point const &ip2, Point const &ip3, Point const &ip4, Point const &ip5,
+        double const vdw0, double const vdw1);
 
-    void add_border_penta(Point const &p0, Point const &p1, Point const &p2,
+    void add_border_penta_3_1(Point const &p0, Point const &p1, Point const &p2,
         Point const &ip3, Point const &ip4, Point const &ip5, double const vdw0,
         double const vdw1, double const vdw2);
 
@@ -74,7 +74,7 @@ public:
 private:
     // Border polyhedrons from the cells that intersected the convex hull.
     std::vector<TTetrahedron> _tetra_border;
-    std::vector<TTriangularPrism> _penta_border;
+    std::vector<TTriangularPrism> _penta_border_2_2, _penta_border_3_1;
     // Number of polyhedron vertices. Needed for output.
     std::vector<int> _poly_vtx_cnt;
 };

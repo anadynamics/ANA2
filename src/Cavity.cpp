@@ -148,7 +148,7 @@ void TCavity::add_border_tetra(Point const &p0, Point const &ip1,
     return;
 }
 
-void TCavity::add_border_penta(Point const &p0, Point const &p1,
+void TCavity::add_border_penta_2_2(Point const &p0, Point const &p1,
     Point const &ip2, Point const &ip3, Point const &ip4, Point const &ip5,
     double const vdw0, double const vdw1) {
 
@@ -163,12 +163,12 @@ void TCavity::add_border_penta(Point const &p0, Point const &p1,
         volume(p1, ip3, ip4, ip5) - sphere_sector_vol(p1, ip3, ip4, ip5, vdw1);
     _outer_volume += vol1 + vol2 + vol3;
 
-    _penta_border.emplace_back(p0, p1, ip2, ip3, ip4, ip5);
+    _penta_border_2_2.emplace_back(p0, p1, ip2, ip3, ip4, ip5);
 
     return;
 }
 
-void TCavity::add_border_penta(Point const &p0, Point const &p1,
+void TCavity::add_border_penta_3_1(Point const &p0, Point const &p1,
     Point const &p2, Point const &ip3, Point const &ip4, Point const &ip5,
     double const vdw0, double const vdw1, double const vdw2) {
 
@@ -186,7 +186,7 @@ void TCavity::add_border_penta(Point const &p0, Point const &p1,
 
     _outer_volume += vol1 + vol2 + vol3;
 
-    _penta_border.emplace_back(p0, p1, p2, ip3, ip4, ip5);
+    _penta_border_3_1.emplace_back(p0, p1, p2, ip3, ip4, ip5);
 
     return;
 }
