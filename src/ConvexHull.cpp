@@ -121,7 +121,7 @@ ConvexHull::ConvexHull(std::string const &sphere_proto, SphereTag) {
     // Drawin a pseudo-sphere. The first 6 correspondon the XYZ axes, the
     // next 8 to the X-Y plane, then 8 more for the X-Z plane and 8 for the
     // Y-Z plane.
-    std::array<CPoint, 30> const incl_area_points {center + CVector(r, 0, 0),
+    std::array<CPoint, 30> const incl_area_points{center + CVector(r, 0, 0),
         center + CVector(0, r, 0), center + CVector(0, 0, r),
         center + CVector(-r, 0, 0), center + CVector(0, -r, 0),
         center + CVector(0, 0, -r), center + CVector(r * cos_30, r * sin_30, 0),
@@ -182,7 +182,7 @@ ConvexHull::ConvexHull(std::string const &cylinder_proto, CylinderTag) {
 
     // The first 12 correspond to the first tap, the other half correspond
     // to the 2nd tap.
-    std::array<CPoint, 24> incl_area_points {center_1 + r * n1,
+    std::array<CPoint, 24> incl_area_points{center_1 + r * n1,
         center_1 + r * n2, center_1 - r * n1, center_1 - r * n2,
         center_1 + r * cos_30 * n1 + r * sin_30 * n2,
         center_1 + r * sin_30 * n1 + r * cos_30 * n2,
@@ -231,7 +231,7 @@ ConvexHull::ConvexHull(std::string const &prism_proto, PrismTag) {
     n2 = n2 / std::sqrt(CGAL::to_double(n2.squared_length()));
 
     // 8 vertices of a prism.
-    std::array<CPoint, 8> incl_area_points {center_1 + width * n1 + height * n2,
+    std::array<CPoint, 8> incl_area_points{center_1 + width * n1 + height * n2,
         center_1 + width * n1 - height * n2,
         center_1 - width * n1 + height * n2,
         center_1 - width * n1 - height * n2,
@@ -250,224 +250,6 @@ ConvexHull::ConvexHull(std::string const &prism_proto, PrismTag) {
 }
 
 ConvexHull::ConvexHull(std::string const &filename, FileTag) {
-    filename.end(); // just to avoid unused value warning.
-    throw("Convex hull construction from input file not supported yet. "
-          "Aborting.");
-}
-////////////////
-// Delete
-////////////////
-TConvexHull tcreate_convex_hull(
-    Molecule const &protein, IncludedAreaOptions const &IA_opts) {
-
-    switch (IA_opts._opt) {
-    case IncludedAreaOptions::IAOption::residue:
-        return TConvexHull(protein, IA_opts._resn_proto, ResidueTag());
-    case IncludedAreaOptions::IAOption::atom:
-        return TConvexHull(protein, IA_opts._atom_proto, AtomTag());
-    case IncludedAreaOptions::IAOption::sphere:
-        return TConvexHull(IA_opts._sphere_proto, SphereTag());
-    case IncludedAreaOptions::IAOption::cylinder:
-        return TConvexHull(IA_opts._cylinder_proto, CylinderTag());
-    case IncludedAreaOptions::IAOption::prism:
-        return TConvexHull(IA_opts._prism_proto, PrismTag());
-    case IncludedAreaOptions::IAOption::file:
-        return TConvexHull(IA_opts._filename, FileTag());
-    case IncludedAreaOptions::IAOption::none:
-        throw(std::invalid_argument(
-            "No Convex Hull input could be parsed. This shouldn't happen."));
-        break;
-    }
-    return {};
-}
-
-TConvexHull::TConvexHull(
-    Molecule const &protein, std::string const &resn_proto, ResidueTag) {
-
-    _included_resis = string_to_list(resn_proto, protein._nres);
-
-    std::vector<CPoint> incl_area_points;
-    incl_area_points.reserve(_included_resis.size());
-
-    for (auto const i : _included_resis) {
-        incl_area_points.push_back(
-            protein._data[protein._alphaCarbons[i - 1]].first);
-    }
-
-    try {
-        run_convex_hull(incl_area_points);
-    } catch (std::runtime_error const &e) {
-        throw;
-    } catch (...) {
-        throw("Uknown error when triangulating convex hull. Aborting.");
-    }
-}
-
-TConvexHull::TConvexHull(
-    Molecule const &protein, std::string const &atom_proto, AtomTag) {
-
-    _included_atoms = string_to_list(atom_proto, protein._natoms);
-
-    std::vector<CPoint> incl_area_points;
-    incl_area_points.reserve(_included_atoms.size());
-
-    for (auto const i : _included_atoms) {
-        // 0-index normalization.
-        incl_area_points.push_back(protein._data[i - 1].first);
-    }
-
-    try {
-        run_convex_hull(incl_area_points);
-    } catch (std::runtime_error const &e) {
-        throw;
-    } catch (...) {
-        throw("Uknown error when triangulating convex hull. Aborting.");
-    }
-}
-
-TConvexHull::TConvexHull(std::string const &sphere_proto, SphereTag) {
-
-    std::stringstream stream_sphere(sphere_proto);
-    double const x = parse_double(stream_sphere);
-    double const y = parse_double(stream_sphere);
-    double const z = parse_double(stream_sphere);
-    double const r = parse_double(stream_sphere);
-    double constexpr cos_30 = 0.86602540378;
-    double constexpr sin_30 = 0.5;
-
-    CPoint const center(x, y, z);
-    // Drawin a pseudo-sphere. The first 6 correspondon the XYZ axes, the
-    // next 8 to the X-Y plane, then 8 more for the X-Z plane and 8 for the
-    // Y-Z plane.
-    std::array<CPoint, 30> const incl_area_points {center + CVector(r, 0, 0),
-        center + CVector(0, r, 0), center + CVector(0, 0, r),
-        center + CVector(-r, 0, 0), center + CVector(0, -r, 0),
-        center + CVector(0, 0, -r), center + CVector(r * cos_30, r * sin_30, 0),
-        center + CVector(r * sin_30, r * cos_30, 0),
-        center + CVector(r * cos_30, -r * sin_30, 0),
-        center + CVector(r * sin_30, -r * cos_30, 0),
-        center + CVector(-r * cos_30, r * sin_30, 0),
-        center + CVector(-r * sin_30, r * cos_30, 0),
-        center + CVector(-r * cos_30, -r * sin_30, 0),
-        center + CVector(-r * sin_30, -r * cos_30, 0),
-        center + CVector(r * cos_30, 0, r * sin_30),
-        center + CVector(r * sin_30, 0, r * cos_30),
-        center + CVector(r * cos_30, 0, -r * sin_30),
-        center + CVector(r * sin_30, 0, -r * cos_30),
-        center + CVector(-r * cos_30, 0, r * sin_30),
-        center + CVector(-r * sin_30, 0, r * cos_30),
-        center + CVector(-r * cos_30, 0, -r * sin_30),
-        center + CVector(-r * sin_30, 0, -r * cos_30),
-        center + CVector(0, r * cos_30, r * sin_30),
-        center + CVector(0, r * sin_30, r * cos_30),
-        center + CVector(0, r * cos_30, -r * sin_30),
-        center + CVector(0, r * sin_30, -r * cos_30),
-        center + CVector(0, -r * cos_30, r * sin_30),
-        center + CVector(0, -r * sin_30, r * cos_30),
-        center + CVector(0, -r * cos_30, -r * sin_30),
-        center + CVector(0, -r * sin_30, -r * cos_30)};
-
-    try {
-        run_convex_hull(incl_area_points);
-    } catch (std::runtime_error const &e) {
-        throw;
-    } catch (...) {
-        throw("Uknown error when triangulating convex hull. Aborting.");
-    }
-}
-
-TConvexHull::TConvexHull(std::string const &cylinder_proto, CylinderTag) {
-
-    std::stringstream stream_cylinder(cylinder_proto);
-
-    double const x1 = parse_double(stream_cylinder);
-    double const y1 = parse_double(stream_cylinder);
-    double const z1 = parse_double(stream_cylinder);
-    double const x2 = parse_double(stream_cylinder);
-    double const y2 = parse_double(stream_cylinder);
-    double const z2 = parse_double(stream_cylinder);
-    double const r = parse_double(stream_cylinder);
-    double constexpr cos_30 = 0.86602540378;
-    double const sin_30 = 0.5;
-
-    CPoint const center_1(x1, y1, z1), center_2(x2, y2, z2);
-
-    CVector const vdiff(center_2 - center_1);
-    CVector n1(-vdiff.y(), vdiff.x(), 0);
-    CVector n2 = CGAL::cross_product(vdiff, n1);
-    n1 = n1 / std::sqrt(CGAL::to_double(n1.squared_length()));
-    n2 = n2 / std::sqrt(CGAL::to_double(n2.squared_length()));
-
-    // The first 12 correspond to the first tap, the other half correspond
-    // to the 2nd tap.
-    std::array<CPoint, 24> incl_area_points {center_1 + r * n1,
-        center_1 + r * n2, center_1 - r * n1, center_1 - r * n2,
-        center_1 + r * cos_30 * n1 + r * sin_30 * n2,
-        center_1 + r * sin_30 * n1 + r * cos_30 * n2,
-        center_1 + r * cos_30 * n1 - r * sin_30 * n2,
-        center_1 + r * sin_30 * n1 - r * cos_30 * n2,
-        center_1 - r * cos_30 * n1 + r * sin_30 * n2,
-        center_1 - r * sin_30 * n1 + r * cos_30 * n2,
-        center_1 - r * cos_30 * n1 - r * sin_30 * n2,
-        center_1 - r * sin_30 * n1 - r * cos_30 * n2, center_2 + r * n1,
-        center_2 + r * n2, center_2 - r * n1, center_2 - r * n2,
-        center_2 + r * cos_30 * n1 + r * sin_30 * n2,
-        center_2 + r * sin_30 * n1 + r * cos_30 * n2,
-        center_2 + r * cos_30 * n1 - r * sin_30 * n2,
-        center_2 + r * sin_30 * n1 - r * cos_30 * n2,
-        center_2 - r * cos_30 * n1 + r * sin_30 * n2,
-        center_2 - r * sin_30 * n1 + r * cos_30 * n2,
-        center_2 - r * cos_30 * n1 - r * sin_30 * n2,
-        center_2 - r * sin_30 * n1 - r * cos_30 * n2};
-
-    try {
-        run_convex_hull(incl_area_points);
-    } catch (std::runtime_error const &e) {
-        throw;
-    } catch (...) {
-        throw("Uknown error when triangulating convex hull. Aborting.");
-    }
-}
-
-TConvexHull::TConvexHull(std::string const &prism_proto, PrismTag) {
-
-    std::stringstream stream_prism(prism_proto);
-    double const x1 = parse_double(stream_prism);
-    double const y1 = parse_double(stream_prism);
-    double const z1 = parse_double(stream_prism);
-    double const x2 = parse_double(stream_prism);
-    double const y2 = parse_double(stream_prism);
-    double const z2 = parse_double(stream_prism);
-    double const width = parse_double(stream_prism) / 2;
-    double const height = parse_double(stream_prism) / 2;
-
-    CPoint const center_1(x1, y1, z1), center_2(x2, y2, z2);
-    CVector const vdiff(center_2 - center_1);
-    CVector n1(-vdiff.y(), vdiff.x(), 0);
-    CVector n2 = CGAL::cross_product(vdiff, n1);
-    n1 = n1 / std::sqrt(CGAL::to_double(n1.squared_length()));
-    n2 = n2 / std::sqrt(CGAL::to_double(n2.squared_length()));
-
-    // 8 vertices of a prism.
-    std::array<CPoint, 8> incl_area_points {center_1 + width * n1 + height * n2,
-        center_1 + width * n1 - height * n2,
-        center_1 - width * n1 + height * n2,
-        center_1 - width * n1 - height * n2,
-        center_2 + width * n1 + height * n2,
-        center_2 + width * n1 - height * n2,
-        center_2 - width * n1 + height * n2,
-        center_2 - width * n1 - height * n2};
-
-    try {
-        run_convex_hull(incl_area_points);
-    } catch (std::runtime_error const &e) {
-        throw;
-    } catch (...) {
-        throw("Uknown error when triangulating convex hull. Aborting.");
-    }
-}
-
-TConvexHull::TConvexHull(std::string const &filename, FileTag) {
     filename.end(); // just to avoid unused value warning.
     throw("Convex hull construction from input file not supported yet. "
           "Aborting.");

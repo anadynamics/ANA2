@@ -41,7 +41,7 @@ inline double volume(
     return determinant(p1 - p0, p2 - p0, p3 - p0) / 6;
 }
 
-inline double volume(const TTetrahedron &t) {
+inline double volume(const Tetrahedron &t) {
     return volume(t[0], t[1], t[2], t[3]);
 }
 
