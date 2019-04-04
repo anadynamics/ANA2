@@ -1,11 +1,9 @@
 #ifndef ANA_CGAL_UTILS_H
 #define ANA_CGAL_UTILS_H
 #include <ANA/Includes.hpp>
-#include <ANA/Primitives.hpp>
+#include <ANA/PrimitivesUtils.hpp>
 
 namespace ANA {
-
-constexpr double M_PI3 = 1 / 3 * M_PI;
 
 // Get the normal vector of the plane specified by p0, p1, p2.
 inline CVector normal(CPoint const p0, CPoint const p1, CPoint const p2) {
@@ -34,8 +32,8 @@ inline double volume(
 
 // Get the volume ocuppied by the sector of the sphere inscribed in the
 // incident cell.
-double sphere_sector_vol(CPoint const &p_0, CPoint const &p_1,
-    CPoint const &p_2, CPoint const &p_3, double const radius);
+double sphere_sector_vol(CPoint const &p0, CPoint const &p1, CPoint const &p2,
+    CPoint const &p3, double const radius);
 
 // Get the normal vector of the plane specified by p0, p1, p2.
 inline Vector normal(Point const p0, Point const p1, Point const p2) {
@@ -48,8 +46,8 @@ inline Vector normal(Point const p0, Point const p1, Point const p2) {
 
 // Get the volume ocuppied by the sector of the sphere inscribed in the
 // incident cell.
-double sphere_sector_vol(Point const &p_0, Point const &p_1, Point const &p_2,
-    Point const &p_3, double const radius);
+double sphere_sector_vol(Point const &p0, Point const &p1, Point const &p2,
+    Point const &p3, double const radius);
 
 // Turns all the cell's info into a more convenient data structure.
 TetraInfo get_cell_info(Finite_cells_iterator const &cell);
