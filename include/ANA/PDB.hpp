@@ -12,7 +12,7 @@ namespace ANA {
 
 void write_PDB(Delaunay const &T, std::string const &filename);
 
-auto draw_lines(Cell_iterator const cell, FILE *out_file,
+auto draw_lines(Finite_cells_iterator const cell, FILE *out_file,
     std::pair<int, int> idx_resid, std::string const &resname)
     -> std::pair<int, int>;
 

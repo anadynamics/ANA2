@@ -10,7 +10,8 @@ void write_PDB(Delaunay const &T, std::string const &filename) {
     if (out_file) {
         std::pair<int, int> idx_resid{1, 1};
         auto const c_end = T.finite_cells_end();
-        for (auto cell = T.finite_cells_begin(); cell < c_end; ++cell) {
+        for (auto cell = T.finite_cells_begin(); cell != c_end; ++cell) {
+
             idx_resid = draw_lines(cell, out_file, idx_resid, "CGA");
         }
         connect_tetrahedra(out_file, 1, idx_resid.first);
@@ -22,7 +23,7 @@ void write_PDB(Delaunay const &T, std::string const &filename) {
     return;
 }
 
-auto draw_lines(Cell_iterator const cell, FILE *out_file,
+auto draw_lines(Finite_cells_iterator const cell, FILE *out_file,
     std::pair<int, int> idx_resid, std::string const &resname)
     -> std::pair<int, int> {
 
