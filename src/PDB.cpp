@@ -2,6 +2,55 @@
 
 namespace ANA {
 
+// CGAL types.
+
+void write_PDB(Delaunay const &T, std::string const &filename) {
+
+    FILE *out_file = std::fopen(filename.c_str(), "w");
+    if (out_file) {
+        std::pair<int, int> idx_resid{1, 1};
+        auto const c_end = T.finite_cells_end();
+        for (auto cell = T.finite_cells_begin(); cell < c_end; ++cell) {
+            idx_resid = draw_lines(cell, out_file, idx_resid, "CGA");
+        }
+        connect_tetrahedra(out_file, 1, idx_resid.first);
+    } else {
+        printf("Could not open %s.\n", filename.c_str());
+    }
+    std::fclose(out_file);
+
+    return;
+}
+
+auto draw_lines(Cell_iterator const cell, FILE *out_file,
+    std::pair<int, int> idx_resid, std::string const &resname)
+    -> std::pair<int, int> {
+
+    idx_resid.first =
+        draw(cell->vertex(0)->point(), out_file, idx_resid, resname);
+    idx_resid.first =
+        draw(cell->vertex(1)->point(), out_file, idx_resid, resname);
+    idx_resid.first =
+        draw(cell->vertex(2)->point(), out_file, idx_resid, resname);
+    idx_resid.first =
+        draw(cell->vertex(3)->point(), out_file, idx_resid, resname);
+    ++idx_resid.second;
+
+    return idx_resid;
+}
+
+auto draw(CPoint const &punto, FILE *out_file, std::pair<int, int> idx_resid,
+    std::string const &name) -> int {
+    fmt::print(out_file,
+        "{: <6}{: >5} {: <4s} {:3} {:1}{: >4}    "
+        "{:8.3f}{:8.3f}{:8.3f}{:6.2f}{:6.2f}          {: >2s}\n",
+        "HETATM", idx_resid.first++, "H", name, "A", idx_resid.second,
+        punto.x(), punto.y(), punto.z(), 1.0, 0.0, "H");
+    return idx_resid.first;
+}
+
+// Own types.
+
 void write_PDB(ConvexHull const &CH, std::string const &filename) {
 
     FILE *out_file = std::fopen(filename.c_str(), "w");

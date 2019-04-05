@@ -7,6 +7,20 @@
 #include <ANA/PrimitivesUtils.hpp>
 
 namespace ANA {
+
+// CGAL types.
+
+void write_PDB(Delaunay const &T, std::string const &filename);
+
+auto draw_lines(Cell_iterator const cell, FILE *out_file,
+    std::pair<int, int> idx_resid, std::string const &resname)
+    -> std::pair<int, int>;
+
+auto draw(CPoint const &punto, FILE *out_file, std::pair<int, int> idx_resid,
+    std::string const &name) -> int;
+
+// Own types.
+
 // TODO: replace `std::string const &` with `std::string_view` as soon as a new
 // string_view supporting fmt version comes out.
 void write_PDB(ConvexHull const &CH, std::string const &filename);
@@ -33,7 +47,6 @@ template <class T>
 
     return idx_resid;
 }
-
 
 [[nodiscard]] auto draw(Point const &punto, FILE *out_file,
     std::pair<int, int> idx_resid, std::string const &name) -> int;
