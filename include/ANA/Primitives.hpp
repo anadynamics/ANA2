@@ -21,6 +21,25 @@ public:
     std::array<CPoint, 4> _data;
 };
 
+struct TrianInfo {
+public:
+    TrianInfo() = default;
+
+    TrianInfo(
+        VertexInfo const &i0, VertexInfo const &i1, VertexInfo const &i2) :
+        _index({i0._index, i1._index, i2._index}),
+        _radius({i0._radius, i1._radius, i2._radius}),
+        _resn({i0._resn, i1._resn, i2._resn}),
+        _resi({i0._resi, i1._resi, i2._resi}) {}
+
+    std::array<int, 3> _index;
+    std::array<double, 3> _radius;
+    // atom's residue number
+    std::array<int, 3> _resn;
+    // atom's residue name in 3 letter format
+    std::array<std::string, 3> _resi;
+};
+
 struct TetraInfo {
 public:
     TetraInfo() = default;
@@ -64,12 +83,12 @@ public:
     Vector() = default;
 
     Vector(double const x, double const y, double const z) noexcept :
-        _vxyz {x, y, z}, _origin {0., 0., 0.} {}
+        _vxyz{x, y, z}, _origin{0., 0., 0.} {}
 
     Vector(double const x, double const y, double const z, double const ox,
         double const oy, double const oz) noexcept :
-        _vxyz {x, y, z},
-        _origin {ox, oy, oz} {}
+        _vxyz{x, y, z},
+        _origin{ox, oy, oz} {}
 
     Vector(CVector const v) :
         _vxyz({CGAL::to_double(v.x()), CGAL::to_double(v.y()),
@@ -133,10 +152,10 @@ class Point {
 public:
     Point() = default;
 
-    Point(double const x, double const y, double const z) : _xyz {x, y, z} {}
+    Point(double const x, double const y, double const z) : _xyz{x, y, z} {}
 
     Point(CPoint const p) :
-        _xyz {CGAL::to_double(p.x()), CGAL::to_double(p.y()),
+        _xyz{CGAL::to_double(p.x()), CGAL::to_double(p.y()),
             CGAL::to_double(p.z())} {}
 
     double operator[](int const idx) const { return _xyz[idx]; }
@@ -218,11 +237,11 @@ public:
         CPoint const &&p3) :
         _data({Point(p0), Point(p1), Point(p2), Point(p3)}) {}
 
-    Tetrahedron(Finite_cells_iterator const cell) :
+    explicit Tetrahedron(Finite_cells_iterator const cell) :
         _data({cell->vertex(0)->point(), cell->vertex(1)->point(),
             cell->vertex(2)->point(), cell->vertex(3)->point()}) {}
 
-    Tetrahedron(Finite_cells_iterator &&cell) :
+    explicit Tetrahedron(Finite_cells_iterator &&cell) :
         _data({cell->vertex(0)->point(), cell->vertex(1)->point(),
             cell->vertex(2)->point(), cell->vertex(3)->point()}) {}
 
