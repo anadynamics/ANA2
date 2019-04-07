@@ -4,6 +4,11 @@
 
 namespace ANA {
 
+inline bool deq(double x, double y) {
+    double const z = x - y;
+    return (z > zero_bot and z < zero_top);
+}
+
 inline double norm(Vector const &v) {
     return std::sqrt(v[0] * v[0] + v[1] * v[1] + v[2] * v[2]);
 }
@@ -37,21 +42,11 @@ inline double distance(Point const &p0, Point const &p1) {
 }
 
 inline bool equal(Point const &p, CPoint const &q) {
-    double const x = p[0] - q.x();
-    double const y = p[1] - q.y();
-    double const z = p[2] - q.z();
-
-    return (x > zero_bot and x < zero_top && y > zero_bot and y < zero_top &&
-        z > zero_bot and z < zero_top);
+    return (deq(p[0], q.x()) && deq(p[1], q.y()) && deq(p[2], q.z()));
 }
 
 inline bool equal(CPoint const &q, Point const &p) {
-    double const x = p[0] - q.x();
-    double const y = p[1] - q.y();
-    double const z = p[2] - q.z();
-
-    return (x > zero_bot and x < zero_top && y > zero_bot and y < zero_top &&
-        z > zero_bot and z < zero_top);
+    return (deq(p[0], q.x()) && deq(p[1], q.y()) && deq(p[2], q.z()));
 }
 
 inline double volume(

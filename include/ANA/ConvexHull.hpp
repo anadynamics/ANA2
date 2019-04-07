@@ -84,11 +84,12 @@ public:
         return;
     }
 
-    void add_res_info(
-        Molecule const &protein, std::vector<CPoint> &incl_area_points);
-
-    void add_atm_info(
-        Molecule const &protein, std::vector<CPoint> &incl_area_points);
+    // Unfortunately I cant add Info on CGAL's Convex Hull Points, so I have to
+    // do this.
+    void add_res_info(Molecule const &protein);
+    // Unfortunately I cant add Info on CGAL's Convex Hull Points, so I have to
+    // do this.
+    void add_atm_info(Molecule const &protein);
 
     std::vector<Triangle> _triangles;
     std::vector<TrianInfo> _info;

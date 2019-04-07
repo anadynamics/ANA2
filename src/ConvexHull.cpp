@@ -78,7 +78,7 @@ ConvexHull::ConvexHull(
 
     try {
         run_convex_hull(incl_area_points);
-        add_res_info(protein, incl_area_points);
+        add_res_info(protein);
     } catch (std::runtime_error const &e) {
         throw std::runtime_error(
             "runtime_error error when triangulating convex hull. Aborting.");
@@ -103,7 +103,7 @@ ConvexHull::ConvexHull(
 
     try {
         run_convex_hull(incl_area_points);
-        add_atm_info(protein, incl_area_points);
+        add_atm_info(protein);
     } catch (std::runtime_error const &e) {
         throw std::runtime_error(
             "runtime_error error when triangulating convex hull. Aborting.");
@@ -261,8 +261,9 @@ ConvexHull::ConvexHull(std::string const &filename, FileTag) {
           "Aborting.");
 }
 
-void ConvexHull::add_res_info(
-    Molecule const &protein, std::vector<CPoint> &incl_area_points) {
+// Unfortunately I cant add Info on CGAL's Convex Hull Points, so I have to do
+// this.
+void ConvexHull::add_res_info(Molecule const &protein) {
 
     for (auto const &t : _triangles) {
         std::array<int, 3> indices{-666, -666, -666};
@@ -293,8 +294,9 @@ void ConvexHull::add_res_info(
     return;
 }
 
-void ConvexHull::add_atm_info(
-    Molecule const &protein, std::vector<CPoint> &incl_area_points) {
+// Unfortunately I cant add Info on CGAL's Convex Hull Points, so I have to do
+// this.
+void ConvexHull::add_atm_info(Molecule const &protein) {
 
     for (auto const &t : _triangles) {
         std::array<int, 3> indices{-666, -666, -666};
