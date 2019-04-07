@@ -204,7 +204,7 @@ NDD_IVector get_vertices(NA_Vector const &cavity_void_cells) {
     cells_indices.reserve(cavity_void_cells.size() * 4);
 
     for (Finite_cells_iterator const ac_ite : cavity_void_cells) {
-        NDD_IElement temp{ac_ite->vertex(0)->info()._index,
+        NDD_IElement temp {ac_ite->vertex(0)->info()._index,
             ac_ite->vertex(1)->info()._index, ac_ite->vertex(2)->info()._index,
             ac_ite->vertex(3)->info()._index};
         cells_indices.push_back(std::move(temp));

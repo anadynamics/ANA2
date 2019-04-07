@@ -12,6 +12,18 @@ namespace ANA {
 // Refine the provided list of amino acids. Throws a lot.
 std::vector<int> adapt_AA_list(std::string &aa_list_proto, int const top = 0);
 
+// Helper function. Returns all 'in_vec' elements not matching the query input.
+inline std::vector<int> get_i_not_equal(
+    std::vector<int> const &in_vec, const int query) {
+    std::vector<int> out_vec;
+    for (auto const &each : in_vec) {
+        if (each != query) {
+            out_vec.push_back(each);
+        }
+    }
+    return out_vec;
+}
+
 struct ResidueTag {};
 struct AtomTag {};
 struct SphereTag {};
@@ -72,7 +84,14 @@ public:
         return;
     }
 
+    void add_res_info(
+        Molecule const &protein, std::vector<CPoint> &incl_area_points);
+
+    void add_atm_info(
+        Molecule const &protein, std::vector<CPoint> &incl_area_points);
+
     std::vector<Triangle> _triangles;
+    std::vector<TrianInfo> _info;
     std::vector<Vector> _normals, _v01, _v02;
     // Used in case the CH was constructed from residues or atoms.
     std::vector<int> _included_resis, _included_atoms;

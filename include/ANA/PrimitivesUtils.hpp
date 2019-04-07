@@ -36,6 +36,24 @@ inline double distance(Point const &p0, Point const &p1) {
     return std::sqrt(dx * dx + dy * dy + dz * dz);
 }
 
+inline bool equal(Point const &p, CPoint const &q) {
+    double const x = p[0] - q.x();
+    double const y = p[1] - q.y();
+    double const z = p[2] - q.z();
+
+    return (x > zero_bot and x < zero_top && y > zero_bot and y < zero_top &&
+        z > zero_bot and z < zero_top);
+}
+
+inline bool equal(CPoint const &q, Point const &p) {
+    double const x = p[0] - q.x();
+    double const y = p[1] - q.y();
+    double const z = p[2] - q.z();
+
+    return (x > zero_bot and x < zero_top && y > zero_bot and y < zero_top &&
+        z > zero_bot and z < zero_top);
+}
+
 inline double volume(
     const Point &p0, const Point &p1, const Point &p2, const Point &p3) {
     return determinant(p1 - p0, p2 - p0, p3 - p0) / 6;

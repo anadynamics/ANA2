@@ -78,10 +78,13 @@ ConvexHull::ConvexHull(
 
     try {
         run_convex_hull(incl_area_points);
+        add_res_info(protein, incl_area_points);
     } catch (std::runtime_error const &e) {
-        throw;
+        throw std::runtime_error(
+            "runtime_error error when triangulating convex hull. Aborting.");
     } catch (...) {
-        throw("Uknown error when triangulating convex hull. Aborting.");
+        throw std::runtime_error(
+            "Uknown error when triangulating convex hull. Aborting.");
     }
 }
 
@@ -100,10 +103,13 @@ ConvexHull::ConvexHull(
 
     try {
         run_convex_hull(incl_area_points);
+        add_atm_info(protein, incl_area_points);
     } catch (std::runtime_error const &e) {
-        throw;
+        throw std::runtime_error(
+            "runtime_error error when triangulating convex hull. Aborting.");
     } catch (...) {
-        throw("Uknown error when triangulating convex hull. Aborting.");
+        throw std::runtime_error(
+            "Uknown error when triangulating convex hull. Aborting.");
     }
 }
 
@@ -253,6 +259,69 @@ ConvexHull::ConvexHull(std::string const &filename, FileTag) {
     filename.end(); // just to avoid unused value warning.
     throw("Convex hull construction from input file not supported yet. "
           "Aborting.");
+}
+
+void ConvexHull::add_res_info(
+    Molecule const &protein, std::vector<CPoint> &incl_area_points) {
+
+    for (auto const &t : _triangles) {
+        std::array<int, 3> indices{-666, -666, -666};
+        for (auto const i : _included_resis) {
+            for (int j = 0; j < 3; ++j) {
+                if (equal(protein._data[protein._alphaCarbons[i - 1]].first,
+                        t[j])) {
+                    if (indices[j] != -666) {
+                        throw std::runtime_error(
+                            "add_res_info() error. A convex hull's atom "
+                            "matched twice.");
+                    } else {
+                        indices[j] = i - 1;
+                    }
+                }
+            }
+            if (indices[0] != -666 && indices[1] != -666 &&
+                indices[2] != -666) {
+                break;
+            }
+        }
+        _info.emplace_back(
+            protein._data[protein._alphaCarbons[indices[0]]].second,
+            protein._data[protein._alphaCarbons[indices[1]]].second,
+            protein._data[protein._alphaCarbons[indices[2]]].second);
+    }
+
+    return;
+}
+
+void ConvexHull::add_atm_info(
+    Molecule const &protein, std::vector<CPoint> &incl_area_points) {
+
+    for (auto const &t : _triangles) {
+        std::array<int, 3> indices{-666, -666, -666};
+        for (auto const i : _included_resis) {
+            for (int j = 0; j < 3; ++j) {
+                if (equal(protein._data[i - 1].first, t[j])) {
+                    if (indices[j] != -666) {
+                        throw std::runtime_error(
+                            "add_res_info() error. A convex hull's atom "
+                            "matched twice.");
+                    } else {
+                        indices[j] = i - 1;
+                    }
+                }
+            }
+            if (indices[0] != -666 && indices[1] != -666 &&
+                indices[2] != -666) {
+                break;
+            }
+        }
+        _info.emplace_back(
+            protein._data[protein._alphaCarbons[indices[0]]].second,
+            protein._data[protein._alphaCarbons[indices[1]]].second,
+            protein._data[protein._alphaCarbons[indices[2]]].second);
+    }
+
+    return;
 }
 
 } // namespace ANA

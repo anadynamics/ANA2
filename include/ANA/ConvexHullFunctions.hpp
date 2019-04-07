@@ -8,13 +8,6 @@
 
 namespace ANA {
 
-double constexpr delta = 0.01;
-double constexpr neg_delta = -0.01;
-double constexpr uno_bot = 1. - delta;
-double constexpr uno_top = 1. + delta;
-double constexpr zero_bot = 0. - delta;
-double constexpr zero_top = 0. + delta;
-
 // Discard voids outside the convex hull.
 void carve_CH_into_cavity(Cavity &hueco, ConvexHull const &CH);
 

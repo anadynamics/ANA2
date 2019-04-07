@@ -17,7 +17,7 @@ void carve_CH_into_cavity(Cavity &hueco, ConvexHull const &CH) {
 
             for (std::size_t j = 0; j < CH._triangles.size(); ++j) {
                 vtx_is_inside = is_vtx_inside(
-                    test_point, CH._triangles[j][1], CH._normals[j]);
+                    test_point, CH._triangles[j][0], CH._normals[j]);
                 if (!vtx_is_inside) {
                     vertices_out.push_back(i);
                     break;
