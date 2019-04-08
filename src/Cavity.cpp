@@ -34,7 +34,7 @@ void Cavity::add_inner_cell(Tetrahedron const &cell, TetraInfo const &info) {
 
 void Cavity::add_outer_cell(Tetrahedron const &cell, TetraInfo const &info) {
     _outer_cells.push_back(cell);
-    _inner_info.push_back(info);
+    _outer_info.push_back(info);
     return;
 }
 
@@ -88,6 +88,56 @@ void Cavity::add_border_penta_3_1(Point const &p0, Point const &p1,
     _outer_volume += vol1 + vol2 + vol3;
 
     _penta_border_3_1.emplace_back(p0, p1, p2, ip3, ip4, ip5);
+
+    return;
+}
+
+// Returns an updated Cavity displacing the input Cavity along the input
+// vector scaled by the step_size. The vector must be alfa carbon mode.
+Cavity::Cavity(Cavity const &hueco, std::vector<double> const &evector,
+    double const step_size) {
+
+    _all_cells.reserve(hueco._inner_cells.size() + hueco._outer_cells.size());
+    _all_info.reserve(hueco._inner_info.size() + hueco._outer_info.size());
+
+    move_cells(hueco._inner_cells, hueco._inner_info, evector, step_size);
+    move_cells(hueco._outer_cells, hueco._outer_info, evector, step_size);
+
+    return;
+}
+
+void Cavity::move_cells(std::vector<Tetrahedron> const &cells,
+    std::vector<TetraInfo> const &info, std::vector<double> const &evector,
+    double const step_size) {
+
+    for (size_t c = 0; c < cells.size(); ++c) {
+        TetraInfo ndd_info = info[c];
+        // _resn is 1-indexed.
+        int const resi_0_x = (ndd_info._resn[0] - 1) * 3;
+        int const resi_1_x = (ndd_info._resn[1] - 1) * 3;
+        int const resi_2_x = (ndd_info._resn[2] - 1) * 3;
+        int const resi_3_x = (ndd_info._resn[3] - 1) * 3;
+
+        Point const p0 {cells[c][0] +
+            step_size *
+                Vector(evector[resi_0_x], evector[resi_0_x + 1],
+                    evector[resi_0_x + 2])};
+        Point const p1 {cells[c][1] +
+            step_size *
+                Vector(evector[resi_1_x], evector[resi_1_x + 1],
+                    evector[resi_1_x + 2])};
+        Point const p2 {cells[c][2] +
+            step_size *
+                Vector(evector[resi_2_x], evector[resi_2_x + 1],
+                    evector[resi_2_x + 2])};
+        Point const p3 {cells[c][3] +
+            step_size *
+                Vector(evector[resi_3_x], evector[resi_3_x + 1],
+                    evector[resi_3_x + 2])};
+
+        _all_cells.emplace_back(p0, p1, p2, p3);
+        _all_info.push_back(ndd_info);
+    }
 
     return;
 }

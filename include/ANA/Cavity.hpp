@@ -29,6 +29,17 @@ public:
         Point const &ip3, Point const &ip4, Point const &ip5, double const vdw0,
         double const vdw1, double const vdw2);
 
+    // Constructor for NDD. Returns an updated Cavity displacing the input
+    // Cavity along the input vector scaled by the step_size. The vector must be
+    // alfa carbon mode.
+    Cavity(Cavity const &hueco, std::vector<double> const &evector,
+        double const step_size);
+
+    // Auxiliary function for the NDD constructor
+    void move_cells(std::vector<Tetrahedron> const &cells,
+        std::vector<TetraInfo> const &info, std::vector<double> const &evector,
+        double const step_size);
+
     friend void write_PDB(Cavity const &hueco, std::string const &filename);
 
     std::vector<Tetrahedron> _all_cells, _inner_cells, _outer_cells;

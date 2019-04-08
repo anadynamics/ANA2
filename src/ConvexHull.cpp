@@ -290,7 +290,7 @@ void ConvexHull::add_atm_info(Molecule const &protein) {
 }
 
 // Returns an updated Convex Hull displacing the input convex hull along the
-// input vector. The vector must be alfa carbon mode.
+// input vector scaled by the step_size. The vector must be alfa carbon mode.
 ConvexHull::ConvexHull(ConvexHull const &CH, std::vector<double> const &evector,
     double const step_size) {
 
@@ -298,6 +298,7 @@ ConvexHull::ConvexHull(ConvexHull const &CH, std::vector<double> const &evector,
     _triangles.reserve(CH._triangles.size());
 
     for (size_t t = 0; t < CH._info.size(); ++t) {
+        // _resn is 1-indexed.
         int const resi_0_x = (CH._info[t]._resn[0] - 1) * 3;
         int const resi_1_x = (CH._info[t]._resn[1] - 1) * 3;
         int const resi_2_x = (CH._info[t]._resn[2] - 1) * 3;

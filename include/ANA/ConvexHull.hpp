@@ -77,7 +77,8 @@ public:
     void add_atm_info(Molecule const &protein);
 
     // Returns an updated Convex Hull displacing the input convex hull along the
-    // input vector. The vector must be alfa carbon mode.
+    // input vector scaled by the step_size. The vector must be alfa carbon
+    // mode.
     ConvexHull(ConvexHull const &CH, std::vector<double> const &evector,
         double const step_size);
 

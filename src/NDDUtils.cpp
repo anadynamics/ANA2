@@ -91,43 +91,23 @@ void ndd(Molecule const &protein, Cavity const &hueco, ConvexHull const &CH,
     // NDD_IVector const cells_indices = get_vertices(cavity_void_cells);
 
     Modes const modos(NDD_opts._modes_ndd_filename);
-
     double st = NDD_opts._min;
-    while ((st + delta) < NDD_opts._max) {
-        if (CH._included_resis.size() != 0) {
 
-            for (size_t j = 0; j < modos._j; ++j) {
-
-                ConvexHull ndd_CH(CH, modos._evectors[j], st);
+    if (CH._included_resis.size() != 0) {
+        while ((st + delta) < NDD_opts._max) {
+            for (auto const &evec : modos._evectors) {
+                ConvexHull ndd_CH(CH, evec, st);
+                Cavity hueco_ndd(hueco, evec, st);
             }
-
+            st += NDD_opts._step;
         }
 
-        //     Cavity hueco_ndd;
-        //     hueco_ndd._all_cells.reserve(
-        //         hueco._inner_cells.size() + hueco._outer_cells.size());
-        //     for (const auto &cell : hueco._inner_cells) {
-        //         auto const p0_info = cell->vertex(0)->info();
-        //         auto const p1_info = cell->vertex(1)->info();
-        //         auto const p2_info = cell->vertex(2)->info();
-        //         auto const p3_info = cell->vertex(3)->info();
-
-        //         // _resn is 1-indexed.
-        //         int const nres_3 = p0_info._resn * 3 - 1;
-        //         cell->vertex(0)->point() +
-        //             CVector(modos._evectors[j][nres_3],
-        //                 modos._evectors[j][nres_3 + 1],
-        //                 modos._evectors[j][nres_3 + 2]);
-        //     }
-        // }
-
-        else if (CH._included_atoms.size() != 0) {
-            ;
-        } else {
-            ;
-        }
-        st += NDD_opts._step;
+    } else if (CH._included_atoms.size() != 0) {
+        ;
+    } else {
+        ;
     }
+
     // ANA::NDD::ndd_write_out_file(output_volumes, out_file);
 
     return;

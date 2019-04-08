@@ -8,9 +8,6 @@ int NDD_ANA(std::string const &in_filename, IncludedAreaOptions &IA_opts,
 
     Molecule const protein = ANA::Molecule(in_filename, atom_only);
 
-    IA_opts._resn_proto = "1 12 16 21 24 51 68 71 84 97 111 119 128 130 133";
-    IA_opts._opt = IncludedAreaOptions::residue;
-
     ANA::ConvexHull const CH = create_convex_hull(protein, IA_opts);
 
     ANA::Cavity hueco = Cavity(protein, cell_opts);
