@@ -9,21 +9,6 @@
 
 namespace ANA {
 
-// Refine the provided list of amino acids. Throws a lot.
-std::vector<int> adapt_AA_list(std::string &aa_list_proto, int const top = 0);
-
-// Helper function. Returns all 'in_vec' elements not matching the query input.
-inline std::vector<int> get_i_not_equal(
-    std::vector<int> const &in_vec, const int query) {
-    std::vector<int> out_vec;
-    for (auto const &each : in_vec) {
-        if (each != query) {
-            out_vec.push_back(each);
-        }
-    }
-    return out_vec;
-}
-
 struct ResidueTag {};
 struct AtomTag {};
 struct SphereTag {};
@@ -91,15 +76,24 @@ public:
     // do this.
     void add_atm_info(Molecule const &protein);
 
+    // Returns an updated Convex Hull displacing the input convex hull along the
+    // input vector. The vector must be alfa carbon mode.
+    ConvexHull(ConvexHull const &CH, std::vector<double> const &evector,
+        double const step_size);
+
     std::vector<Triangle> _triangles;
-    std::vector<TrianInfo> _info;
     std::vector<Vector> _normals, _v01, _v02;
     // Used in case the CH was constructed from residues or atoms.
     std::vector<int> _included_resis, _included_atoms;
+    std::vector<TrianInfo> _info;
 };
 
 ConvexHull create_convex_hull(
     Molecule const &protein, IncludedAreaOptions const &IA_opts);
+
+// Refine the provided list of amino acids. Throws a lot.
+std::vector<int> string_to_list(
+    std::string const &list_proto, int const top = 0);
 
 } // namespace ANA
 
