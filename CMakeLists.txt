@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.10.0)
 project(ANA VERSION 1.1.0 LANGUAGES CXX)
 set (CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/CMake")
-set(CMAKE_BUILD_TYPE Debug) 
+set(CMAKE_BUILD_TYPE Release) 
 
 ###################################################################
 if(NOT WIN32)

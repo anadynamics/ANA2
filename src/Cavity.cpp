@@ -118,19 +118,19 @@ void Cavity::move_cells(std::vector<Tetrahedron> const &cells,
         int const resi_2_x = (ndd_info._resn[2] - 1) * 3;
         int const resi_3_x = (ndd_info._resn[3] - 1) * 3;
 
-        Point const p0 {cells[c][0] +
+        Point const p0{cells[c][0] +
             step_size *
                 Vector(evector[resi_0_x], evector[resi_0_x + 1],
                     evector[resi_0_x + 2])};
-        Point const p1 {cells[c][1] +
+        Point const p1{cells[c][1] +
             step_size *
                 Vector(evector[resi_1_x], evector[resi_1_x + 1],
                     evector[resi_1_x + 2])};
-        Point const p2 {cells[c][2] +
+        Point const p2{cells[c][2] +
             step_size *
                 Vector(evector[resi_2_x], evector[resi_2_x + 1],
                     evector[resi_2_x + 2])};
-        Point const p3 {cells[c][3] +
+        Point const p3{cells[c][3] +
             step_size *
                 Vector(evector[resi_3_x], evector[resi_3_x + 1],
                     evector[resi_3_x + 2])};

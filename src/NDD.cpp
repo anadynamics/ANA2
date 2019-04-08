@@ -14,7 +14,7 @@ int NDD_ANA(std::string const &in_filename, IncludedAreaOptions &IA_opts,
 
     ANA::carve_CH_into_cavity(hueco, CH);
 
-    ANA::NDD::ndd(protein, hueco, CH, IA_opts, NDD_opts, in_filename);
+    ANA::NDD::ndd(hueco, CH, NDD_opts);
 
     ANA::write_PDB(CH, "hull.pdb");
     ANA::write_PDB(hueco, "sal.pdb");

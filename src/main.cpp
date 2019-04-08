@@ -163,13 +163,6 @@ int main(int argc, char *argv[]) {
     } else if (NDD_opts._pdbs_list_ndd_filename != "none" ||
         NDD_opts._modes_ndd_filename != "none") {
 
-        IA_opts._resn_proto =
-            "1 12 16 21 24 51 68 71 84 97 111 119 128 130 133";
-        IA_opts._opt = ANA::IncludedAreaOptions::residue;
-        NDD_opts._min = 10.;
-        NDD_opts._step = 10.;
-        NDD_opts._max = 11.;
-
         ANA::NDD_ANA(in_filename, IA_opts, NDD_opts, cell_opts, atom_only);
 
     } else {

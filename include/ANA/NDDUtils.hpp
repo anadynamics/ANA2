@@ -2,6 +2,7 @@
 #define ANA_NDD_UTILS_H
 #include <ANA/Cavity.hpp>
 #include <ANA/ConvexHull.hpp>
+#include <ANA/ConvexHullFunctions.hpp>
 #include <ANA/Includes.hpp>
 #include <ANA/Modes.hpp>
 #include <ANA/Molecule.hpp>
@@ -27,9 +28,9 @@ void ndd_read_PDB_get_cells(std::string const &filename,
     Triang_Vector &CH_triangs);
 
 // On-site NDD.
-void ndd(Molecule const &protein, Cavity const &hueco, ConvexHull const &CH,
-    IncludedAreaOptions const &IA_opts, NDDOptions const &NDD_opts,
-    std::string const &pdb_filename);
+void ndd(Cavity const &hueco, ConvexHull const &CH, NDDOptions const &NDD_opts);
+
+void write_vector(std::vector<double> vec, std::string const &filename);
 
 // Perform Non Delaunay Dynamics.
 void ndd_nondelaunay_dynamics_old(NA_Vector const &cavity_void_cells,

@@ -81,35 +81,61 @@ void ndd_read_PDB_get_cells(std::string const &filename,
 }
 
 // On-site NDD.
-void ndd(Molecule const &protein, Cavity const &hueco, ConvexHull const &CH,
-    IncludedAreaOptions const &IA_opts, NDDOptions const &NDD_opts,
-    std::string const &pdb_filename) {
+void ndd(
+    Cavity const &hueco, ConvexHull const &CH, NDDOptions const &NDD_opts) {
 
     std::vector<double> output_volumes;
-    std::vector<int> all_indices;
-
-    // NDD_IVector const cells_indices = get_vertices(cavity_void_cells);
 
     Modes const modos(NDD_opts._modes_ndd_filename);
-    double st = NDD_opts._min;
 
     if (CH._included_resis.size() != 0) {
-        while ((st + delta) < NDD_opts._max) {
-            for (auto const &evec : modos._evectors) {
-                ConvexHull ndd_CH(CH, evec, st);
-                Cavity hueco_ndd(hueco, evec, st);
-            }
-            st += NDD_opts._step;
+        std::vector<double> pos_vols_ndd, neg_vols_ndd, der_vols_ndd;
+        pos_vols_ndd.reserve(modos._j);
+        neg_vols_ndd.reserve(modos._j);
+        der_vols_ndd.reserve(modos._j);
+
+        for (size_t j = 0; j < modos._j; ++j) {
+            double const mul = NDD_opts._step / modos._evals[j];
+            // In the positive direction.
+            ConvexHull CH_pos(CH, modos._evectors[j], mul);
+            Cavity hueco_pos(hueco, modos._evectors[j], mul);
+            carve_CH_into_cavity(hueco_pos, CH_pos);
+            double const pos_vol = hueco_pos._volume + hueco_pos._outer_volume;
+
+            // In the negative direction.
+            ConvexHull CH_neg(CH, modos._evectors[j], -mul);
+            Cavity hueco_neg(hueco, modos._evectors[j], -mul);
+            carve_CH_into_cavity(hueco_neg, CH_neg);
+            double const neg_vol = hueco_neg._volume + hueco_neg._outer_volume;
+
+            // Numerical derivative.
+            double const der_vol = (pos_vol - neg_vol) / mul;
+            der_vols_ndd.push_back(der_vol);
+            pos_vols_ndd.push_back(pos_vol);
+            neg_vols_ndd.push_back(neg_vol);
         }
 
+        std::string const filename =
+            std::to_string(NDD_opts._step) + "_" + NDD_opts._out_ndd_filename;
+        write_vector(der_vols_ndd, filename);
     } else if (CH._included_atoms.size() != 0) {
         ;
     } else {
         ;
     }
 
-    // ANA::NDD::ndd_write_out_file(output_volumes, out_file);
+    return;
+}
 
+void write_vector(std::vector<double> vec, std::string const &filename) {
+    FILE *out_file = std::fopen(filename.c_str(), "w");
+    if (out_file) {
+        for (auto const &each : vec) {
+            fmt::print(out_file, "{:8.3f}\n", each);
+        }
+    } else {
+        printf("Could not write NDD output to: %s.\n", filename.c_str());
+    }
     return;
 }
 

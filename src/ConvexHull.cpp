@@ -90,7 +90,7 @@ ConvexHull::ConvexHull(std::string const &sphere_proto, SphereTag) {
     // Drawin a pseudo-sphere. The first 6 correspondon the XYZ axes, the
     // next 8 to the X-Y plane, then 8 more for the X-Z plane and 8 for the
     // Y-Z plane.
-    std::array<CPoint, 30> const incl_area_points{center + CVector(r, 0, 0),
+    std::array<CPoint, 30> const incl_area_points {center + CVector(r, 0, 0),
         center + CVector(0, r, 0), center + CVector(0, 0, r),
         center + CVector(-r, 0, 0), center + CVector(0, -r, 0),
         center + CVector(0, 0, -r), center + CVector(r * cos_30, r * sin_30, 0),
@@ -151,7 +151,7 @@ ConvexHull::ConvexHull(std::string const &cylinder_proto, CylinderTag) {
 
     // The first 12 correspond to the first tap, the other half correspond
     // to the 2nd tap.
-    std::array<CPoint, 24> incl_area_points{center_1 + r * n1,
+    std::array<CPoint, 24> incl_area_points {center_1 + r * n1,
         center_1 + r * n2, center_1 - r * n1, center_1 - r * n2,
         center_1 + r * cos_30 * n1 + r * sin_30 * n2,
         center_1 + r * sin_30 * n1 + r * cos_30 * n2,
@@ -200,7 +200,7 @@ ConvexHull::ConvexHull(std::string const &prism_proto, PrismTag) {
     n2 = n2 / std::sqrt(CGAL::to_double(n2.squared_length()));
 
     // 8 vertices of a prism.
-    std::array<CPoint, 8> incl_area_points{center_1 + width * n1 + height * n2,
+    std::array<CPoint, 8> incl_area_points {center_1 + width * n1 + height * n2,
         center_1 + width * n1 - height * n2,
         center_1 - width * n1 + height * n2,
         center_1 - width * n1 - height * n2,
@@ -229,7 +229,7 @@ ConvexHull::ConvexHull(std::string const &filename, FileTag) {
 void ConvexHull::add_res_info(Molecule const &protein) {
 
     for (auto const &t : _triangles) {
-        std::array<int, 3> indices{-666, -666, -666};
+        std::array<int, 3> indices {-666, -666, -666};
         for (auto const i : _included_resis) {
             for (int j = 0; j < 3; ++j) {
                 if (equal(protein._data[protein._alphaCarbons[i - 1]].first,
@@ -262,7 +262,7 @@ void ConvexHull::add_res_info(Molecule const &protein) {
 void ConvexHull::add_atm_info(Molecule const &protein) {
 
     for (auto const &t : _triangles) {
-        std::array<int, 3> indices{-666, -666, -666};
+        std::array<int, 3> indices {-666, -666, -666};
         for (auto const i : _included_resis) {
             for (int j = 0; j < 3; ++j) {
                 if (equal(protein._data[i - 1].first, t[j])) {
@@ -303,15 +303,15 @@ ConvexHull::ConvexHull(ConvexHull const &CH, std::vector<double> const &evector,
         int const resi_1_x = (CH._info[t]._resn[1] - 1) * 3;
         int const resi_2_x = (CH._info[t]._resn[2] - 1) * 3;
 
-        Point const p0{CH._triangles[t][0] +
+        Point const p0 {CH._triangles[t][0] +
             step_size *
                 Vector(evector[resi_0_x], evector[resi_0_x + 1],
                     evector[resi_0_x + 2])};
-        Point const p1{CH._triangles[t][1] +
+        Point const p1 {CH._triangles[t][1] +
             step_size *
                 Vector(evector[resi_1_x], evector[resi_1_x + 1],
                     evector[resi_1_x + 2])};
-        Point const p2{CH._triangles[t][2] +
+        Point const p2 {CH._triangles[t][2] +
             step_size *
                 Vector(evector[resi_2_x], evector[resi_2_x + 1],
                     evector[resi_2_x + 2])};
@@ -319,6 +319,8 @@ ConvexHull::ConvexHull(ConvexHull const &CH, std::vector<double> const &evector,
         Vector const v01 = p1 - p0, v02 = p2 - p0;
 
         _normals.emplace_back(normalize(cross_product(v01, v02)));
+        _v01.push_back(v01);
+        _v02.push_back(v02);
         _triangles.emplace_back(p0, p1, p2);
     }
 

@@ -17,7 +17,7 @@ inline bool is_vtx_inside(
 
     Vector test_vtor = normalize(test_point - p);
     double const test_dot_pdt = dot_product(test_vtor, v);
-    return test_dot_pdt < 0;
+    return test_dot_pdt < zero_bot;
 }
 
 // Returns the intersection point between the segment that joins the 2 input

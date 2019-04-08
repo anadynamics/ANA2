@@ -23,7 +23,7 @@ public:
     std::string _modes_ndd_filename;
     std::string _pdbs_list_ndd_filename;
     std::string _out_ndd_filename;
-    double _min = 1., _max = 1., _step = 1.;
+    int _step = 5;
 };
 
 class CellFilteringOptions {
