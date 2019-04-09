@@ -44,11 +44,6 @@ inline Vector normal(Point const p0, Point const p1, Point const p2) {
     return normalize(plane_normal);
 }
 
-// Get the volume ocuppied by the sector of the sphere inscribed in the
-// incident cell.
-double sphere_sector_vol(Point const &p0, Point const &p1, Point const &p2,
-    Point const &p3, double const radius);
-
 // Turns all the cell's info into a more convenient data structure.
 TetraInfo get_cell_info(Finite_cells_iterator const &cell);
 

@@ -35,6 +35,7 @@ target_sources(ANA
         src/PrimitivesUtils.cpp
         src/Read.cpp
         src/Static.cpp
+        src/TextUtils.cpp
         src/Utils.cpp
         src/Write.cpp
 
@@ -56,6 +57,7 @@ target_sources(ANA
         include/ANA/ProgramOptions.hpp
         include/ANA/Read.hpp
         include/ANA/Static.hpp
+        include/ANA/TextUtils.hpp
         include/ANA/Utils.hpp
         include/ANA/Write.hpp
 )

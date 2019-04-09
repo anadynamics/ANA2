@@ -17,7 +17,7 @@
 namespace ANA {
 
 // Main function for NDD version of ANA.
-int NDD_ANA(std::string const &in_filename, IncludedAreaOptions &IA_opts,
+int NDD_ANA(std::string const &in_filename, IncludedAreaOptions const &IA_opts,
     NDDOptions const &NDD_opts, CellFilteringOptions const cell_opts,
     bool const atom_only);
 

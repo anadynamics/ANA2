@@ -12,6 +12,7 @@ double constexpr uno_bot = 1. - delta;
 double constexpr uno_top = 1. + delta;
 double constexpr zero_bot = 0. - delta;
 double constexpr zero_top = 0. + delta;
+using std::size_t;
 
 class CCTetrahedron {
 public:

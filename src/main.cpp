@@ -160,11 +160,8 @@ int main(int argc, char *argv[]) {
             triangulate_only_included_aas, atom_only, cell_opts, max_probe,
             max_probe_length, sphere_count, nbr_of_vertices_to_include,
             precision, md_start, md_step, md_end);
-    } else if (NDD_opts._pdbs_list_ndd_filename != "none" ||
-        NDD_opts._modes_ndd_filename != "none") {
-
+    } else if (NDD_opts._modes_ndd_filename != "none") {
         ANA::NDD_ANA(in_filename, IA_opts, NDD_opts, cell_opts, atom_only);
-
     } else {
 
         ANA::static_ANA(in_filename, AA_indices_proto, ASA_method,

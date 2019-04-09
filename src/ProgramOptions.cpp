@@ -26,8 +26,6 @@ int get_parameters(int ac, char *av[], std::string &input_struct_filename,
 	  ->default_value("none"), "Input structure (pdb). Positional argument.\n")
     ("input_md,d", PO::value<std::string>(&input_md_filename)
     ->default_value("none"), "Input file with MD simulation.\n")
-	  ("NDD_input,I", PO::value<std::string>(&NDD_opts._pdbs_list_ndd_filename)
-    ->default_value("none")->composing(), "File with the list of input PDBs for non Delaunay dynamics.\n")
     ("NDD_modes,M", PO::value<std::string>(&NDD_opts._modes_ndd_filename)
     ->default_value("none")->composing(), "Input vectors for non Delaunay dynamics.\n")
     ("config_file,c", PO::value<std::string>(&config_filename)
@@ -241,23 +239,17 @@ int get_parameters(int ac, char *av[], std::string &input_struct_filename,
     "'included_area_atoms' were set. Using the former. " << "\n";
   }
 
-  if (IA_opts._opt != IncludedAreaOptions::none && 
-  (NDD_opts._pdbs_list_ndd_filename != "none" || input_md_filename != "none") ) {
+  if (IA_opts._opt == IncludedAreaOptions::none && 
+  (NDD_opts._modes_ndd_filename != "none" || input_md_filename != "none") ) {
     std::cerr << "WARNING: You are running ANA MD/NDD without an inclusion "
     "area. Check ANA's manual." << "\n";
     return 1;
   }
 
-  if (NDD_opts._pdbs_list_ndd_filename == "none" && NDD_opts._out_ndd_filename == "none") {
+  if (NDD_opts._modes_ndd_filename == "none" && NDD_opts._out_ndd_filename == "none") {
     std::cerr << "ERROR: NDD_input/NDD_output filename was not set." << "\n";
     return 1;
   }
-
-  if (NDD_opts._pdbs_list_ndd_filename != "none" && NDD_opts._modes_ndd_filename != "none") {
-    std::cerr << "ERROR: NDD_input and NDD_modes were both set." << "\n";
-    return 1;
-  }
-
 
   cell_opts.update();
   
