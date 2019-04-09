@@ -8,7 +8,7 @@ void ndd(
 
     std::vector<double> output_volumes;
 
-    Modes const modos(NDD_opts._modes_ndd_filename);
+    Modes const modos(NDD_opts._modes_ndd_filename, NDD_opts._amber_modes);
     std::vector<double> pos_vols_ndd, neg_vols_ndd, der_vols_ndd;
     pos_vols_ndd.reserve(modos._j);
     neg_vols_ndd.reserve(modos._j);

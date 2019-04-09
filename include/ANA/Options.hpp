@@ -21,6 +21,7 @@ public:
 struct NDDOptions {
 public:
     std::string _modes_ndd_filename;
+    bool _amber_modes;
     std::string _out_ndd_filename;
     int _step = 5;
 };

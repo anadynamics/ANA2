@@ -3,25 +3,7 @@
 namespace ANA {
 namespace NDD {
 
-    Modes::Modes(std::string const &modes_filename) {
-
-        std::ifstream ifs(modes_filename);
-        if (ifs.is_open()) {
-            ifs.seekg(0, ifs.end);
-            size_t const fsz = static_cast<size_t>(ifs.tellg());
-            std::unique_ptr<char[]> const buffer =
-                std::make_unique<char[]>(fsz);
-            ifs.seekg(0);
-            ifs.read(buffer.get(), fsz);
-            ifs.close();
-
-            get_modes_from_raw(std::string_view(buffer.get(), fsz));
-        } else
-            std::cout << "Could not get vectors from: " << modes_filename
-                      << '\n';
-    }
-
-    void Modes::get_modes_from_raw(std::string_view const texto) {
+    void Modes::get_amber_modes_from_raw(std::string_view const texto) {
 
         size_t beg = 57;
         if (isspace(texto[38])) {

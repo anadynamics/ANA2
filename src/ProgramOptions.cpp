@@ -158,6 +158,9 @@ int get_parameters(int ac, char *av[], std::string &input_struct_filename,
     ("NDD_step", PO::value<int>(&NDD_opts._step)->default_value(5),
     "Scaling number for input vectors in non Delaunay dynamics. Default: 5\n")
 
+    ("NDD_amber_format", PO::value<bool>(&NDD_opts._amber_modes)->default_value(false),
+    "If false, vectors will be read as raw text. If true, they will be read as Amber PCA modes. Default: false\n")
+
     ("min_vol_radius", PO::value<double>(&cell_opts._minVR)->default_value(1.4)
     ->composing(), "Radius of the sphere with the minimum volume to be taken "
     "into account. Default: 1.4.\n")
