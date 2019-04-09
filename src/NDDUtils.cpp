@@ -9,13 +9,12 @@ void ndd(
     std::vector<double> output_volumes;
 
     Modes const modos(NDD_opts._modes_ndd_filename);
+    std::vector<double> pos_vols_ndd, neg_vols_ndd, der_vols_ndd;
+    pos_vols_ndd.reserve(modos._j);
+    neg_vols_ndd.reserve(modos._j);
+    der_vols_ndd.reserve(modos._j);
 
-    if (CH._included_resis.size() != 0) {
-        std::vector<double> pos_vols_ndd, neg_vols_ndd, der_vols_ndd;
-        pos_vols_ndd.reserve(modos._j);
-        neg_vols_ndd.reserve(modos._j);
-        der_vols_ndd.reserve(modos._j);
-
+    if (CH._dynamic) {
         for (size_t j = 0; j < modos._j; ++j) {
             double const mul = NDD_opts._step / modos._evals[j];
             // In the positive direction.
@@ -31,7 +30,8 @@ void ndd(
             double const neg_vol = hueco_neg._volume + hueco_neg._outer_volume;
 
             // Numerical derivative.
-            double const der_vol = (pos_vol - neg_vol) / mul;
+            double const der_vol =
+                ((pos_vol - neg_vol) * modos._evals[j]) / NDD_opts._step;
             der_vols_ndd.push_back(der_vol);
             pos_vols_ndd.push_back(pos_vol);
             neg_vols_ndd.push_back(neg_vol);
@@ -40,8 +40,6 @@ void ndd(
         std::string const filename =
             std::to_string(NDD_opts._step) + "_" + NDD_opts._out_ndd_filename;
         write_vector(der_vols_ndd, filename);
-    } else if (CH._included_atoms.size() != 0) {
-        ;
     } else {
         ;
     }

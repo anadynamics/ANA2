@@ -84,6 +84,7 @@ public:
 
     std::vector<Triangle> _triangles;
     std::vector<Vector> _normals, _v01, _v02;
+    bool _dynamic = false;
     // Used in case the CH was constructed from residues or atoms.
     std::vector<int> _included_resis, _included_atoms;
     std::vector<TrianInfo> _info;
