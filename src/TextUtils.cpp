@@ -43,4 +43,37 @@ auto slurp(std::string const &filename) -> std::unique_ptr<char[]> {
     }
 }
 
+//
+auto guess_format(std::string_view texto) -> std::tuple<int, int, int> {
+    int ch_elem = 0, line_length = -1;
+    int const fsz = static_cast<int>(texto.size());
+    bool done_ch_elem = false, pre_blank = false;
+
+    for (int c = 0; c < fsz; ++c) {
+        if (iscntrl(texto[c])) {
+            line_length = c;
+            break;
+        }
+        if (!done_ch_elem) {
+            if (isspace(texto[c])) {
+                // In case there are leading whitespaces.
+                if (c == 0 || pre_blank) {
+                    pre_blank = true;
+                    continue;
+                }
+                ch_elem = c;
+                done_ch_elem = true;
+            } else
+                pre_blank = false;
+        }
+    }
+
+    if (line_length < 0 || line_length % ch_elem != 0 ||
+        fsz % (line_length + 1) != 0) {
+        throw std::runtime_error("NDD vectors corrupted. Could not read them.");
+    }
+
+    return {ch_elem, line_length / ch_elem, fsz / (line_length + 1)};
+}
+
 } // namespace ANA

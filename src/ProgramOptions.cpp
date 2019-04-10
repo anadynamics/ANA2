@@ -28,6 +28,8 @@ int get_parameters(int ac, char *av[], std::string &input_struct_filename,
     ->default_value("none"), "Input file with MD simulation.\n")
     ("NDD_modes,M", PO::value<std::string>(&NDD_opts._modes_ndd_filename)
     ->default_value("none")->composing(), "Input vectors for non Delaunay dynamics.\n")
+    ("NDD_evals,E", PO::value<std::string>(&NDD_opts._evalues_ndd_filename)
+    ->default_value("none")->composing(), "Input eigenvalues for non Delaunay dynamics.\n")
     ("config_file,c", PO::value<std::string>(&config_filename)
     ->default_value("ANA.cfg"), "Filename of the configuration file. Default: \"ANA.cfg\".\n")
     ("output_draw,o", PO::value<std::string>(&out_filename)
@@ -158,8 +160,8 @@ int get_parameters(int ac, char *av[], std::string &input_struct_filename,
     ("NDD_step", PO::value<int>(&NDD_opts._step)->default_value(5),
     "Scaling number for input vectors in non Delaunay dynamics. Default: 5\n")
 
-    ("NDD_amber_format", PO::value<bool>(&NDD_opts._amber_modes)->default_value(false),
-    "If false, vectors will be read as raw text. If true, they will be read as Amber PCA modes. Default: false\n")
+    ("NDD_modes_format", PO::value<std::string>(&NDD_opts._modes_format)->default_value("row"),
+    "amber: vectors will be read as Amber PCA modes. row(column): vectors will be read in row(column) major order. Default: row\n")
 
     ("min_vol_radius", PO::value<double>(&cell_opts._minVR)->default_value(1.4)
     ->composing(), "Radius of the sphere with the minimum volume to be taken "
@@ -238,19 +240,25 @@ int get_parameters(int ac, char *av[], std::string &input_struct_filename,
 
   if (IA_opts._resn_proto != "none" && IA_opts._atom_proto != "none") {
     IA_opts._atom_proto = "none";
-    std::cerr << "WARNING: Both 'included_area_residues' and "
+    std::cerr << "Input warning: Both 'included_area_residues' and "
     "'included_area_atoms' were set. Using the former. " << "\n";
   }
 
   if (IA_opts._opt == IncludedAreaOptions::none && 
   (NDD_opts._modes_ndd_filename != "none" || input_md_filename != "none") ) {
-    std::cerr << "WARNING: You are running ANA MD/NDD without an inclusion "
+    std::cerr << "Input error: You are running ANA MD/NDD without an inclusion "
     "area. Check ANA's manual." << "\n";
     return 1;
   }
 
   if (NDD_opts._modes_ndd_filename == "none" && NDD_opts._out_ndd_filename == "none") {
-    std::cerr << "ERROR: NDD_input/NDD_output filename was not set." << "\n";
+    std::cerr << "Input error: NDD_input/NDD_output filename was not set." << "\n";
+    return 1;
+  }
+
+  if ((NDD_opts._evalues_ndd_filename != "none") && 
+  ((NDD_opts._modes_format != "row") && (NDD_opts._modes_format != "column"))) {
+    std::cerr << "Input error: NDD_modes_format should be set to row or column." << "\n";
     return 1;
   }
 

@@ -20,14 +20,14 @@ namespace NDD {
         }
         _evectors.reserve(_j);
         _evals.reserve(_j);
+        // representa: " ****"
+        size_t constexpr spacer = 6;
         size_t constexpr ch_elem = 11;
         size_t constexpr ch_num = 5;
         size_t constexpr ch_eval = 12;
         size_t constexpr ncolumns = 7;
         size_t const resto = _i % ncolumns;
         size_t const nlines = (resto) ? _i / ncolumns + 1 : _i / ncolumns;
-        // representa: " ****"
-        size_t constexpr spacer = 6;
         // número de caracteres q ocupa 1 modo en el formato de Amber.
         size_t const ch_mode = (nlines - 1) * ncolumns * ch_elem +
             resto * ch_elem + nlines + spacer;
@@ -55,6 +55,27 @@ namespace NDD {
             }
             _evectors.push_back(temp);
             cursor = cursor + ch_mode + ch_num + ch_eval + 1;
+        }
+
+        return;
+    }
+
+    void Modes::get_cmajor_from_raw(std::string_view const texto) {
+        auto [ch_elem, ncols, nrows] = guess_format(texto);
+        _j = ncols;
+        _i = nrows;
+        int line_length = ncols * ch_elem + 1;
+        char const *cursor = texto.data();
+
+        _evectors.resize(_j);
+        for (size_t i = 0; i < _i; ++i) {
+            for (size_t j = 0; j < _j; ++j) {
+                char const *left{cursor + j * ch_elem};
+                char *right{const_cast<char *>(left + ch_elem)};
+
+                _evectors[j].push_back(std::strtof(left, &right));
+            }
+            cursor += line_length;
         }
 
         return;

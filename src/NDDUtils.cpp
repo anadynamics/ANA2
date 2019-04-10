@@ -8,14 +8,21 @@ void ndd(
 
     std::vector<double> output_volumes;
 
-    Modes const modos(NDD_opts._modes_ndd_filename, NDD_opts._amber_modes);
+    Modes const modos(NDD_opts._modes_ndd_filename,
+        NDD_opts._evalues_ndd_filename, NDD_opts._modes_format);
     std::vector<double> pos_vols_ndd, neg_vols_ndd, der_vols_ndd;
     pos_vols_ndd.reserve(modos._j);
     neg_vols_ndd.reserve(modos._j);
     der_vols_ndd.reserve(modos._j);
 
+    std::cerr << "1"
+              << " 1" << '\n';
+
     if (CH._dynamic) {
         for (size_t j = 0; j < modos._j; ++j) {
+
+            std::cerr << "1" << j << '\n';
+
             double const mul = NDD_opts._step / modos._evals[j];
             // In the positive direction.
             ConvexHull CH_pos(CH, modos._evectors[j], mul);
@@ -35,6 +42,8 @@ void ndd(
             der_vols_ndd.push_back(der_vol);
             pos_vols_ndd.push_back(pos_vol);
             neg_vols_ndd.push_back(neg_vol);
+
+            std::cerr << "2" << j << '\n';
         }
 
         std::string const filename =
