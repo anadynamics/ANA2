@@ -81,6 +81,30 @@ namespace NDD {
         return;
     }
 
+    void Modes::get_evals_from_raw(std::string_view const texto) {
+
+        auto [ch_elem, ncols, nrows] = guess_format(texto);
+        if (nrows != _j) {
+            std::cerr << "Vector count: " << _j << ". Scalar count: " << nrows
+                      << '\n';
+            throw std::runtime_error(
+                "Frequencies don't match vectors. Aborting.");
+        }
+
+        int line_length = ncols * ch_elem + 1;
+        char const *cursor = texto.data();
+
+        _evals.reserve(_j);
+        for (size_t j = 0; j < _j; ++j) {
+            char const *left{cursor};
+            char *right{const_cast<char *>(left + ch_elem)};
+            _evals.push_back(std::strtof(left, &right));
+            cursor += line_length;
+        }
+
+        return;
+    }
+
     void Modes::normalize_matrix(std::vector<std::vector<double>> &mtx) {
         for (auto &vector : mtx) {
             double sum = 0.;

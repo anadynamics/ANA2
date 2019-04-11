@@ -44,14 +44,21 @@ auto slurp(std::string const &filename) -> std::unique_ptr<char[]> {
 }
 
 //
-auto guess_format(std::string_view texto) -> std::tuple<int, int, int> {
-    int ch_elem = 0, line_length = -1;
-    int const fsz = static_cast<int>(texto.size());
+auto guess_format(std::string_view texto)
+    -> std::tuple<size_t, size_t, size_t> {
+
+    size_t ch_elem = 0, line_length = 0;
+    size_t const fsz = texto.size();
     bool done_ch_elem = false, pre_blank = false;
 
-    for (int c = 0; c < fsz; ++c) {
+    for (size_t c = 0; c < fsz; ++c) {
         if (iscntrl(texto[c])) {
             line_length = c;
+            if (!done_ch_elem) {
+                // newline char read before a space char. There is only 1
+                // element per line.
+                ch_elem = line_length;
+            }
             break;
         }
         if (!done_ch_elem) {
@@ -68,9 +75,11 @@ auto guess_format(std::string_view texto) -> std::tuple<int, int, int> {
         }
     }
 
-    if (line_length < 0 || line_length % ch_elem != 0 ||
+    if (line_length == 0 || line_length % ch_elem != 0 ||
         fsz % (line_length + 1) != 0) {
-        throw std::runtime_error("NDD vectors corrupted. Could not read them.");
+        throw std::runtime_error(
+            "guess_format(): corrupted input. Could not read them.\nRemember "
+            "to use fixed-width format.");
     }
 
     return {ch_elem, line_length / ch_elem, fsz / (line_length + 1)};

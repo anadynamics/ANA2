@@ -15,24 +15,21 @@ void ndd(
     neg_vols_ndd.reserve(modos._j);
     der_vols_ndd.reserve(modos._j);
 
-    std::cerr << "1"
-              << " 1" << '\n';
-
     if (CH._dynamic) {
         for (size_t j = 0; j < modos._j; ++j) {
-
-            std::cerr << "1" << j << '\n';
 
             double const mul = NDD_opts._step / modos._evals[j];
             // In the positive direction.
             ConvexHull CH_pos(CH, modos._evectors[j], mul);
             Cavity hueco_pos(hueco, modos._evectors[j], mul);
+
             carve_CH_into_cavity(hueco_pos, CH_pos);
             double const pos_vol = hueco_pos._volume + hueco_pos._outer_volume;
 
             // In the negative direction.
             ConvexHull CH_neg(CH, modos._evectors[j], -mul);
             Cavity hueco_neg(hueco, modos._evectors[j], -mul);
+
             carve_CH_into_cavity(hueco_neg, CH_neg);
             double const neg_vol = hueco_neg._volume + hueco_neg._outer_volume;
 
@@ -42,8 +39,6 @@ void ndd(
             der_vols_ndd.push_back(der_vol);
             pos_vols_ndd.push_back(pos_vol);
             neg_vols_ndd.push_back(neg_vol);
-
-            std::cerr << "2" << j << '\n';
         }
 
         std::string const filename =

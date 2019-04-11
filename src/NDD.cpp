@@ -14,6 +14,9 @@ int NDD_ANA(std::string const &in_filename, IncludedAreaOptions const &IA_opts,
 
     ANA::carve_CH_into_cavity(hueco, CH);
 
+    ANA::write_PDB(hueco, "cav.pdb");
+    ANA::write_PDB(CH, "ch.pdb");
+
     ANA::NDD::ndd(hueco, CH, NDD_opts);
 
     printf("Volumen:  %f\n", hueco._volume + hueco._outer_volume);

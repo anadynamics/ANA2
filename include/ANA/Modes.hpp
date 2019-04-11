@@ -17,7 +17,7 @@ namespace NDD {
             std::unique_ptr<char[]> const buffer_modes = slurp(modes_filename);
             std::unique_ptr<char[]> const buffer_evals = slurp(evals_filename);
 
-            if (evalues_filename == "none") {
+            if (evals_filename == "none") {
                 get_amber_modes_from_raw(std::string_view(buffer_modes.get()));
             } else if (modes_format == "row") {
                 ;
@@ -29,10 +29,9 @@ namespace NDD {
         }
 
         Modes(std::string const &modes_filename,
-            std::string const &evalues_filename,
-            std::string const &pdb_filename,
+            std::string const &evals_filename, std::string const &pdb_filename,
             std::string_view const modes_format) :
-            Modes(modes_filename, evalues_filename, modes_format) {
+            Modes(modes_filename, evals_filename, modes_format) {
 
             calpha_to_full_atom(pdb_filename);
         }
