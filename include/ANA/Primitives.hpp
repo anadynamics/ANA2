@@ -181,21 +181,26 @@ inline Vector operator-(Point const &lhs, Point const &rhs) {
         rhs[2]};
 }
 
-// Displaces the Point along the Vector.
+// Use point as vector.
 inline Point operator+(Point const &p0, Point const &p1) {
     return Point(p0[0] + p1[0], p0[1] + p1[1], p0[2] + p1[2]);
 }
 
 // Displaces the Point along the Vector.
 inline Point operator+(Point const &p, Vector const &v) {
-    return Point(p[0] + (v[0] - v._origin[0]), p[1] + (v[1] - v._origin[1]),
-        p[2] + (v[2] - v._origin[2]));
+    return Point(p[0] + v[0], p[1] + v[1], p[2] + v[2]);
 }
+
 // Displaces the Point along the Vector.
 inline Point operator-(Point const &p, Vector const &v) {
-    return Point(p[0] - (v[0] - v._origin[0]), p[1] - (v[1] - v._origin[1]),
-        p[2] - (v[2] - v._origin[2]));
+    return Point(p[0] - v[0], p[1] - v[1], p[2] - v[2]);
 }
+
+// Displaces the Point along the Vector.
+inline Point operator+(Vector const &v, Point const &p) { return p + v; }
+
+// Displaces the Point along the Vector.
+inline Point operator-(Vector const &v, Point const &p) { return p - v; }
 
 inline Point operator*(Point const &p, double const &rhs) {
     return {p[0] * rhs, p[1] * rhs, p[2] * rhs};
