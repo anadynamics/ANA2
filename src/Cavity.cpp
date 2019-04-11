@@ -177,4 +177,17 @@ double parse_double(std::stringstream &in_stream) {
     return coord;
 }
 
+void write_volume(Cavity const &hueco, std::string const &filename) {
+
+    FILE *out_file = std::fopen(filename.c_str(), "w");
+    if (out_file) {
+        fmt::print(out_file, "{: <7}{: >5}{:8.3f}\n",
+            "Volume:", hueco._volume + hueco._outer_volume);
+    } else {
+        printf("Could not write NDD output to: %s.\n", filename.c_str());
+    }
+
+    return;
+}
+
 } // namespace ANA

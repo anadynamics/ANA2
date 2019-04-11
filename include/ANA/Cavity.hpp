@@ -60,6 +60,8 @@ double occupied_cell_vol(Tetrahedron const &cell, TetraInfo const &info);
 // Tool for parsing a double from input file stringstream
 double parse_double(std::stringstream &in_stream);
 
+void write_volume(Cavity const &hueco, std::string const &filename);
+
 } // namespace ANA
 
 #endif // _H
