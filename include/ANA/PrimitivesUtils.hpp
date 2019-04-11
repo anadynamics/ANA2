@@ -51,7 +51,7 @@ inline bool equal(CPoint const &q, Point const &p) {
 
 inline double volume(
     const Point &p0, const Point &p1, const Point &p2, const Point &p3) {
-    return determinant(p1 - p0, p2 - p0, p3 - p0) / 6;
+    return std::abs(determinant(p1 - p0, p2 - p0, p3 - p0)) / 6;
 }
 
 inline double volume(const Tetrahedron &t) {
