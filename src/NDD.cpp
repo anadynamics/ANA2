@@ -2,11 +2,11 @@
 
 namespace ANA {
 
-int NDD_ANA(std::string const &in_filename, IncludedAreaOptions const &IA_opts,
+int NDD_ANA(InOutOptions const &io_opts, IncludedAreaOptions const &IA_opts,
     NDDOptions const &NDD_opts, CellFilteringOptions const cell_opts,
     bool const atom_only) {
 
-    Molecule const protein = ANA::Molecule(in_filename, atom_only);
+    Molecule const protein = ANA::Molecule(io_opts._in_filename, atom_only);
 
     ANA::ConvexHull const CH = create_convex_hull(protein, IA_opts);
 
@@ -19,7 +19,11 @@ int NDD_ANA(std::string const &in_filename, IncludedAreaOptions const &IA_opts,
 
     ANA::NDD::ndd(hueco, CH, NDD_opts);
 
-    printf("Volumen:  %f\n", hueco._volume + hueco._outer_volume);
+    if (io_opts._out_vol_filename == "none") {
+        printf("Volumen:  %f\n", hueco._volume + hueco._outer_volume);
+    } else {
+        write_volume(hueco, io_opts._out_vol_filename);
+    }
 
     return 0;
 }

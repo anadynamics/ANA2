@@ -2,29 +2,28 @@
 
 namespace ANA {
 
-int get_parameters(int ac, char *av[], std::string &input_struct_filename,
-    std::string &input_md_filename, ANA::IncludedAreaOptions &IA_opts,
-    std::string &AA_indices_proto, bool &triangulate_only_included_aas,
-    bool &atom_only, int &precision, int &clusters_min_size,
-    int &nbr_of_vertices_to_include, int &md_start, int &md_step, int &md_end,
-    CellFilteringOptions &cell_opts, double &max_probe,
-    double &max_probe_length, int &sphere_count, std::string &list_wall,
-    std::string &list_wall_separator, std::string &clusters_method,
-    std::string &only_side_ASA, std::string &ASA_method,
-    std::string &exclude_ca_for_ASA, NDDOptions &NDD_opts,
-    std::string &out_filename, std::string &out_vol, std::string &output_type,
-    std::string &tool_check_CH, std::string &tool_pdb_to_ch,
-    std::string &tool_pdb_norm, std::string &tool_aa_to_ca) {
+int get_parameters(int ac, char *av[], ANA::InOutOptions &io_opts,
+    ANA::IncludedAreaOptions &IA_opts, std::string &AA_indices_proto,
+    bool &triangulate_only_included_aas, bool &atom_only, int &precision,
+    int &clusters_min_size, int &nbr_of_vertices_to_include, int &md_start,
+    int &md_step, int &md_end, CellFilteringOptions &cell_opts,
+    double &max_probe, double &max_probe_length, int &sphere_count,
+    std::string &list_wall, std::string &list_wall_separator,
+    std::string &clusters_method, std::string &only_side_ASA,
+    std::string &ASA_method, std::string &exclude_ca_for_ASA,
+    NDDOptions &NDD_opts, std::string &tool_check_CH,
+    std::string &tool_pdb_to_ch, std::string &tool_pdb_norm,
+    std::string &tool_aa_to_ca) {
     // clang-format off
-  try {
+  try { 
     std::string config_filename;
     // Declare options that are allowed only in the command line
     PO::options_description CLI_only_options(help_header);
 
     CLI_only_options.add_options()
-    ("input_struct,i", PO::value<std::string>(&input_struct_filename)
+    ("input_struct,i", PO::value<std::string>(&io_opts._in_filename)
 	  ->default_value("none"), "Input structure (pdb). Positional argument.\n")
-    ("input_md,d", PO::value<std::string>(&input_md_filename)
+    ("input_md,d", PO::value<std::string>(&io_opts._in_md_filename)
     ->default_value("none"), "Input file with MD simulation.\n")
     ("NDD_modes,M", PO::value<std::string>(&NDD_opts._modes_ndd_filename)
     ->default_value("none")->composing(), "Input vectors for non Delaunay dynamics.\n")
@@ -32,9 +31,9 @@ int get_parameters(int ac, char *av[], std::string &input_struct_filename,
     ->default_value("none")->composing(), "Input eigenvalues for non Delaunay dynamics.\n")
     ("config_file,c", PO::value<std::string>(&config_filename)
     ->default_value("ANA.cfg"), "Filename of the configuration file. Default: \"ANA.cfg\".\n")
-    ("output_draw,o", PO::value<std::string>(&out_filename)
+    ("output_draw,o", PO::value<std::string>(&io_opts._out_pdb_filename)
     ->default_value("none")->composing(),"Output filename.\n")
-    ("out_vol,V", PO::value<std::string>(&out_vol)
+    ("out_vol,v", PO::value<std::string>(&io_opts._out_vol_filename)
     ->default_value("none")->composing(),"Volume output filename.\n")
     ("NDD_output,O", PO::value<std::string>(&NDD_opts._out_ndd_filename)
     ->default_value("ANA_NDD.out")->composing(),
@@ -157,11 +156,17 @@ int get_parameters(int ac, char *av[], std::string &input_struct_filename,
     ("stop", PO::value<int>(&md_end)->default_value(0),
     "Frame to stop reading. If set to 0, read all. Default: 0.\n")
 
+    ("NDD_derivative", PO::value<bool>(&NDD_opts._derivative)->default_value(true),
+    "If set to false, ANA will not perform the derivative and instead output"
+    "2 files with the volumes of the displaced cavity in the positive and"
+    "the negative direction. Default: true\n")
+
     ("NDD_step", PO::value<int>(&NDD_opts._step)->default_value(5),
     "Scaling number for input vectors in non Delaunay dynamics. Default: 5\n")
 
     ("NDD_modes_format", PO::value<std::string>(&NDD_opts._modes_format)->default_value("row"),
-    "amber: vectors will be read as Amber PCA modes. row(column): vectors will be read in row(column) major order. Default: row\n")
+    "amber: vectors will be read as Amber PCA modes. "
+    "row(column): vectors will be read in row(column) major order. Default: row\n")
 
     ("min_vol_radius", PO::value<double>(&cell_opts._minVR)->default_value(1.4)
     ->composing(), "Radius of the sphere with the minimum volume to be taken "
@@ -174,7 +179,7 @@ int get_parameters(int ac, char *av[], std::string &input_struct_filename,
     ("sphere_count", PO::value<int>(&sphere_count)->default_value(5)
     ->composing(), "Sphere count for grid output. Default: 5.\n")
 
-    ("output_type", PO::value<std::string>(&output_type)
+    ("output_type", PO::value<std::string>(&io_opts._out_type)
     ->default_value("grid_pdb")->composing(), "raw_pdb: null areas as "
     "tetrahedrons (residues). raw_cgo: null areas as tetrahedrons formed with "
     "CGO lines in a pymol script. grid_pdb: null areas filled with points. "
@@ -211,7 +216,7 @@ int get_parameters(int ac, char *av[], std::string &input_struct_filename,
     cerr << "Exception of unknown type when reading config file.\n";
   }
 
-  if(input_struct_filename == "none" && tool_pdb_to_ch == "none" &&
+  if(io_opts._in_filename == "none" && tool_pdb_to_ch == "none" &&
      tool_pdb_norm == "none"         && tool_aa_to_ca == "none") {
     std::cerr << "Error: option '--input_struct' is required but missing."
     << '\n';
@@ -245,7 +250,7 @@ int get_parameters(int ac, char *av[], std::string &input_struct_filename,
   }
 
   if (IA_opts._opt == IncludedAreaOptions::none && 
-  (NDD_opts._modes_ndd_filename != "none" || input_md_filename != "none") ) {
+  (NDD_opts._modes_ndd_filename != "none" || io_opts._in_md_filename != "none") ) {
     std::cerr << "Input error: You are running ANA MD/NDD without an inclusion "
     "area. Check ANA's manual." << "\n";
     return 1;

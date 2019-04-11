@@ -4,6 +4,14 @@
 
 namespace ANA {
 
+struct InOutOptions {
+    std::string _in_filename;
+    std::string _in_md_filename;
+    std::string _out_vol_filename = "none";
+    std::string _out_pdb_filename = "none";
+    std::string _out_type = "grid_pdb";
+};
+
 struct IncludedAreaOptions {
 public:
     // Would like to have only 1 string, but that won't play nicely with Boost
@@ -24,6 +32,7 @@ public:
     std::string _evalues_ndd_filename;
     std::string _modes_format;
     std::string _out_ndd_filename;
+    bool _derivative = true;
     int _step = 5;
 };
 
