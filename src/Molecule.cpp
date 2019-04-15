@@ -10,11 +10,11 @@ Molecule::Molecule(std::string const &pdb_filename, bool const atom_only) {
     auto const in_xyz = input_pdb_frame.positions();
     auto const input_pdb_top = input_pdb_frame.topology();
 
-    int const natoms = input_pdb_top.natoms();
-    int const nres = input_pdb_top.residues().size();
+    _natoms = input_pdb_top.natoms();
+    _nres = input_pdb_top.residues().size();
 
-    _data.reserve(natoms);
-    _alphaCarbons.reserve(nres);
+    _data.reserve(_natoms);
+    _alphaCarbons.reserve(_nres);
 
     for (auto const &residuo : input_pdb_top.residues()) {
         auto const res_name = residuo.name();
@@ -42,8 +42,7 @@ Molecule::Molecule(std::string const &pdb_filename, bool const atom_only) {
             _data.emplace_back(p1, vi1);
 
             if (input_pdb_top[i].name() == "CA") {
-                // Will use to draw Convex Hull or whatever. It's always
-                // useful.
+                // Will use to get the Convex Hull if requested.
                 _alphaCarbons.push_back(i);
             }
         }
@@ -51,6 +50,5 @@ Molecule::Molecule(std::string const &pdb_filename, bool const atom_only) {
 
     return;
 }
-
 
 } // namespace ANA

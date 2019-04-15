@@ -37,6 +37,7 @@ public:
     // Should only work with containers. Will fix w/ c++20. TODO
     template <class T>
     void run_convex_hull(T const &points) {
+
         if (points.size() < 4) {
             throw std::runtime_error(
                 "Not possible to triangulate less than 4 points. Aborting.");
