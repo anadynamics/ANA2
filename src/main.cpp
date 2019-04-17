@@ -161,6 +161,7 @@ int main(int argc, char *argv[]) {
             max_probe_length, sphere_count, nbr_of_vertices_to_include,
             precision, md_start, md_step, md_end);
     } else if (NDD_opts._modes_ndd_filename != "none") {
+        IA_opts.has_info = true;
         ANA::NDD_ANA(io_opts, IA_opts, NDD_opts, cell_opts, atom_only);
     } else {
 

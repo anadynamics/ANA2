@@ -7,17 +7,17 @@ ConvexHull create_convex_hull(
 
     switch (IA_opts._opt) {
     case IncludedAreaOptions::IAOption::residue:
-        return ConvexHull(protein, IA_opts._resn_proto, ResidueTag());
+        return ConvexHull(protein, IA_opts, ResidueTag());
     case IncludedAreaOptions::IAOption::atom:
-        return ConvexHull(protein, IA_opts._atom_proto, AtomTag());
+        return ConvexHull(protein, IA_opts, AtomTag());
     case IncludedAreaOptions::IAOption::sphere:
-        return ConvexHull(IA_opts._sphere_proto, SphereTag());
+        return ConvexHull(IA_opts, SphereTag());
     case IncludedAreaOptions::IAOption::cylinder:
-        return ConvexHull(IA_opts._cylinder_proto, CylinderTag());
+        return ConvexHull(IA_opts, CylinderTag());
     case IncludedAreaOptions::IAOption::prism:
-        return ConvexHull(IA_opts._prism_proto, PrismTag());
+        return ConvexHull(IA_opts, PrismTag());
     case IncludedAreaOptions::IAOption::file:
-        return ConvexHull(IA_opts._filename, FileTag());
+        return ConvexHull(IA_opts, FileTag());
     case IncludedAreaOptions::IAOption::none:
         throw(std::invalid_argument(
             "No Convex Hull input could be parsed. This shouldn't happen."));
@@ -27,9 +27,9 @@ ConvexHull create_convex_hull(
 }
 
 ConvexHull::ConvexHull(
-    Molecule const &protein, std::string const &resn_proto, ResidueTag) {
+    Molecule const &protein, IncludedAreaOptions const &IA_opts, ResidueTag) {
 
-    _included_resis = string_to_list(resn_proto, protein._nres);
+    _included_resis = string_to_list(IA_opts._resn_proto, protein._nres);
 
     std::vector<CPoint> incl_area_points;
     incl_area_points.reserve(_included_resis.size());
@@ -41,7 +41,9 @@ ConvexHull::ConvexHull(
 
     try {
         run_convex_hull(incl_area_points);
-        add_res_info(protein);
+        if (IA_opts.has_info) {
+            add_res_info(protein);
+        }
         _dynamic = true;
     } catch (std::runtime_error const &e) {
         throw std::runtime_error(
@@ -53,9 +55,9 @@ ConvexHull::ConvexHull(
 }
 
 ConvexHull::ConvexHull(
-    Molecule const &protein, std::string const &atom_proto, AtomTag) {
+    Molecule const &protein, IncludedAreaOptions const &IA_opts, AtomTag) {
 
-    _included_atoms = string_to_list(atom_proto, protein._natoms);
+    _included_atoms = string_to_list(IA_opts._atom_proto, protein._natoms);
 
     std::vector<CPoint> incl_area_points;
     incl_area_points.reserve(_included_atoms.size());
@@ -67,7 +69,9 @@ ConvexHull::ConvexHull(
 
     try {
         run_convex_hull(incl_area_points);
-        add_atm_info(protein);
+        if (IA_opts.has_info) {
+            add_atm_info(protein);
+        }
         _dynamic = true;
     } catch (std::runtime_error const &e) {
         throw std::runtime_error(
@@ -78,9 +82,9 @@ ConvexHull::ConvexHull(
     }
 }
 
-ConvexHull::ConvexHull(std::string const &sphere_proto, SphereTag) {
+ConvexHull::ConvexHull(IncludedAreaOptions const &IA_opts, SphereTag) {
 
-    std::stringstream stream_sphere(sphere_proto);
+    std::stringstream stream_sphere(IA_opts._sphere_proto);
     double const x = parse_double(stream_sphere);
     double const y = parse_double(stream_sphere);
     double const z = parse_double(stream_sphere);
@@ -129,9 +133,9 @@ ConvexHull::ConvexHull(std::string const &sphere_proto, SphereTag) {
     }
 }
 
-ConvexHull::ConvexHull(std::string const &cylinder_proto, CylinderTag) {
+ConvexHull::ConvexHull(IncludedAreaOptions const &IA_opts, CylinderTag) {
 
-    std::stringstream stream_cylinder(cylinder_proto);
+    std::stringstream stream_cylinder(IA_opts._cylinder_proto);
 
     double const x1 = parse_double(stream_cylinder);
     double const y1 = parse_double(stream_cylinder);
@@ -182,9 +186,9 @@ ConvexHull::ConvexHull(std::string const &cylinder_proto, CylinderTag) {
     }
 }
 
-ConvexHull::ConvexHull(std::string const &prism_proto, PrismTag) {
+ConvexHull::ConvexHull(IncludedAreaOptions const &IA_opts, PrismTag) {
 
-    std::stringstream stream_prism(prism_proto);
+    std::stringstream stream_prism(IA_opts._prism_proto);
     double const x1 = parse_double(stream_prism);
     double const y1 = parse_double(stream_prism);
     double const z1 = parse_double(stream_prism);
@@ -220,10 +224,11 @@ ConvexHull::ConvexHull(std::string const &prism_proto, PrismTag) {
     }
 }
 
-ConvexHull::ConvexHull(std::string const &filename, FileTag) {
-    filename.end(); // just to avoid unused value warning.
-    throw("Convex hull construction from input file not supported yet. "
-          "Aborting.");
+ConvexHull::ConvexHull(IncludedAreaOptions const &IA_opts, FileTag) {
+    IA_opts._filename + "ss"; // just to avoid unused value warning.
+    throw std::runtime_error(
+        "Convex hull construction from input file not supported yet. "
+        "Aborting.");
 }
 
 // Unfortunately I cant add Info on CGAL's Convex Hull Points, so I have to do

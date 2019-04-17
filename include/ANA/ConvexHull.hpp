@@ -20,18 +20,19 @@ class ConvexHull {
 public:
     ConvexHull() = default;
 
-    ConvexHull(
-        Molecule const &protein, std::string const &resn_proto, ResidueTag);
+    ConvexHull(Molecule const &protein, IncludedAreaOptions const &resn_proto,
+        ResidueTag);
 
-    ConvexHull(Molecule const &protein, std::string const &atom_proto, AtomTag);
+    ConvexHull(Molecule const &protein, IncludedAreaOptions const &atom_proto,
+        AtomTag);
 
-    ConvexHull(std::string const &sphere_proto, SphereTag);
+    ConvexHull(IncludedAreaOptions const &sphere_proto, SphereTag);
 
-    ConvexHull(std::string const &cylinder_proto, CylinderTag);
+    ConvexHull(IncludedAreaOptions const &cylinder_proto, CylinderTag);
 
-    ConvexHull(std::string const &prism_proto, PrismTag);
+    ConvexHull(IncludedAreaOptions const &prism_proto, PrismTag);
 
-    ConvexHull(std::string const &filename, FileTag);
+    ConvexHull(IncludedAreaOptions const &filename, FileTag);
 
     // Run the actual Convex Hull algorithm with CGAL.
     // Should only work with containers. Will fix w/ c++20. TODO

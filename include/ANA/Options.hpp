@@ -22,6 +22,7 @@ public:
     std::string _cylinder_proto = "none";
     std::string _prism_proto = "none";
     std::string _filename = "none";
+    bool has_info = false;
     enum IAOption { none, residue, atom, sphere, cylinder, prism, file };
     IAOption _opt = IAOption::none;
 };
