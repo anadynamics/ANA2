@@ -11,12 +11,11 @@ Accurate volume calculation. Ugly output.
 
 ## Installation
 
-See installation info on the manual.
+https://anadynamics.netlify.com/docs/install_instructions.html
 
 ## Usage example
 
-Check the quickstart example.
-
+https://anadynamics.netlify.com/docs/quickstart.html
 
 ## Release History
 
@@ -29,6 +28,12 @@ Check the quickstart example.
 * Road to 2.0.0
     * Major refactoring.
     * Switched to C++ 17.
+    * New on NDD:
+        * No need to input displaced PDBs. ANA will read Amber modes or a raw
+text file with vectors and move the inpud pdb atoms forward and backwards along
+those vectors.
+        * ANA will output either, the volumes of the perturbed cavities, the
+numerical derivative, or the flexibility coefficient for that cavity.
     * Deprecated:
         * Cell filtering by facet area.
     * Deprecations for NDD:
