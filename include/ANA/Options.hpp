@@ -23,18 +23,19 @@ public:
     std::string _prism_proto = "none";
     std::string _filename = "none";
     bool has_info = false;
-    enum IAOption { none, residue, atom, sphere, cylinder, prism, file };
-    IAOption _opt = IAOption::none;
 };
 
 struct NDDOptions {
 public:
     std::string _modes_ndd_filename;
     std::string _evalues_ndd_filename;
+    std::string _scaling_ndd_filename;
     std::string _modes_format;
     std::string _out_ndd_filename;
     bool _derivative = true;
     int _step = 5;
+    enum ModesFormat { amber, column, row };
+    ModesFormat _format = IAOption::amber;
 };
 
 class CellFilteringOptions {

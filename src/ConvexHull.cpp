@@ -5,24 +5,23 @@ namespace ANA {
 ConvexHull create_convex_hull(
     Molecule const &protein, IncludedAreaOptions const &IA_opts) {
 
-    switch (IA_opts._opt) {
-    case IncludedAreaOptions::IAOption::residue:
+    if (IA_opts._resn_proto != "none") {
         return ConvexHull(protein, IA_opts, ResidueTag());
-    case IncludedAreaOptions::IAOption::atom:
+    } else if (IA_opts._atom_proto != "none") {
         return ConvexHull(protein, IA_opts, AtomTag());
-    case IncludedAreaOptions::IAOption::sphere:
+    } else if (IA_opts._sphere_proto != "none") {
         return ConvexHull(IA_opts, SphereTag());
-    case IncludedAreaOptions::IAOption::cylinder:
+    } else if (IA_opts._cylinder_proto != "none") {
         return ConvexHull(IA_opts, CylinderTag());
-    case IncludedAreaOptions::IAOption::prism:
+    } else if (IA_opts._prism_proto != "none") {
         return ConvexHull(IA_opts, PrismTag());
-    case IncludedAreaOptions::IAOption::file:
+    } else if (IA_opts._filename != "none") {
         return ConvexHull(IA_opts, FileTag());
-    case IncludedAreaOptions::IAOption::none:
-        throw(std::invalid_argument(
-            "No Convex Hull input could be parsed. This shouldn't happen."));
-        break;
+    } else {
+        throw std::invalid_argument(
+            "No Convex Hull input could be parsed. This shouldn't happen.");
     }
+
     return {};
 }
 
