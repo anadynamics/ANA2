@@ -44,9 +44,9 @@ namespace NDD {
 
         void get_amber_modes_from_raw(std::string_view const texto);
 
-        // TODO: get_rmajor_from_raw
+        void get_row_major_from_raw(std::string_view const texto);
 
-        void get_cmajor_from_raw(std::string_view const texto);
+        void get_col_major_from_raw(std::string_view const texto);
 
         void get_evals_from_raw(std::string_view const texto);
 

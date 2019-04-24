@@ -13,16 +13,14 @@ namespace NDD {
     Modes::Modes(std::string const &modes_filename, RowTag) {
 
         std::unique_ptr<char[]> const buffer_modes = slurp(modes_filename);
-        // TODO: replace with get_rmajor_from_raw
-        get_cmajor_from_raw(std::string_view(buffer_modes.get()));
+        get_row_major_from_raw(std::string_view(buffer_modes.get()));
         return;
     }
 
     Modes::Modes(std::string const &modes_filename, ColumnTag) {
 
         std::unique_ptr<char[]> const buffer_modes = slurp(modes_filename);
-
-        get_cmajor_from_raw(std::string_view(buffer_modes.get()));
+        get_col_major_from_raw(std::string_view(buffer_modes.get()));
         return;
     }
 
@@ -31,9 +29,8 @@ namespace NDD {
 
         std::unique_ptr<char[]> const buffer_modes = slurp(modes_filename);
         std::unique_ptr<char[]> const buffer_evals = slurp(evals_filename);
-        // TODO: replace with get_rmajor_from_raw
-        get_cmajor_from_raw(std::string_view(buffer_modes.get()));
 
+        get_row_major_from_raw(std::string_view(buffer_modes.get()));
         _evals = get_values_from_raw(std::string_view(buffer_evals.get()));
 
         if (_evals.size() != _j) {
@@ -50,8 +47,8 @@ namespace NDD {
 
         std::unique_ptr<char[]> const buffer_modes = slurp(modes_filename);
         std::unique_ptr<char[]> const buffer_evals = slurp(evals_filename);
-        get_cmajor_from_raw(std::string_view(buffer_modes.get()));
 
+        get_col_major_from_raw(std::string_view(buffer_modes.get()));
         _evals = get_values_from_raw(std::string_view(buffer_evals.get()));
 
         if (_evals.size() != _j) {
@@ -141,7 +138,33 @@ namespace NDD {
         return;
     }
 
-    void Modes::get_cmajor_from_raw(std::string_view const texto) {
+    void Modes::get_row_major_from_raw(std::string_view const texto) {
+        auto [ch_elem, ncols, nrows] = guess_format(texto);
+        _j = nrows;
+        _i = ncols;
+        int line_length = ncols * ch_elem + 1;
+        char const *cursor = texto.data();
+
+        _evectors.resize(_j);
+        for (size_t j = 0; j < _j; ++j) {
+            std::vector<double> vector;
+            vector.reserve(_i);
+
+            for (size_t i = 0; i < _i; ++i) {
+                char const *left {cursor + i * ch_elem};
+                char *right {const_cast<char *>(left + ch_elem)};
+
+                vector.push_back(std::strtof(left, &right));
+            }
+
+            _evectors.push_back(std::move(vector));
+            cursor += line_length;
+        }
+
+        return;
+    }
+
+    void Modes::get_col_major_from_raw(std::string_view const texto) {
         auto [ch_elem, ncols, nrows] = guess_format(texto);
         _j = ncols;
         _i = nrows;
