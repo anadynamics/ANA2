@@ -15,7 +15,7 @@ struct InOutOptions {
 struct IncludedAreaOptions {
 public:
     // Would like to have only 1 string, but that won't play nicely with Boost
-    // Program Options. Hopefully I'll fix it someday. TODO
+    // Program Options. Hopefully I'll fix it someday. TODO.
     std::string _resn_proto = "none";
     std::string _atom_proto = "none";
     std::string _sphere_proto = "none";
@@ -34,8 +34,6 @@ public:
     std::string _out_ndd_filename;
     bool _derivative = true;
     int _step = 5;
-    enum ModesFormat { amber, column, row };
-    ModesFormat _format = IAOption::amber;
 };
 
 class CellFilteringOptions {
