@@ -43,7 +43,8 @@ auto slurp(std::string const &filename) -> std::unique_ptr<char[]> {
     }
 }
 
-//
+// Returns number of chars in each element, nbr of elements in line, nbr of
+// lines.
 auto guess_format(std::string_view texto)
     -> std::tuple<size_t, size_t, size_t> {
 
@@ -78,11 +79,28 @@ auto guess_format(std::string_view texto)
     if (line_length == 0 || line_length % ch_elem != 0 ||
         fsz % (line_length + 1) != 0) {
         throw std::runtime_error(
-            "guess_format(): corrupted input. Could not read them.\nRemember "
+            "guess_format(): corrupted input. Could not read values.\nRemember "
             "to use fixed-width format.");
     }
 
     return {ch_elem, line_length / ch_elem, fsz / (line_length + 1)};
+}
+
+auto get_values_from_raw(std::string_view const texto) -> std::vector<double> {
+    auto [ch_elem, ncols, nrows] = guess_format(texto);
+    int line_length = ncols * ch_elem + 1;
+    char const *cursor = texto.data();
+    std::vector<double> data;
+
+    data.reserve(nrows);
+    for (size_t j = 0; j < nrows; ++j) {
+        char const *left {cursor};
+        char *right {const_cast<char *>(left + ch_elem)};
+        data.push_back(std::strtof(left, &right));
+        cursor += line_length;
+    }
+
+    return data;
 }
 
 } // namespace ANA

@@ -17,6 +17,9 @@ namespace ANA::NDD {
 // On-site NDD.
 void ndd(Cavity const &hueco, ConvexHull const &CH, NDDOptions const &NDD_opts);
 
+auto initialize_scaling_factors(NDDOptions const &NDD_opts, std::size_t j)
+    -> std::vector<double>;
+
 } // namespace NDD:: ANA
 
 #endif // _H

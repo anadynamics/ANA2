@@ -3,6 +3,87 @@
 namespace ANA {
 namespace NDD {
 
+    Modes::Modes(std::string const &modes_filename, AmberTag) {
+
+        std::unique_ptr<char[]> const buffer_modes = slurp(modes_filename);
+        get_amber_modes_from_raw(std::string_view(buffer_modes.get()));
+        return;
+    }
+
+    Modes::Modes(std::string const &modes_filename, RowTag) {
+
+        std::unique_ptr<char[]> const buffer_modes = slurp(modes_filename);
+        // TODO: replace with get_rmajor_from_raw
+        get_cmajor_from_raw(std::string_view(buffer_modes.get()));
+        return;
+    }
+
+    Modes::Modes(std::string const &modes_filename, ColumnTag) {
+
+        std::unique_ptr<char[]> const buffer_modes = slurp(modes_filename);
+
+        get_cmajor_from_raw(std::string_view(buffer_modes.get()));
+        return;
+    }
+
+    Modes::Modes(std::string const &modes_filename,
+        std::string const &evals_filename, RowTag) {
+
+        std::unique_ptr<char[]> const buffer_modes = slurp(modes_filename);
+        std::unique_ptr<char[]> const buffer_evals = slurp(evals_filename);
+        // TODO: replace with get_rmajor_from_raw
+        get_cmajor_from_raw(std::string_view(buffer_modes.get()));
+
+        _evals = get_values_from_raw(std::string_view(buffer_evals.get()));
+
+        if (_evals.size() != _j) {
+            std::cerr << "Vector count: " << _j
+                      << ". Scalar count: " << _evals.size() << '\n';
+            throw std::runtime_error(
+                "Frequencies don't match vectors. Aborting.");
+        }
+        return;
+    }
+
+    Modes::Modes(std::string const &modes_filename,
+        std::string const &evals_filename, ColumnTag) {
+
+        std::unique_ptr<char[]> const buffer_modes = slurp(modes_filename);
+        std::unique_ptr<char[]> const buffer_evals = slurp(evals_filename);
+        get_cmajor_from_raw(std::string_view(buffer_modes.get()));
+
+        _evals = get_values_from_raw(std::string_view(buffer_evals.get()));
+
+        if (_evals.size() != _j) {
+            std::cerr << "Vector count: " << _j
+                      << ". Scalar count: " << _evals.size() << '\n';
+            throw std::runtime_error(
+                "Frequencies don't match vectors. Aborting.");
+        }
+        return;
+    }
+
+    Modes::Modes(std::string const &modes_filename, AmberTag,
+        std::string const &pdb_filename) :
+        Modes(modes_filename, AmberTag()) {
+
+        calpha_to_full_atom(pdb_filename);
+    }
+
+    Modes::Modes(std::string const &modes_filename, RowTag,
+        std::string const &pdb_filename) :
+        Modes(modes_filename, RowTag()) {
+
+        calpha_to_full_atom(pdb_filename);
+    }
+
+    Modes::Modes(std::string const &modes_filename, ColumnTag,
+        std::string const &pdb_filename) :
+        Modes(modes_filename, ColumnTag()) {
+
+        calpha_to_full_atom(pdb_filename);
+    }
+
     void Modes::get_amber_modes_from_raw(std::string_view const texto) {
 
         size_t beg = 57;
@@ -70,35 +151,11 @@ namespace NDD {
         _evectors.resize(_j);
         for (size_t i = 0; i < _i; ++i) {
             for (size_t j = 0; j < _j; ++j) {
-                char const *left{cursor + j * ch_elem};
-                char *right{const_cast<char *>(left + ch_elem)};
+                char const *left {cursor + j * ch_elem};
+                char *right {const_cast<char *>(left + ch_elem)};
 
                 _evectors[j].push_back(std::strtof(left, &right));
             }
-            cursor += line_length;
-        }
-
-        return;
-    }
-
-    void Modes::get_evals_from_raw(std::string_view const texto) {
-
-        auto [ch_elem, ncols, nrows] = guess_format(texto);
-        if (nrows != _j) {
-            std::cerr << "Vector count: " << _j << ". Scalar count: " << nrows
-                      << '\n';
-            throw std::runtime_error(
-                "Frequencies don't match vectors. Aborting.");
-        }
-
-        int line_length = ncols * ch_elem + 1;
-        char const *cursor = texto.data();
-
-        _evals.reserve(_j);
-        for (size_t j = 0; j < _j; ++j) {
-            char const *left{cursor};
-            char *right{const_cast<char *>(left + ch_elem)};
-            _evals.push_back(std::strtof(left, &right));
             cursor += line_length;
         }
 
@@ -162,6 +219,35 @@ namespace NDD {
             _atm_evectors.push_back(std::move(atm_evectors));
             _normas_atm.push_back(sqrt(sum));
         }
+    }
+
+    // Call the proper Modes constructor.
+    Modes create_modes(NDDOptions const &NDD_opts) {
+        if (NDD_opts._modes_format == "amber") {
+
+            return {NDD_opts._modes_ndd_filename, AmberTag()};
+
+        } else if (NDD_opts._modes_format == "row") {
+
+            if (NDD_opts._evalues_ndd_filename == "none") {
+                return {NDD_opts._modes_ndd_filename, RowTag()};
+            } else {
+                return {NDD_opts._modes_ndd_filename,
+                    NDD_opts._evalues_ndd_filename, RowTag()};
+            }
+
+        } else if (NDD_opts._modes_format == "column") {
+
+            if (NDD_opts._evalues_ndd_filename == "none") {
+                return {NDD_opts._modes_ndd_filename, ColumnTag()};
+            } else {
+                return {NDD_opts._modes_ndd_filename,
+                    NDD_opts._evalues_ndd_filename, ColumnTag()};
+            }
+        }
+        throw std::invalid_argument(
+            "No Modes format input could be parsed. This shouldn't happen.");
+        return {};
     }
 }
 }

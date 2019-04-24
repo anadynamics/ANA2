@@ -29,6 +29,8 @@ int get_parameters(int ac, char *av[], ANA::InOutOptions &io_opts,
     ->default_value("none")->composing(), "Input vectors for non Delaunay dynamics.\n")
     ("NDD_evals,E", PO::value<std::string>(&NDD_opts._evalues_ndd_filename)
     ->default_value("none")->composing(), "Input eigenvalues for non Delaunay dynamics.\n")
+    ("NDD_scaling,S", PO::value<std::string>(&NDD_opts._scaling_ndd_filename)
+    ->default_value("none")->composing(), "Input scaling factors for non Delaunay dynamics.\n")
     ("config_file,c", PO::value<std::string>(&config_filename)
     ->default_value("ANA.cfg"), "Filename of the configuration file. Default: \"ANA.cfg\".\n")
     ("output_draw,o", PO::value<std::string>(&io_opts._out_pdb_filename)
@@ -229,32 +231,33 @@ int get_parameters(int ac, char *av[], ANA::InOutOptions &io_opts,
       return 1;
   }
 
-  if (IA_opts._resn_proto != "none") {
-    IA_opts._opt = IncludedAreaOptions::residue;
-  } else if (IA_opts._atom_proto != "none") {
-    IA_opts._opt = IncludedAreaOptions::atom;
-  } else if (IA_opts._sphere_proto != "none") {
-    IA_opts._opt = IncludedAreaOptions::sphere;
-  } else if (IA_opts._cylinder_proto != "none") {
-    IA_opts._opt = IncludedAreaOptions::cylinder;
-  } else if (IA_opts._prism_proto != "none") {
-    IA_opts._opt = IncludedAreaOptions::prism;
-  } else if (IA_opts._filename != "none") {
-    IA_opts._opt = IncludedAreaOptions::file;
-  } 
-
   if (IA_opts._resn_proto != "none" && IA_opts._atom_proto != "none") {
     IA_opts._atom_proto = "none";
     std::cerr << "Input warning: Both 'included_area_residues' and "
     "'included_area_atoms' were set. Using the former. " << "\n";
   }
 
-  if (IA_opts._opt == IncludedAreaOptions::none && 
-  (NDD_opts._modes_ndd_filename != "none" || io_opts._in_md_filename != "none") ) {
+
+  bool const defined_included_area = (IA_opts._resn_proto != "none") || 
+      (IA_opts._atom_proto != "none") || (IA_opts._sphere_proto != "none") || 
+      (IA_opts._cylinder_proto != "none") || (IA_opts._prism_proto != "none") || 
+      (IA_opts._filename != "none");
+  bool const modes_or_ndd = (NDD_opts._modes_ndd_filename != "none") || 
+      (io_opts._in_md_filename != "none");
+
+  if (!defined_included_area && modes_or_ndd) {
     std::cerr << "Input error: You are running ANA MD/NDD without an inclusion "
     "area. Check ANA's manual." << "\n";
     return 1;
   }
+
+  // if (NDD_opts._modes_format != "amber") {
+  //   IA_opts._opt = NDDOptions::amber;
+  // } else if (NDD_opts._modes_format != "column") {
+  //   IA_opts._opt = NDDOptions::column;
+  // } else if (NDD_opts._modes_format != "row") {
+  //   IA_opts._opt = NDDOptions::row ;
+  // }
 
   if (NDD_opts._modes_ndd_filename == "none" && NDD_opts._out_ndd_filename == "none") {
     std::cerr << "Input error: NDD_input/NDD_output filename was not set." << "\n";
