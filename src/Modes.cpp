@@ -5,37 +5,39 @@ namespace NDD {
 
     Modes::Modes(std::string const &modes_filename, AmberTag) {
 
-        std::unique_ptr<char[]> const buffer_modes = slurp(modes_filename);
-        get_amber_modes_from_raw(std::string_view(buffer_modes.get()));
+        auto [bufr_modes, fsz_modes] = slurp(modes_filename);
+        get_amber_modes_from_raw(std::string_view(bufr_modes.get(), fsz_modes));
         return;
     }
 
     Modes::Modes(std::string const &modes_filename, RowTag) {
 
-        std::unique_ptr<char[]> const buffer_modes = slurp(modes_filename);
-        get_row_major_from_raw(std::string_view(buffer_modes.get()));
+        auto [bufr_modes, fsz_modes] = slurp(modes_filename);
+        get_row_major_from_raw(std::string_view(bufr_modes.get(), fsz_modes));
         return;
     }
 
     Modes::Modes(std::string const &modes_filename, ColumnTag) {
 
-        std::unique_ptr<char[]> const buffer_modes = slurp(modes_filename);
-        get_col_major_from_raw(std::string_view(buffer_modes.get()));
+        auto [bufr_modes, fsz_modes] = slurp(modes_filename);
+        get_col_major_from_raw(std::string_view(bufr_modes.get(), fsz_modes));
         return;
     }
 
     Modes::Modes(std::string const &modes_filename,
         std::string const &evals_filename, RowTag) {
 
-        std::unique_ptr<char[]> const buffer_modes = slurp(modes_filename);
-        std::unique_ptr<char[]> const buffer_evals = slurp(evals_filename);
+        auto [bufr_modes, fsz_modes] = slurp(modes_filename);
+        auto [bufr_freqs, fsz_evals] = slurp(evals_filename);
 
-        get_row_major_from_raw(std::string_view(buffer_modes.get()));
-        _evals = get_values_from_raw(std::string_view(buffer_evals.get()));
+        get_row_major_from_raw(std::string_view(bufr_modes.get(), fsz_modes));
+        _freqs_ndd_filename =
+            get_values_from_raw(std::string_view(bufr_freqs.get(), fsz_evals));
 
-        if (_evals.size() != _j) {
+        if (_freqs_ndd_filename.size() != _j) {
             std::cerr << "Vector count: " << _j
-                      << ". Scalar count: " << _evals.size() << '\n';
+                      << ". Scalar count: " << _freqs_ndd_filename.size()
+                      << '\n';
             throw std::runtime_error(
                 "Frequencies don't match vectors. Aborting.");
         }
@@ -45,15 +47,17 @@ namespace NDD {
     Modes::Modes(std::string const &modes_filename,
         std::string const &evals_filename, ColumnTag) {
 
-        std::unique_ptr<char[]> const buffer_modes = slurp(modes_filename);
-        std::unique_ptr<char[]> const buffer_evals = slurp(evals_filename);
+        auto [bufr_modes, fsz_modes] = slurp(modes_filename);
+        auto [bufr_freqs, fsz_evals] = slurp(evals_filename);
 
-        get_col_major_from_raw(std::string_view(buffer_modes.get()));
-        _evals = get_values_from_raw(std::string_view(buffer_evals.get()));
+        get_col_major_from_raw(std::string_view(bufr_modes.get(), fsz_modes));
+        _freqs_ndd_filename =
+            get_values_from_raw(std::string_view(bufr_freqs.get(), fsz_evals));
 
-        if (_evals.size() != _j) {
+        if (_freqs_ndd_filename.size() != _j) {
             std::cerr << "Vector count: " << _j
-                      << ". Scalar count: " << _evals.size() << '\n';
+                      << ". Scalar count: " << _freqs_ndd_filename.size()
+                      << '\n';
             throw std::runtime_error(
                 "Frequencies don't match vectors. Aborting.");
         }
@@ -97,7 +101,7 @@ namespace NDD {
             ++beg;
         }
         _evectors.reserve(_j);
-        _evals.reserve(_j);
+        _freqs_ndd_filename.reserve(_j);
         // representa: " ****"
         size_t constexpr spacer = 6;
         size_t constexpr ch_elem = 11;
@@ -114,7 +118,7 @@ namespace NDD {
         for (size_t K = 0; K < _j; ++K) {
             char const *start_eval = cursor + ch_num;
             char *end_eval = const_cast<char *>(start_eval) + ch_eval;
-            _evals.push_back(std::strtof(start_eval, &end_eval));
+            _freqs_ndd_filename.push_back(std::strtof(start_eval, &end_eval));
 
             auto idx = cursor + ch_num + ch_eval;
             size_t nl = 0;
@@ -252,20 +256,20 @@ namespace NDD {
 
         } else if (NDD_opts._modes_format == "row") {
 
-            if (NDD_opts._evalues_ndd_filename == "none") {
+            if (NDD_opts._freqs_ndd_filename == "none") {
                 return {NDD_opts._modes_ndd_filename, RowTag()};
             } else {
                 return {NDD_opts._modes_ndd_filename,
-                    NDD_opts._evalues_ndd_filename, RowTag()};
+                    NDD_opts._freqs_ndd_filename, RowTag()};
             }
 
         } else if (NDD_opts._modes_format == "column") {
 
-            if (NDD_opts._evalues_ndd_filename == "none") {
+            if (NDD_opts._freqs_ndd_filename == "none") {
                 return {NDD_opts._modes_ndd_filename, ColumnTag()};
             } else {
                 return {NDD_opts._modes_ndd_filename,
-                    NDD_opts._evalues_ndd_filename, ColumnTag()};
+                    NDD_opts._freqs_ndd_filename, ColumnTag()};
             }
         }
         throw std::invalid_argument(

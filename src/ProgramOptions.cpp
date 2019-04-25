@@ -27,8 +27,8 @@ int get_parameters(int ac, char *av[], ANA::InOutOptions &io_opts,
     ->default_value("none"), "Input file with MD simulation.\n")
     ("NDD_modes,M", PO::value<std::string>(&NDD_opts._modes_ndd_filename)
     ->default_value("none")->composing(), "Input vectors for non Delaunay dynamics.\n")
-    ("NDD_evals,E", PO::value<std::string>(&NDD_opts._evalues_ndd_filename)
-    ->default_value("none")->composing(), "Input eigenvalues for non Delaunay dynamics.\n")
+    ("NDD_frequencies,F", PO::value<std::string>(&NDD_opts._freqs_ndd_filename)
+    ->default_value("none")->composing(), "Input frequencies to calculate the flexibility index by NDD.\n")
     ("NDD_scaling,S", PO::value<std::string>(&NDD_opts._scaling_ndd_filename)
     ->default_value("none")->composing(), "Input scaling factors for non Delaunay dynamics.\n")
     ("config_file,c", PO::value<std::string>(&config_filename)
@@ -158,17 +158,23 @@ int get_parameters(int ac, char *av[], ANA::InOutOptions &io_opts,
     ("stop", PO::value<int>(&md_end)->default_value(0),
     "Frame to stop reading. If set to 0, read all. Default: 0.\n")
 
-    ("NDD_derivative", PO::value<bool>(&NDD_opts._derivative)->default_value(true),
-    "If set to false, ANA will not perform the derivative and instead output"
-    "2 files with the volumes of the displaced cavity in the positive and"
-    "the negative direction. Default: true\n")
+    ("NDD_step", PO::value<int>(&NDD_opts._step)->default_value(3),
+    "If set to 1, ANA will not perform the derivative and instead output "
+    "2 files with the volumes of the displaced cavity in the positive and "
+    "the negative direction.\n"
+    "If set to 2, ANA will output the VGV.\n"
+    "3: ANA will output the flexibility index. Default: 3\n")
 
-    ("NDD_step", PO::value<int>(&NDD_opts._step)->default_value(5),
-    "Scaling number for input vectors in non Delaunay dynamics. Default: 5\n")
+    ("NDD_size", PO::value<int>(&NDD_opts._size)->default_value(1),
+    "Scaling number for input vectors in non Delaunay dynamics. Default: 1\n")
 
     ("NDD_modes_format", PO::value<std::string>(&NDD_opts._modes_format)->default_value("row"),
     "amber: vectors will be read as Amber PCA modes. "
     "row(column): vectors will be read in row(column) major order. Default: row\n")
+
+    ("NDD_frequences_scaling", PO::value<bool>(&NDD_opts._scale_w_freqs)->default_value(false),
+    "If true, ANA will scale the input vectors by their frequencies instead of "
+    "automatically generating its own scaling factors. Default: false\n")
 
     ("min_vol_radius", PO::value<double>(&cell_opts._minVR)->default_value(1.4)
     ->composing(), "Radius of the sphere with the minimum volume to be taken "
@@ -212,29 +218,29 @@ int get_parameters(int ac, char *av[], ANA::InOutOptions &io_opts,
     // Throws an error in case the first argument is not specified
     PO::notify(vm);
   } catch (exception &e) {
-    cerr << "error: " << e.what() << "\n";
+    cerr << "error: " << e.what() << "\n\n";
     return 1;
   } catch (...) {
-    cerr << "Exception of unknown type when reading config file.\n";
+    cerr << "Exception of unknown type when reading config file.\n\n";
   }
 
   if(io_opts._in_filename == "none" && tool_pdb_to_ch == "none" &&
      tool_pdb_norm == "none"         && tool_aa_to_ca == "none") {
     std::cerr << "Error: option '--input_struct' is required but missing."
-    << '\n';
+    << '\n\n';
     return 1;
   }
 
   if (triangulate_only_included_aas == true && AA_indices_proto == "none") {
       std::cerr << "ERROR: 'triangulate_only_included_aas' is TRUE, but "
-      "'included_amino_acids' was not set." << "\n";
+      "'included_amino_acids' was not set." << "\n\n";
       return 1;
   }
 
   if (IA_opts._resn_proto != "none" && IA_opts._atom_proto != "none") {
     IA_opts._atom_proto = "none";
     std::cerr << "Input warning: Both 'included_area_residues' and "
-    "'included_area_atoms' were set. Using the former. " << "\n";
+    "'included_area_atoms' were set. Using the former. " << "\n\n";
   }
 
 
@@ -246,27 +252,39 @@ int get_parameters(int ac, char *av[], ANA::InOutOptions &io_opts,
       (io_opts._in_md_filename != "none");
 
   if (!defined_included_area && modes_or_ndd) {
-    std::cerr << "Input error: You are running ANA MD/NDD without an inclusion "
-    "area. Check ANA's manual." << "\n";
+    std::cerr << "Input error: You are running ANA MD/NDD without an included "
+    "area. Check ANA's manual." << "\n\n";
     return 1;
   }
 
-  // if (NDD_opts._modes_format != "amber") {
-  //   IA_opts._opt = NDDOptions::amber;
-  // } else if (NDD_opts._modes_format != "column") {
-  //   IA_opts._opt = NDDOptions::column;
-  // } else if (NDD_opts._modes_format != "row") {
-  //   IA_opts._opt = NDDOptions::row ;
-  // }
+  bool const no_frequencies = (NDD_opts._freqs_ndd_filename == "none") && 
+      (NDD_opts._modes_format != "amber");
+  if ((NDD_opts._step == 3) && no_frequencies) {
+     std::cerr << "Input error: You are trying to get a cavity's flexibility index "
+    "without the eigenvectors frequencies. Check ANA's manual." << "\n\n";
+    return 1;
+  }
+  
+  if (NDD_opts._scale_w_freqs && no_frequencies) {
+     std::cerr << "Input error: NDD_frequences_scaling is true but no "
+    "eigenvectors frequencies could be found." << "\n\n";
+    return 1;
+  }
+
+  if (NDD_opts._scaling_ndd_filename != "none" && NDD_opts._scale_w_freqs) {
+     std::cerr << "Input warning: NDD_frequences_scaling is true and input file "
+    "NDD_scaling was also set. The later will override the former." << "\n\n";
+  }
+
 
   if (NDD_opts._modes_ndd_filename == "none" && NDD_opts._out_ndd_filename == "none") {
-    std::cerr << "Input error: NDD_input/NDD_output filename was not set." << "\n";
+    std::cerr << "Input error: NDD_input/NDD_output filename was not set." << "\n\n";
     return 1;
   }
 
-  if ((NDD_opts._evalues_ndd_filename != "none") && 
+  if ((NDD_opts._freqs_ndd_filename != "none") && 
   ((NDD_opts._modes_format != "row") && (NDD_opts._modes_format != "column"))) {
-    std::cerr << "Input error: NDD_modes_format should be set to row or column." << "\n";
+    std::cerr << "Input error: NDD_modes_format should be set to row or column." << "\n\n";
     return 1;
   }
 

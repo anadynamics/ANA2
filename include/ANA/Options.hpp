@@ -28,12 +28,15 @@ public:
 struct NDDOptions {
 public:
     std::string _modes_ndd_filename;
-    std::string _evalues_ndd_filename;
+    std::string _freqs_ndd_filename;
     std::string _scaling_ndd_filename;
     std::string _modes_format;
+    bool _scale_w_freqs = false;
     std::string _out_ndd_filename;
-    bool _derivative = true;
-    int _step = 5;
+
+    enum Steps { Volumes = 1, Gradient, Index };
+    int _step = Index;
+    int _size = 5;
 };
 
 class CellFilteringOptions {
