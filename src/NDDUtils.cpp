@@ -9,23 +9,19 @@ void ndd(
     std::vector<double> output_volumes;
 
     Modes const modos = create_modes(NDD_opts);
-    std::vector<double> scaling_factors =
-        initialize_scaling_factors(NDD_opts, modos._j);
 
-    std::vector<double> pos_vols_ndd, neg_vols_ndd, der_vols_ndd;
-    pos_vols_ndd.reserve(modos._j);
+    std::vector<double> scaling_factors =
+        initialize_scaling_factors(modos, NDD_opts);
+
+    std::vector<double> neg_vols_ndd, pos_vols_ndd, vgv;
     neg_vols_ndd.reserve(modos._j);
-    der_vols_ndd.reserve(modos._j);
+    pos_vols_ndd.reserve(modos._j);
+    vgv.reserve(modos._j);
 
     if (CH._dynamic) {
+        // update the convex hull (included area) if needed.
         for (size_t j = 0; j < modos._j; ++j) {
-            double const mul = NDD_opts._step / scaling_factors[j];
-
-            // In the positive direction.
-            ConvexHull CH_pos(CH, modos._evectors[j], mul);
-            Cavity hueco_pos(hueco, modos._evectors[j], mul);
-            carve_CH_into_cavity(hueco_pos, CH_pos);
-            double const pos_vol = hueco_pos._volume + hueco_pos._outer_volume;
+            double const mul = NDD_opts._size / scaling_factors[j];
 
             // In the negative direction.
             ConvexHull CH_neg(CH, modos._evectors[j], -mul);
@@ -33,63 +29,112 @@ void ndd(
             carve_CH_into_cavity(hueco_neg, CH_neg);
             double const neg_vol = hueco_neg._volume + hueco_neg._outer_volume;
 
-            // Numerical derivative.
-            double const der_vol {(pos_vol - neg_vol) / mul};
+            // In the positive direction.
+            ConvexHull CH_pos(CH, modos._evectors[j], mul);
+            Cavity hueco_pos(hueco, modos._evectors[j], mul);
+            carve_CH_into_cavity(hueco_pos, CH_pos);
+            double const pos_vol = hueco_pos._volume + hueco_pos._outer_volume;
 
-            der_vols_ndd.push_back(der_vol);
+            // 1st step
             pos_vols_ndd.push_back(pos_vol);
             neg_vols_ndd.push_back(neg_vol);
-        }
 
-        if (NDD_opts._derivative) {
-            std::string const filename = std::to_string(NDD_opts._step) + "_" +
-                NDD_opts._out_ndd_filename;
-            write_vector(der_vols_ndd, filename);
-        } else {
-            std::string const filename_pos = std::to_string(NDD_opts._step) +
-                "_pos_" + NDD_opts._out_ndd_filename;
-            write_vector(pos_vols_ndd, filename_pos);
-
-            std::string const filename_neg = std::to_string(NDD_opts._step) +
-                "_neg_" + NDD_opts._out_ndd_filename;
-            write_vector(neg_vols_ndd, filename_neg);
+            // 2nd step: numerical derivative.
+            double const der_vol {(pos_vol - neg_vol) / mul};
+            vgv.push_back(der_vol);
         }
 
     } else {
         ;
     }
 
+    write_result(NDD_opts, modos, neg_vols_ndd, pos_vols_ndd, vgv);
+
     return;
 }
 
 // If scaling values were provided, read them. If not, set a uniform distro
 // of 1.
-auto initialize_scaling_factors(NDDOptions const &NDD_opts, std::size_t j)
+auto initialize_scaling_factors(Modes const &modos, NDDOptions const &NDD_opts)
     -> std::vector<double> {
+
+    // If both _scaling_ndd_filename and _scale_w_freqs were set, the later will
+    // override the former.
     if (NDD_opts._scaling_ndd_filename != "none") {
 
-        std::unique_ptr<char[]> const buffer_evals =
-            slurp(NDD_opts._scaling_ndd_filename);
+        auto [bufr_scaling_ftor, fsz] = slurp(NDD_opts._scaling_ndd_filename);
         std::vector<double> scaling_factors =
-            get_values_from_raw(std::string_view(buffer_evals.get()));
+            get_values_from_raw(std::string_view(bufr_scaling_ftor.get(), fsz));
 
-        if (scaling_factors.size() != j) {
-            std::cerr << "Vector count: " << j
+        if (scaling_factors.size() != modos._j) {
+            std::cerr << "Vector count: " << modos._j
                       << ". Scalar count: " << scaling_factors.size() << '\n';
             throw std::runtime_error(
                 "Frequencies don't match vectors. Aborting.");
         }
 
         return scaling_factors;
+    } else if (NDD_opts._scale_w_freqs) {
+        return modos._freqs_ndd_filename;
+    } else {
+
+        std::vector<double> scaling_factors;
+        scaling_factors.reserve(modos._j);
+        for (std::size_t i = 0; i < modos._j; ++i) {
+            scaling_factors.push_back(1.);
+        }
+        return scaling_factors;
+    }
+}
+
+void write_result(NDDOptions const &NDD_opts, Modes const &modos,
+    std::vector<double> const &neg_vols_ndd,
+    std::vector<double> const &pos_vols_ndd, std::vector<double> const &vgv) {
+
+    switch (NDD_opts._step) {
+    case 1: {
+        std::string const filename_neg = std::to_string(NDD_opts._size) +
+            "_neg_" + NDD_opts._out_ndd_filename;
+        std::string const filename_pos = std::to_string(NDD_opts._size) +
+            "_pos_" + NDD_opts._out_ndd_filename;
+
+        write_vector(neg_vols_ndd, filename_neg);
+        write_vector(pos_vols_ndd, filename_pos);
+        break;
+    }
+    case 2: {
+        std::string const filename =
+            std::to_string(NDD_opts._size) + "_" + NDD_opts._out_ndd_filename;
+        write_vector(vgv, filename);
+        break;
+    }
+    case 3: {
+        barletta_index(modos, vgv);
+        break;
+    }
+    }
+    return;
+}
+
+void barletta_index(Modes const &modos, std::vector<double> const &vgv) {
+    // VGV needs to be normalized before calculating the flexibility index.
+    double squared_norm = 0;
+    for (std::size_t j = 0; j < modos._j; ++j) {
+        squared_norm += vgv[j] * vgv[j];
     }
 
-    std::vector<double> scaling_factors;
-    scaling_factors.reserve(j);
-    for (std::size_t i = 0; i < j; ++i) {
-        scaling_factors.push_back(1.);
+    // Instead of dividing each VGV element by the vector's norm, just
+    // divide each squared element by the squared norm.
+    double sum = 0;
+    for (std::size_t j = 0; j < modos._j; ++j) {
+        sum += modos._freqs_ndd_filename[j] * modos._freqs_ndd_filename[j] *
+            vgv[j] * vgv[j] / squared_norm;
     }
 
-    return scaling_factors;
+    double const barletta_index = cte * sum;
+    printf("Flexibility:  %.10f\n", barletta_index);
+
+    return;
 }
 
 } // namespace ANA::NDD
