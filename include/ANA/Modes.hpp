@@ -48,15 +48,6 @@ namespace NDD {
 
         void get_col_major_from_raw(std::string_view const texto);
 
-        void get_evals_from_raw(std::string_view const texto);
-
-        void read_evals(std::string const &evals_filename) {
-
-            std::unique_ptr<char[]> const buffer_evals = slurp(evals_filename);
-            get_evals_from_raw(std::string_view(buffer_evals.get()));
-            return;
-        }
-
         void calpha_to_full_atom(std::string const &pdb_filename);
 
         void normalize_evectors() {
@@ -81,7 +72,7 @@ namespace NDD {
 
         std::vector<std::vector<double>> _atm_evectors;
         std::vector<std::vector<double>> _evectors;
-        std::vector<double> _evals;
+        std::vector<double> _freqs_ndd_filename;
         std::vector<double> _normas_atm;
         size_t _i, _j, _iatm = 0;
     };
