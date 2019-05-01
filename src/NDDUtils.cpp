@@ -122,7 +122,6 @@ void barletta_index(Modes const &modos, std::vector<double> const &vgv) {
     for (std::size_t j = 0; j < modos._j; ++j) {
         squared_norm += vgv[j] * vgv[j];
     }
-
     // Instead of dividing each VGV element by the vector's norm, just
     // divide each squared element by the squared norm.
     double sum = 0;
