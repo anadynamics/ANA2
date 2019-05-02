@@ -29,6 +29,12 @@ int get_parameters(int ac, char *av[], ANA::InOutOptions &io_opts,
     ("input_md,d", PO::value<std::string>(&io_opts._in_md_filename)
     ->default_value("none"), "Input file with MD simulation.\n")
 
+    ("output_draw,f", PO::value<std::string>(&io_opts._out_pdb_filename)
+    ->default_value("none")->composing(),"PDB output filename.\n")
+    
+    ("out_vol,o", PO::value<std::string>(&io_opts._out_vol_filename)
+    ->default_value("none")->composing(),"Volume output filename.\n")
+
     ("NDD_modes,M", PO::value<std::string>(&NDD_opts._modes_ndd_filename)
     ->default_value("none")->composing(), "Input vectors for non Delaunay dynamics (NDD).\n")
     
@@ -46,12 +52,6 @@ int get_parameters(int ac, char *av[], ANA::InOutOptions &io_opts,
 
     ("config_file,c", PO::value<std::string>(&config_filename)
     ->default_value("none"), "Filename of the configuration file.\n")
-    
-    ("output_draw,f", PO::value<std::string>(&io_opts._out_pdb_filename)
-    ->default_value("none")->composing(),"PDB output filename.\n")
-    
-    ("out_vol,o", PO::value<std::string>(&io_opts._out_vol_filename)
-    ->default_value("none")->composing(),"Volume output filename.\n")
     
     ("include,i", PO::value<std::string>(&IA_opts._filename)
     ->default_value("none")->composing(), "Coordinates of the included area in PDB format.\n")
@@ -103,7 +103,7 @@ int get_parameters(int ac, char *av[], ANA::InOutOptions &io_opts,
     ->composing(), "Read the input coordinates and write 'include_prism.ANA' file with the requested prism.\n")
 
     ("triangulate_only_included_aas", PO::value<bool>(&triangulate_only_included_aas)
-    ->default_value(false), "Instead of triangulating the whole molecule; triangulate only the included amino acids.\n"
+    ->default_value(false), "Instead of triangulating the whole molecule triangulate only the included amino acids.\n"
     "Default: false.\n")
 
     ("atom_only", PO::value<bool>(&atom_only)
@@ -142,7 +142,7 @@ int get_parameters(int ac, char *av[], ANA::InOutOptions &io_opts,
     "Default: cm.\n")
 
     ("ASA_only_side", PO::value<std::string>(&only_side_ASA)
-    ->default_value("inside"), "inside: keep inside nulls,\n"
+    ->default_value("inside"), "inside: keep inside nulls.\n"
     "outside: keep outside nulls.\n" 
     "Default: inside.\n")
 
@@ -154,7 +154,7 @@ int get_parameters(int ac, char *av[], ANA::InOutOptions &io_opts,
     "more cells are classified as being \"outside\". Default: 0.7.\n")
 
     ("ASA_max_dist", PO::value<double>(&max_probe_length)->default_value(15)
-    ->composing(), "Maximum distance between cell and Calpha used to keep cell.The bigger this number is the better (but slower) the process gets.\n"
+    ->composing(), "Maximum distance between cell and Calpha used to keep cell. The bigger this number is the better (but slower) the process gets.\n"
     "Default: 15.\n")
 
     ("start", PO::value<int>(&md_start)->default_value(1),
@@ -166,7 +166,7 @@ int get_parameters(int ac, char *av[], ANA::InOutOptions &io_opts,
     "Default: 1.\n")
 
     ("stop", PO::value<int>(&md_end)->default_value(0),
-    "Frame to stop reading. If set to 0, read all.\n"
+    "Frame to stop reading. Reads the whole trajectory when set to 0.\n"
     "Default: 0.\n")
 
     ("NDD_step", PO::value<int>(&NDD_opts._step)->default_value(3),
@@ -181,7 +181,7 @@ int get_parameters(int ac, char *av[], ANA::InOutOptions &io_opts,
     "Default: row.\n")
 
     ("NDD_frequences_scaling", PO::value<bool>(&NDD_opts._scale_w_freqs)->default_value(false),
-    "If true, ANA will scale the input vectors by their frequencies instead of automatically generating its own scaling factors.\n"
+    "If true ANA will scale the input vectors by their frequencies instead of automatically generating its own scaling factors.\n"
     "Default: false.\n")
 
     ("min_vol_radius", PO::value<double>(&cell_opts._minVR)->default_value(1.4)
