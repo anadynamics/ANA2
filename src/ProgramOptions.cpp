@@ -23,7 +23,7 @@ int get_parameters(int ac, char *av[], ANA::InOutOptions &io_opts,
 
     CLI_only_options.add_options()
 
-    ("input_struct,i", PO::value<std::string>(&io_opts._in_filename)
+    ("input_struct", PO::value<std::string>(&io_opts._in_filename)
 	  ->default_value("none"), "Input structure (pdb). Positional argument. \n")
 
     ("input_md,d", PO::value<std::string>(&io_opts._in_md_filename)
@@ -48,13 +48,13 @@ int get_parameters(int ac, char *av[], ANA::InOutOptions &io_opts,
     ("config_file,c", PO::value<std::string>(&config_filename)
     ->default_value("ANA.cfg"), "Filename of the configuration file. Default: \"ANA.cfg\". \n")
     
-    ("output_draw,o", PO::value<std::string>(&io_opts._out_pdb_filename)
+    ("output_draw,f", PO::value<std::string>(&io_opts._out_pdb_filename)
     ->default_value("none")->composing(),"Output filename. \n")
     
-    ("out_vol,v", PO::value<std::string>(&io_opts._out_vol_filename)
+    ("out_vol,o", PO::value<std::string>(&io_opts._out_vol_filename)
     ->default_value("none")->composing(),"Volume output filename. \n")
     
-    ("include,f", PO::value<std::string>(&IA_opts._filename)
+    ("include,i", PO::value<std::string>(&IA_opts._filename)
     ->default_value("none")->composing(), "Coordinates of the included area in PDB format. \n")
 
     ("tool_check_CH,C", PO::value<std::string>(&tool_check_CH)->default_value("none")
@@ -72,7 +72,9 @@ int get_parameters(int ac, char *av[], ANA::InOutOptions &io_opts,
       ->composing(), "Write Calpha atoms indices for the included residues "
       "to stdout. \n")
     
-    ("ver", "Output version number. \n")("help,h", "Output help message. \n");
+    ("ver,v", "Output version number. \n")
+    
+    ("help,h", "Output help message. \n");
 
     // Input structures is a positional argument
     PO::positional_options_description input_struct;
