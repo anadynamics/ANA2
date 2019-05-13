@@ -275,6 +275,11 @@ int get_parameters(int ac, char *av[], ANA::InOutOptions &io_opts,
         "without the eigenvectors frequencies. Check ANA's manual." << "\n\n";
         return 1;
       }
+
+      if ((NDD_opts._step < 3) && NDD_opts._out_ndd_filename == "none") {
+        std::cerr << "Input error: NDD requested but no NDD_output filename was not set." << "\n\n";
+        return 1;
+      }
   
       if (NDD_opts._scale_w_freqs && no_frequencies) {
         std::cerr << "Input error: NDD_frequences_scaling is true but no "
@@ -285,11 +290,6 @@ int get_parameters(int ac, char *av[], ANA::InOutOptions &io_opts,
       if (NDD_opts._scaling_ndd_filename != "none" && NDD_opts._scale_w_freqs) {
         std::cerr << "Input warning: NDD_frequences_scaling is true and input file "
         "NDD_scaling was also set. The later will override the former." << "\n\n";
-      }
-
-      if (NDD_opts._out_ndd_filename == "none") {
-        std::cerr << "Input error: NDD requested but no NDD_output filename was not set." << "\n\n";
-        return 1;
       }
 
       if ((NDD_opts._freqs_ndd_filename != "none") && 
