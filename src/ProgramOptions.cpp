@@ -220,11 +220,13 @@ int get_parameters(int ac, char *av[], ANA::InOutOptions &io_opts,
     }
 
     // Parse variables to see if a config file was specificated. If so, read it,
-    // and parse again.      PO::notify(vm);
+    // and parse again.
+    PO::notify(vm);
     std::ifstream ifs(config_filename);
     store(PO::parse_config_file(ifs, cfg_only_options), vm);
     // Throws an error in case the first argument is not specified
     PO::notify(vm);
+
   } catch (exception &e) {
     cerr << "error: " << e.what() << "\n\n";
     return 1;
