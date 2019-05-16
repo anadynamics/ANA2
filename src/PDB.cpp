@@ -8,7 +8,7 @@ void write_PDB(Delaunay const &T, std::string const &filename) {
 
     FILE *out_file = std::fopen(filename.c_str(), "w");
     if (out_file) {
-        std::pair<int, int> idx_resid{1, 1};
+        std::pair<int, int> idx_resid {1, 1};
         auto const c_end = T.finite_cells_end();
         for (auto cell = T.finite_cells_begin(); cell != c_end; ++cell) {
 
@@ -56,7 +56,7 @@ void write_PDB(ConvexHull const &CH, std::string const &filename) {
 
     FILE *out_file = std::fopen(filename.c_str(), "w");
     if (out_file) {
-        std::pair<int, int> idx_resid{1, 1};
+        std::pair<int, int> idx_resid {1, 1};
         for (auto const &triangle : CH._triangles) {
             idx_resid = draw_lines(triangle, out_file, idx_resid, " IA");
         }
@@ -73,7 +73,7 @@ void write_PDB(Cavity const &hueco, std::string const &filename) {
 
     FILE *out_file = std::fopen(filename.c_str(), "w");
     if (out_file) {
-        std::pair<int, int> idx_resid{1, 1};
+        std::pair<int, int> idx_resid {1, 1};
 
         for (auto const &cell : hueco._inner_cells) {
             idx_resid = draw_lines(cell, out_file, idx_resid, "CEL");
@@ -136,8 +136,8 @@ auto draw(Point const &punto, FILE *out_file, std::pair<int, int> idx_resid,
     fmt::print(out_file,
         "{: <6}{: >5} {: <4s} {:3} {:1}{: >4}    "
         "{:8.3f}{:8.3f}{:8.3f}{:6.2f}{:6.2f}          {: >2s}\n",
-        "HETATM", idx_resid.first++, "H", name, "A", idx_resid.second, punto[0],
-        punto[1], punto[2], 1.0, 0.0, "H");
+        "HETATM", idx_resid.first++, "CH", name, "A", idx_resid.second,
+        punto[0], punto[1], punto[2], 1.0, 0.0, "C");
     return idx_resid.first;
 }
 

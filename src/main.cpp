@@ -1,4 +1,5 @@
 #include <ANA/MD.hpp>
+#include <ANA/Molecule.hpp>
 #include <ANA/NDD.hpp>
 #include <ANA/Options.hpp>
 #include <ANA/ProgramOptions.hpp>
@@ -64,7 +65,11 @@ int main(int argc, char *argv[]) {
 
         if (io_opts._in_md_filename == "none") {
 
-            ANA::draw_CH(CH_triangs, tool_check_CH);
+            // ANA::draw_CH(CH_triangs, tool_check_CH);
+            ANA::Molecule const protein =
+                ANA::Molecule(io_opts._in_filename, atom_only);
+            ANA::ConvexHull const CH = create_convex_hull(protein, IA_opts);
+            ANA::write_PDB(CH, tool_check_CH + ".pdb");
 
         } else {
 
