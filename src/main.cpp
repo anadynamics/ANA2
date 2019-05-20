@@ -170,10 +170,10 @@ int main(int argc, char *argv[]) {
         ANA::NDD_ANA(io_opts, IA_opts, NDD_opts, cell_opts, atom_only);
     } else {
 
-        ANA::static_ANA(io_opts._in_filename, AA_indices_proto, ASA_method,
-            only_side_ASA, exclude_ca_for_ASA_indices_proto, list_wall,
-            list_wall_separator, clusters_method, IA_opts._resn_proto,
-            IA_opts._atom_proto, IA_opts._sphere_proto, IA_opts._cylinder_proto,
+        ANA::static_ANA(io_opts, AA_indices_proto, ASA_method, only_side_ASA,
+            exclude_ca_for_ASA_indices_proto, list_wall, list_wall_separator,
+            clusters_method, IA_opts._resn_proto, IA_opts._atom_proto,
+            IA_opts._sphere_proto, IA_opts._cylinder_proto,
             IA_opts._prism_proto, IA_opts._filename, io_opts._out_pdb_filename,
             io_opts._out_type, triangulate_only_included_aas, atom_only,
             cell_opts, max_probe, max_probe_length, sphere_count,

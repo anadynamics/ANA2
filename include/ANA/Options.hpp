@@ -10,6 +10,7 @@ struct InOutOptions {
     std::string _out_vol_filename = "none";
     std::string _out_pdb_filename = "none";
     std::string _out_type = "grid_pdb";
+    std::string _out_wall_filename = "none";
 };
 
 struct IncludedAreaOptions {

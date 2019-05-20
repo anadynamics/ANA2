@@ -10,7 +10,7 @@
 namespace ANA {
 
 // Main function for static version of ANA.
-int static_ANA(std::string const &in_filename, std::string &AA_indices_proto,
+int static_ANA(InOutOptions const &io_opts, std::string &AA_indices_proto,
     std::string const &ASA_method, std::string const &only_side_ASA,
     std::string &exclude_ca_for_ASA_indices_proto, std::string const &list_wall,
     std::string const &list_wall_separator, std::string const &clusters_method,

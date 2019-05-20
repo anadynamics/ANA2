@@ -35,6 +35,9 @@ int get_parameters(int ac, char *av[], ANA::InOutOptions &io_opts,
     ("out_vol,o", PO::value<std::string>(&io_opts._out_vol_filename)
     ->default_value("none")->composing(),"Volume output filename.\n")
 
+    ("out_wall,w", PO::value<std::string>(&io_opts._out_wall_filename)
+    ->default_value("none")->composing(),"Cavity's wall atoms/residues output filename.\n")
+
     ("NDD_modes,M", PO::value<std::string>(&NDD_opts._modes_ndd_filename)
     ->default_value("none")->composing(), "Input vectors for non Delaunay dynamics (NDD).\n")
     

@@ -2,7 +2,7 @@
 
 namespace ANA {
 
-int static_ANA(std::string const &in_filename, std::string &AA_indices_proto,
+int static_ANA(InOutOptions const &io_opts, std::string &AA_indices_proto,
     std::string const &ASA_method, std::string const &only_side_ASA,
     std::string &exclude_ca_for_ASA_indices_proto, std::string const &list_wall,
     std::string const &list_wall_separator, std::string const &clusters_method,
@@ -36,7 +36,7 @@ int static_ANA(std::string const &in_filename, std::string &AA_indices_proto,
     std::vector<std::array<double, 3>> in_vtces_radii;
 
     // Read input file
-    bool const requested_CH = ANA::read_static(in_filename,
+    bool const requested_CH = ANA::read_static(io_opts._in_filename,
         triangulate_only_included_aas, atom_only, AA_indices_proto,
         exclude_ca_for_ASA_indices_proto, include_CH_aa_proto,
         include_CH_atom_proto, sphere_proto, cylinder_proto, prism_proto,
@@ -125,10 +125,7 @@ int static_ANA(std::string const &in_filename, std::string &AA_indices_proto,
 
     if (list_wall == "atom") {
         int pock_cnt = 1;
-        // Remove ".pdb"
-        std::string filename = in_filename.substr(0, in_filename.size() - 4);
-        filename.insert(0, "wall_");
-        std::ofstream wall_out(filename);
+        std::ofstream wall_out(io_opts._out_wall_filename);
         for (NA_Vector const &null_areas_vtor : null_areas_mtx) {
             ANA::wall_atom_output(wall_out, null_areas_vtor,
                 cavity_intersecting_cells, intersecting_bool, requested_CH,
@@ -137,10 +134,7 @@ int static_ANA(std::string const &in_filename, std::string &AA_indices_proto,
         }
     } else if (list_wall == "residue") {
         int pock_cnt = 1;
-        // Remove ".pdb"
-        std::string filename = in_filename.substr(0, in_filename.size() - 4);
-        filename.insert(0, "wall_");
-        std::ofstream wall_out(filename);
+        std::ofstream wall_out(io_opts._out_wall_filename);
         for (NA_Vector const &null_areas_vtor : null_areas_mtx) {
             ANA::wall_aa_output(wall_out, null_areas_vtor,
                 cavity_intersecting_cells, intersecting_bool, requested_CH,
