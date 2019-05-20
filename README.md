@@ -1,6 +1,6 @@
 # Analysis of Null Areas 
 
-        ANA input.pdb -c config_file.cfg -d trajectory.nc -o output.pdb 
+        ANA input.pdb -c config_file.cfg -d trajectory.nc -f output.pdb 
 
 
 Precise cavity definition. Flexible tracking. Fast performance.
