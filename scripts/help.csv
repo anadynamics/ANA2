@@ -3,6 +3,7 @@ input_struct	s	none	 Input structure (pdb). Positional argument	io_opts._in_file
 input_md	d	none	 Input file with MD simulation	io_opts._in_md_filename
 output_draw	f	none	PDB output filename	io_opts._out_pdb_filename
 out_vol	o	none	Volume output filename	io_opts._out_vol_filename
+out_wall	w	none	Cavity's wall atoms/residues output filename	io_opts._out_wall_filename
 NDD_modes	M	none	 Input vectors for non Delaunay dynamics (NDD)	NDD_opts._modes_ndd_filename
 NDD_frequencies	F	none	 Input frequencies to calculate the flexibility index by NDD	NDD_opts._freqs_ndd_filename
 NDD_scaling	S	none	 Input scaling factors for NDD	NDD_opts._scaling_ndd_filename
