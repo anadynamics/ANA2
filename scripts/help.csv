@@ -1,48 +1,48 @@
 Name	Shorthand	Default	Description	Variables
-input_struct	s	none	 Input structure (pdb). Positional argument	io_opts._in_filename
-input_md	d	none	 Input file with MD simulation	io_opts._in_md_filename
-output_draw	f	none	PDB output filename	io_opts._out_pdb_filename
-out_vol	o	none	Volume output filename	io_opts._out_vol_filename
-out_wall	w	none	Cavity's wall atoms/residues output filename	io_opts._out_wall_filename
-NDD_modes	M	none	 Input vectors for non Delaunay dynamics (NDD)	NDD_opts._modes_ndd_filename
-NDD_frequencies	F	none	 Input frequencies to calculate the flexibility index by NDD	NDD_opts._freqs_ndd_filename
-NDD_scaling	S	none	 Input scaling factors for NDD	NDD_opts._scaling_ndd_filename
-NDD_output	O	none	 Suffix for the NDD output file	NDD_opts._out_ndd_filename
-NDD_size	Z	1	 Scaling number for input vectors in non Delaunay dynamics. Default: 1	NDD_opts._size
-config_file	c	none	 Filename of the configuration file	config_filename
-include	i	none	 Coordinates of the included area in PDB format	IA_opts._filename
-tool_check_CH	t	none	 Filename of output .pdb displaying the included area	tool_check_CH
-tool_pdb_to_ch	P	none	 Read the input PDB and write 'include.ANA' file with the vertices of its convex hull	tool_pdb_to_ch
-tool_pdb_norm	n	none	 Read the input PDB and renumber its atoms and residues. Write the output PDB to \tool_pdb_norm\	tool_pdb_norm
-tool_aa_to_ca	a	none	 Write Calpha atoms indices for the included residues to stdout	tool_aa_to_ca
+input_struct	s	none	    Input structure. This is the only positional argument so you can type it first and skip the flag	io_opts._in_filename
+input_md	d	none	    Input file with MD simulation	io_opts._in_md_filename
+config_file	c	none	    Filename of the configuration file	config_filename
+include	i	none	    Coordinates of the included area in PDB format	IA_opts._filename
+output_draw	f	none	    PDB output filename	io_opts._out_pdb_filename
+output_vol	o	none	    Volume output filename	io_opts._out_vol_filename
+output_wall	w	none	    Cavity's wall atoms/residues output filename	io_opts._out_wall_filename
+NDD_modes	M	none	    Input vectors for Non-Delaunay dynamics (NDD)	NDD_opts._modes_ndd_filename
+NDD_frequencies	F	none	    Input frequencies (in cm^-1) to calculate the flexibility index by NDD	NDD_opts._freqs_ndd_filename
+NDD_scaling	S	none	    Input scaling factors for NDD. See ANA's manual to understand why they are necessary	NDD_opts._scaling_ndd_filename
+NDD_size	Z	1	    Scaling magnitude for the input vectors for NDD. Default: 1	NDD_opts._size
+NDD_output	O	none	    Suffix for the NDD output file. The scaling magnitude will be the prefix	NDD_opts._out_ndd_filename
+tool_check_CH	t	none	    Filename of output PDB displaying the included area	tool_check_CH
+tool_pdb_to_ch	p	none	    Read the input PDB and write 'include.ANA' file with the vertices of its convex hull	tool_pdb_to_ch
+tool_pdb_norm	n	none	    Read the input PDB and renumber its atoms and residues. Write the output PDB to \tool_pdb_norm\	tool_pdb_norm
+tool_aa_to_ca	a	none	    Write Calpha atoms indices for the included residues to stdout	tool_aa_to_ca
 ver	v	-	 Output version number	-
 help	h	-	 Output help message	-
-included_amino_acids	-	none	    Amino acids that are part of a cell	AA_indices_proto
-included_area_residues	-	none	 Amino acids that delimit the convex hull of the included area	IA_opts._resn_proto
-included_area_atoms	-	none	 Atoms that delimit the convex hull of the included area	IA_opts._atom_proto
-included_area_precision	-	0	 0: keep all cells that intercede in the included area.    1: only keep null areas that are within the included area.    Default: 0	precision
-sphere	-	none	 Read the input coordinates and write 'include_sphere.ANA' file with the requested pseudo sphere	IA_opts._sphere_proto
-cylinder	-	none	 Read the input coordinates and write 'include_cylinder.ANA' file with the requested pseudo cylinder	IA_opts._cylinder_proto
-prism	-	none	 Read the input coordinates and write 'include_prism.ANA' file with the requested prism	IA_opts._prism_proto
-triangulate_only_included_aas	-	false	 Instead of triangulating the whole molecule triangulate only the included amino acids.    Default: false	triangulate_only_included_aas
-atom_only	-	true	 Triangulate only ATOM records.    Default: true	atom_only
-clusters_method	-	boxes	    none: don't group null areas.    facets: group null areas if the tetrahedrons share facets.    boxes: group null areas if the tetrahedrons bounding boxes intersect.    Default: boxes	clusters_method
-clusters_min_size	-	2	 Minimum number of cells a cluster has to have to be included.    Default: 2	clusters_min_size
-minimum_number_of_vertices_to_include	-	2	 Minimum number of wall atoms of the included amino acids.    Default: 2	nbr_of_vertices_to_include
-list_wall	-	none	    atom: output a file with the wall atoms.    residue: output a file with the wall amino acids.     none: don't.    Default: none	list_wall
-separator	-	\t	    Separator character for wall residues (atoms). \+\: might useful for pymol.    Default: \t	list_wall_separator
-ASA_discard_method	-	cm	  none: don't.    cm: determine cells surrondings using the global CM as reference.    backbone: draw a convex hull between the Calphas and discard every cell with its centroid outside(inside) the hull.    axes: determine cells surrondings using its centroid and cartesian axes as references.    Default: cm	ASA_method
-ASA_only_side	-	inside	 inside: keep inside nulls.    outside: keep outside nulls.     Default: inside	only_side_ASA
-ASA_exclude_amino_acids	-	none	 Residues to exclude from the ASA algorithms	exclude_ca_for_ASA
-ASA_min_dot_pdt	-	0.7	 Minimum dot product to keep(discard) cell. As it increases     more cells are classified as being \outside\. Default: 0.7	max_probe
-ASA_max_dist	-	15	 Maximum distance between cell and Calpha used to keep cell. The bigger this number is the better (but slower) the process gets.    Default: 15	max_probe_length
+included_area_residues	-	none	 spaces or tabs	IA_opts._resn_proto
+included_area_atoms	-	none	 spaces or tabs	IA_opts._atom_proto
+included_area_precision	-	0	    0: keep all cells that intersect in the included area.    1: prune the intersecting cells to keep only the voids that lie inside the included area.    Default: 0	precision
+sphere	-	none	    Read the input coordinates and write 'include_sphere.ANA' file with the requested pseudo sphere	IA_opts._sphere_proto
+cylinder	-	none	    Read the input coordinates and write 'include_cylinder.ANA' file with the requested pseudo cylinder	IA_opts._cylinder_proto
+prism	-	none	    Read the input coordinates and write 'include_prism.ANA' file with the requested prism	IA_opts._prism_proto
+included_residues	-	none	    Amino acids that line the desired cavity. Useful for discovering new cavities	AA_indices_proto
+minimum_number_of_vertices_to_include	-	2	    Minimum number of wall atoms of the included amino acids.    Default: 2	nbr_of_vertices_to_include
+clusters_method	-	boxes	    Define the method to clusterize cells.    none: don't group null areas.    facets: group null areas if the tetrahedrons share facets.    boxes: group null areas if the tetrahedrons bounding boxes intersect.    Default: boxes	clusters_method
+clusters_min_size	-	2	    Minimum number of cells a cluster has to have to be included.    Default: 2	clusters_min_size
+ASA_discard_method	-	cm	    Method for discarding cells according to solvent exposure.     none: don't.    cm: determine cells surrondings using the global CM as reference.    backbone: draw a convex hull between the Calphas and discard every cell with its centroid outside(inside) the hull.    axes: determine cells surrondings using its centroid and cartesian axes as references.    Default: cm	ASA_method
+ASA_only_side	-	inside	    Which side to keep.    inside: keep inside nulls.    outside: keep outside nulls.     Default: inside	only_side_ASA
+ASA_exclude_residues	-	none	    Residues to exclude from the ASA algorithms	exclude_ca_for_ASA
+ASA_min_dot_pdt	-	0.7	    Minimum dot product to keep(discard) cell. As it increases more cells are classified as being \outside\.    Default: 0.7	max_probe
+ASA_max_dist	-	15	    Maximum distance between cell and Calpha used to keep cell. The bigger this number is the better (but slower) the process gets.    Default: 15	max_probe_length
 start	-	1	    Frame to begin reading at.    Default: 1	md_start
 step	-	1	    Step count to read trajectory frames. NetCDF format only.    Default: 1	md_step
 stop	-	0	    Frame to stop reading. Reads the whole trajectory when set to 0.    Default: 0	md_end
-NDD_step	-	3	    1: ANA will not perform the derivative and instead output 2 files with the volumes of the displaced cavity in the positive and the negative direction.    2: ANA will output the VGV.    3: ANA will output the flexibility index.    Default: 	NDD_opts._step
-NDD_modes_format	-	row	    amber: vectors will be read as Amber PCA modes.    row(column): vectors will be read in row(column) major order.    Default: row	NDD_opts._modes_format
+NDD_step	-	3	    Number of steps in the NDD pipeline ANA will perform.    1: ANA will not perform the derivative and instead output 2 files with the volumes of the displaced cavity in the positive and the negative direction.    2: ANA will output the VGV.    3: ANA will output the flexibility index.    Default: 3	NDD_opts._step
+NDD_modes_format	-	row	    Format of the input vectors.    amber: vectors will be read as Amber PCA modes.    row: vectors will be read in row major order.    column: vectors will be read in column major order.    Default: row	NDD_opts._modes_format
 NDD_frequences_scaling	-	false	    If true ANA will scale the input vectors by their frequencies instead of automatically generating its own scaling factors.    Default: false	NDD_opts._scale_w_freqs
-min_vol_radius	-	1.4	 Radius of the sphere with the minimum volume to be taken into account.    Default: 1.4	cell_opts._minVR
-max_area_radius	-	99	 Radius of the sphere with the maximum surface to be taken into account.    Default: 99	cell_opts._maxSR
-sphere_count	-	5	 Sphere count for grid output.    Default: 5	sphere_count
-output_type	-	grid_pdb	 raw_pdb: null areas as tetrahedrons (residues).    raw_cgo: null areas as tetrahedrons formed with CGO lines in a pymol script.    grid_pdb: null areas filled with points.    grid_cgo: null areas filled with CGO spheres in a pymol script.    Default: grid_pdb	io_opts._out_type
+output_type	-	grid_pdb	    How to visualize output cavities.    raw_pdb: null areas as tetrahedrons.    raw_cgo: null areas as tetrahedrons formed with CGO lines in a pymol script.    grid_pdb: null areas filled with points.    grid_cgo: null areas filled with CGO spheres in a pymol script.    Default: grid_pdb	io_opts._out_type
+sphere_count	-	5	    Sphere count for grid output.    Default: 5	sphere_count
+min_vol_radius	-	1.4	    Radius of the sphere with the minimum volume to be taken into account.    Default: 1.4	cell_opts._minVR
+max_area_radius	-	99	    Radius of the sphere with the maximum surface to be taken into account.    Default: 99	cell_opts._maxSR
+atom_only	-	true	    Triangulate only ATOM records.    Default: true	atom_only
+list_wall	-	none	    atom: output a file with the wall atoms.    residue: output a file with the wall amino acids.     none: don't.    Default: none	list_wall
+separator	-	\t	    Separator character for wall residues (atoms). \+\: might useful for pymol.    Default: \t	list_wall_separator
+triangulate_only_included_aas	-	false	    Instead of triangulating the whole molecule triangulate only the included amino acids.    Default: false	triangulate_only_included_aas
