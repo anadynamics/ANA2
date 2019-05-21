@@ -352,6 +352,13 @@ int get_parameters(int ac, char *av[], ANA::InOutOptions &io_opts,
     return 1;
   }
 
+  if( ((io_opts._out_wall_filename != "none") && (list_wall == "none")) ||
+      ((io_opts._out_wall_filename == "none") && (list_wall != "none")) ) {
+    std::cerr << "Input warning: both \"output_wall,w\"  and \"list_wall\" options " 
+    " need to be defined to obtain the cavity lining residues/atoms. ANA will not " 
+    " write an \"output_wall,w\" file." << "\n\n";
+  }
+
   if(ndd_requested){
       bool const no_frequencies = (NDD_opts._freqs_ndd_filename == "none") && 
         (NDD_opts._modes_format != "amber");

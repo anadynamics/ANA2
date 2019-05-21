@@ -106,7 +106,8 @@ bool read_static(std::string const &filename,
                         vi1._radius = 1.5;
                         std::cerr << "Element from atom " << i + 1
                                   << " not available. "
-                                  << " Using covalent radius of 1.5." << '\n';
+                                  << " Using covalent radius of 1.5." << '\n'
+                                  << "Fix the input PDB." << '\n';
                     }
                     CPoint p1(in_xyz[i][0], in_xyz[i][1], in_xyz[i][2]);
                     molecule_points.push_back(std::make_pair(p1, vi1));
