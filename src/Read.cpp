@@ -109,6 +109,7 @@ bool read_static(std::string const &filename,
                                   << " Using covalent radius of 1.5." << '\n'
                                   << "Fix the input PDB." << '\n';
                     }
+
                     CPoint p1(in_xyz[i][0], in_xyz[i][1], in_xyz[i][2]);
                     molecule_points.push_back(std::make_pair(p1, vi1));
 
@@ -200,7 +201,7 @@ bool read_static(std::string const &filename,
                               << "Using Van Der Walls radii of 1.5." << '\n';
                 }
                 auto resid = residuo.id().value();
-                vi1._resi = resid;
+                vi1._resn = resid;
                 CPoint p1(in_xyz[i][0], in_xyz[i][1], in_xyz[i][2]);
                 molecule_points.push_back(std::make_pair(p1, vi1));
 
