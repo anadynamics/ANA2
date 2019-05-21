@@ -1047,7 +1047,7 @@ void wall_aa_output(std::ofstream &wall_out, NA_Vector const &in_cells,
 
     // Get wall amino acids.
     get_info_cell(in_cells, wall_aa_idx, wall_aa_id);
-    if (requested_CH && precision == 1) {
+    if (requested_CH && (precision == 1)) {
         get_info_cell(
             in_intersecting_cells, intersecting_bool, wall_aa_idx, wall_aa_id);
     }
