@@ -28,6 +28,8 @@ https://anadynamics.netlify.com/docs/quickstart.html
 * Road to 2.0.0
     * Major refactoring.
     * Switched to C++ 17.
+    * New on Static:
+        * New output_wall terminal option to set output filename.
     * New on NDD:
         * No need to input displaced PDBs. ANA will read Amber modes or a raw
 text file with vectors and move the inpud pdb atoms forward and backwards along
