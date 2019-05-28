@@ -13,7 +13,7 @@ NDD_size	Z	1	    Scaling magnitude for the input vectors for NDD. Default: 1	NDD
 NDD_output	O	none	    Suffix for the NDD output file. The scaling magnitude will be the prefix	NDD_opts._out_ndd_filename
 tool_check_CH	t	none	    Filename of output PDB displaying the included area	tool_check_CH
 tool_pdb_to_ch	p	none	    Read the input PDB and write 'include.ANA' file with the vertices of its convex hull	tool_pdb_to_ch
-tool_pdb_norm	n	none	    Read the input PDB and renumber its atoms and residues. Write the output PDB to \tool_pdb_norm\	tool_pdb_norm
+tool_pdb_norm	n	none	    Read the input PDB and renumber its atoms and residues.     Be aware that his tool won't fix every error in your PDB.    Writes the output PDB to \tool_pdb_norm\	tool_pdb_norm
 tool_aa_to_ca	a	none	    Write Calpha atoms indices for the included residues to stdout	tool_aa_to_ca
 ver	v	-	 Output version number	-
 help	h	-	 Output help message	-

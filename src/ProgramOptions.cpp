@@ -83,7 +83,9 @@ int get_parameters(int ac, char *av[], ANA::InOutOptions &io_opts,
     
     ("tool_pdb_norm,n",
     PO::value<std::string>(&tool_pdb_norm)->default_value("none")->composing(),
-    "Read the input PDB and renumber its atoms and residues. Write the output PDB to \"tool_pdb_norm\".\n")
+    "Read the input PDB and renumber its atoms and residues. "
+    "Be aware that his tool won't fix every error in your PDB.\n"
+    "Writes the output PDB to \"tool_pdb_norm\".\n")
     
     ("tool_aa_to_ca,a",
     PO::value<std::string>(&tool_aa_to_ca)->default_value("none")->composing(),
