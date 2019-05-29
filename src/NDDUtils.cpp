@@ -81,7 +81,7 @@ auto initialize_scaling_factors(Modes const &modos, NDDOptions const &NDD_opts)
         std::vector<double> scaling_factors;
         scaling_factors.reserve(modos._j);
         for (std::size_t i = 0; i < modos._j; ++i) {
-            scaling_factors.push_back(1.);
+            scaling_factors.push_back(static_cast<double>(i + 1) / 10);
         }
         return scaling_factors;
     }
