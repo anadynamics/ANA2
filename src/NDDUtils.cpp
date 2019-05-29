@@ -53,8 +53,8 @@ void ndd(
     return;
 }
 
-// If scaling values were provided, read them. If not, set a uniform distro
-// of 1.
+// If scaling values were provided, read them. If not, set a linear
+// distribution.
 auto initialize_scaling_factors(Modes const &modos, NDDOptions const &NDD_opts)
     -> std::vector<double> {
 
@@ -130,7 +130,7 @@ void barletta_index(Modes const &modos, std::vector<double> const &vgv) {
             vgv[j] * vgv[j] / squared_norm;
     }
 
-    double const barletta_index = cte * sum;
+    double const barletta_index = 1 / (cte * sum);
     printf("Flexibility:  %.10f\n", barletta_index);
 
     return;
