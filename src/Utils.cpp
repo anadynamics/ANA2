@@ -56,11 +56,11 @@ void get_neighbors(NA_Vector const &input_cells,
 // Functor to get pairs of intersecting boxes and group them in clusters.
 class callback_for_boxes {
 public:
-    std::vector<int> *_id_vector_a, *_id_vector_b;
+    std::vector<size_t> *_id_vector_a, *_id_vector_b;
     NA_Vector *_neighbors_a, *_neighbors_b;
 
-    callback_for_boxes(std::vector<int> &id_vector_a,
-        std::vector<int> &id_vector_b, NA_Vector &neighbors_a,
+    callback_for_boxes(std::vector<size_t> &id_vector_a,
+        std::vector<size_t> &id_vector_b, NA_Vector &neighbors_a,
         NA_Vector &neighbors_b) :
         _id_vector_a(&id_vector_a),
         _id_vector_b(&id_vector_b), _neighbors_a(&neighbors_a),
@@ -81,41 +81,41 @@ public:
 void cluster_cells_boxes(
     NA_Vector const &input_cells, NA_Matrix &output_cells) {
 
-    int min_cells_cluster = 2;
+    size_t min_cells_cluster = 2;
     std::vector<Box> boxes;
-    std::vector<int> id_vector_a, id_vector_b;
-    std::vector<std::vector<int>> id_mtx;
+    std::vector<size_t> id_vector_a, id_vector_b;
+    std::vector<std::vector<size_t>> id_mtx;
     NA_Vector neighbors_a, neighbors_b;
     callback_for_boxes called(
         id_vector_a, id_vector_b, neighbors_a, neighbors_b);
 
     // Get cells bounding boxes.
-    for (auto const &cell_ite : input_cells) {
+    for (auto const cell_ite : input_cells) {
         const CTetrahedron tetra(cell_ite->vertex(0)->point(),
             cell_ite->vertex(1)->point(), cell_ite->vertex(2)->point(),
             cell_ite->vertex(3)->point());
-        boxes.push_back(Box(std::move(tetra.bbox()), cell_ite));
+        boxes.push_back(Box(tetra.bbox(), cell_ite));
     }
 
     // Get the intersections
     CGAL::box_self_intersection_d(boxes.begin(), boxes.end(), called);
 
     // Get the indices that sort the id vectors
-    std::vector<int> indices_a = sort_indices(id_vector_a);
-    std::vector<int> indices_b = sort_indices(id_vector_b);
+    std::vector<size_t> indices_a = sort_indices(id_vector_a);
+    std::vector<size_t> indices_b = sort_indices(id_vector_b);
 
     // Get a sorted vector with all the ids and no repetitions. "map_aux" is
     // probably bigger than needed, since some cells won't have any
-    // intersections
-    // at all and won't appear in neither "indices_a" nor "indices_b".
-    std::vector<int> map_aux(input_cells.size());
+    // intersections at all and won't appear in neither "indices_a" nor
+    // "indices_b".
+    std::vector<size_t> map_aux(input_cells.size());
     map_aux[0] = id_vector_a[indices_a[0]];
-    int cnt = 0, tmp = map_aux[cnt];
+    size_t cnt = 0, tmp = map_aux[cnt];
     // Get all the indices IDs from "id_vector_a".
-    for (auto const &each : indices_a) {
-        if (id_vector_a[each] != tmp) {
+    for (auto const idx : indices_a) {
+        if (id_vector_a[idx] != tmp) {
             ++cnt;
-            map_aux[cnt] = id_vector_a[each];
+            map_aux[cnt] = id_vector_a[idx];
             tmp = map_aux[cnt];
         }
     }
@@ -134,8 +134,7 @@ void cluster_cells_boxes(
     for (auto const &each : indices_b) {
         if (id_vector_b[each] != *ite) {
             // This may be a new ID or just a higher ID that's not were "ite"
-            // points,
-            // but forward.
+            // points, but forward.
             ite = std::lower_bound(
                 map_aux.begin(), map_aux.end(), id_vector_b[each]);
             if (ite == map_aux.end()) {
@@ -159,18 +158,16 @@ void cluster_cells_boxes(
             continue;
         }
 
-        std::vector<int> current, current_tmp;
+        std::vector<size_t> current, current_tmp;
         NA_Vector neighbors;
         // This is the starting cell of the cluster.
         current_tmp.push_back(map_aux[i]);
 
-        if (lb_with_indices(id_vector_a, indices_a, map_aux[i], result) &&
-            (id_vector_a[indices_a[result]] == map_aux[i])) {
+        if (lb_with_indices(id_vector_a, indices_a, map_aux[i], result)) {
             neighbors.push_back(neighbors_a[indices_a[result]]);
 
         } else if (lb_with_indices(
-                       id_vector_b, indices_b, map_aux[i], result) &&
-            (id_vector_b[indices_b[result]] == map_aux[i])) {
+                       id_vector_b, indices_b, map_aux[i], result)) {
             neighbors.push_back(neighbors_b[indices_b[result]]);
         } else {
             std::cerr << "Iso-oriented boxes clustering method. Invalid "
@@ -245,7 +242,7 @@ void cluster_cells_boxes(
         }
 
         // Done with this cluster.
-        if (static_cast<int>(current.size()) >= min_cells_cluster) {
+        if (static_cast<size_t>(current.size()) >= min_cells_cluster) {
             id_mtx.push_back(std::move(current));
             output_cells.push_back(std::move(neighbors));
         }
@@ -1226,6 +1223,34 @@ void tool_PDB_norm(
         output_pdb_traj.write(output_pdb_frame);
     }
     return;
+}
+
+// Helper function for getting the indices that sort a vector.
+std::vector<int> sort_indices(const std::vector<int> &v) {
+
+    // initialize original index locations
+    std::vector<int> idx(v.size());
+    std::iota(idx.begin(), idx.end(), 0);
+
+    // sort indices based on comparing values in v
+    sort(
+        idx.begin(), idx.end(), [&v](int i1, int i2) { return v[i1] < v[i2]; });
+
+    return idx;
+}
+
+// Helper function for getting the indices that sort a vector.
+std::vector<size_t> sort_indices(const std::vector<size_t> &v) {
+
+    // initialize original index locations
+    std::vector<size_t> idx(v.size());
+    std::iota(idx.begin(), idx.end(), 0);
+
+    // sort indices based on comparing values in v
+    sort(idx.begin(), idx.end(),
+        [&v](size_t i1, size_t i2) { return v[i1] < v[i2]; });
+
+    return idx;
 }
 
 } // namespace ANA

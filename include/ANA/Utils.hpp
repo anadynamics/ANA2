@@ -223,25 +223,14 @@ T get_i_not_equal(const std::vector<T> &in_vec, const std::vector<T> &query_vec,
 }
 
 // Helper function for getting the indices that sort a vector.
-template <typename T>
-std::vector<int> sort_indices(const std::vector<T> &v) {
-
-    // initialize original index locations
-    std::vector<int> idx(v.size());
-    std::iota(idx.begin(), idx.end(), 0);
-
-    // sort indices based on comparing values in v
-    sort(
-        idx.begin(), idx.end(), [&v](int i1, int i2) { return v[i1] < v[i2]; });
-
-    return idx;
-}
+std::vector<int> sort_indices(const std::vector<int> &v);
+// Helper function for getting the indices that sort a vector.
+std::vector<size_t> sort_indices(const std::vector<size_t> &v);
 
 // Helper function to use binary search to find the lowest bound of a query in
 // a sorted vector in ascending order. It returns true if a match is found,
-// and
-// stores the index of the element that satisfies the lower bound condition in
-// the variable "first".
+// and tores the index of the element that satisfies the lower bound condition
+// in the variable "first".
 template <typename T, typename K>
 bool lb(const std::vector<T> &v1, const T q1, K &first) {
 
@@ -275,7 +264,7 @@ bool lb(const std::vector<T> &v1, const T q1, K &first) {
 // This variable also serves as a starting point in the search, to start
 // searching in an arbitrary position and forward.
 template <typename T, typename K>
-bool lb_with_indices(const std::vector<T> &v1, const std::vector<int> &indices,
+bool lb_with_indices(const std::vector<T> &v1, const std::vector<T> &indices,
     const T q1, K &first) {
 
     static_assert(std::is_integral<K>::value);
@@ -294,11 +283,9 @@ bool lb_with_indices(const std::vector<T> &v1, const std::vector<int> &indices,
             count = step;
     }
 
-    // Is the query larger?
-    if (first == count) {
-        return false;
-    } else
-        return true;
+    // Found it?
+    bool const match = (v1[indices[first]] == q1);
+    return match;
 }
 
 } // namespace ANA
