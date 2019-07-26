@@ -105,9 +105,9 @@ bool read_static(std::string const &filename,
                     } else {
                         vi1._radius = 1.5;
                         std::cerr << "Element from atom " << i + 1
-                                  << " not available. "
-                                  << " Using covalent radius of 1.5." << '\n'
-                                  << "Fix the input PDB." << '\n';
+                                  << " not available. " << '\n';
+                        throw std::runtime_error(
+                            "Can't parse input. Aborting.");
                     }
 
                     CPoint p1(in_xyz[i][0], in_xyz[i][1], in_xyz[i][2]);
