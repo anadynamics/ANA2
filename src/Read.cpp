@@ -196,10 +196,12 @@ bool read_static(std::string const &filename,
                     vi1._radius = vdw.value();
                 } else {
                     vi1._radius = .5;
-                    std::cerr << "Element from atom " << i + 1
-                              << " not available. Using Van Der Walls radii of "
-                                 "1.5. You should fix this."
-                              << '\n';
+                    std::cerr
+                        << "Element from atom " << i + 1
+                        << " not available. Using Van Der Walls radii of "
+                           "1.5. You should fix this. If too many of these "
+                           "warnings show up, the result is meaningless."
+                        << '\n';
                 }
                 auto resid = residuo.id().value();
                 vi1._resn = resid;
