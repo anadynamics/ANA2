@@ -112,12 +112,12 @@ int get_parameters(int ac, char *av[], ANA::InOutOptions &io_opts,
     ("included_area_residues",
     PO::value<std::string>(&IA_opts._resn_proto)->default_value("none"),
     "Amino acids that delimit the convex hull of the included area. "
-    "Numbers from 1 to 9999, separated by commas, spaces or tabs.\n")
+    "Numbers from 1 to 9999 separated by commas spaces or tabs.\n")
 
     ("included_area_atoms",
     PO::value<std::string>(&IA_opts._atom_proto)->default_value("none"),
     "Atoms that delimit the convex hull of the included area."
-    "Numbers from 1 to 9999, separated by commas, spaces or tabs.\n")
+    "Numbers from 1 to 9999 separated by commas spaces or tabs.\n")
 
     ("included_area_precision",
     PO::value<int>(&precision)->default_value(0),
@@ -149,7 +149,7 @@ int get_parameters(int ac, char *av[], ANA::InOutOptions &io_opts,
     "Default: 2.\n")
 
 ///
-// ### Clusters options
+// #### Clusters options
 ///
 
     ("clusters_method",
