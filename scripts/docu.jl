@@ -78,9 +78,6 @@ function write_header!(file, categorias, opciones, i)
     if idx == i
         popfirst!(categorias)
         popfirst!(indices)
-
-        println(categoria, "   ", idx)
-
         write(file, "\n", categoria, "\n")
         write_header!(file, categorias, opciones, i)
     end
@@ -132,12 +129,15 @@ variables = Array{String,1}()
 
 let terminal_opts = true
     for i = 1:length(raw_opciones)
+
         tempo = split(raw_opciones[i], ",")
         # Remove weird chars
-        texto = replace(replace(replace(replace(replace(tempo[end], "\"" => ""), "\\n" => ""),
-        "\n" => ""), r"( +)" => " "), "\\" => "")
+        texto = replace(replace(replace(replace(replace(replace(tempo[end], "\"" => ""), "\\n" => ""),
+        "\n" => ""), r"( +)" => " "), "\\" => ""), r". Default:(\s*.*)" => "")
+        texto *= "."
         push!(textos, texto)
         linea_var = String
+
         if terminal_opts
             push!(opciones, tempo[1])
             push!(ops, string(tempo[2][1]))
