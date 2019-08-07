@@ -1206,9 +1206,10 @@ void tool_PDB_norm(
             for (auto const &k : residuo) {
                 // Add atom to residue.
                 res.add_atom(k);
+                // Fix element
+                std::string element {input_pdb_top[k].type()[0]};
                 // Add atom to frame and topology.
-                chemfiles::Atom atomo(
-                    input_pdb_top[k].name(), input_pdb_top[k].type());
+                chemfiles::Atom atomo(input_pdb_top[k].name(), element);
                 atomo.set("is_hetatm",
                     input_pdb_top[k].get("is_hetatm").value_or(true));
                 output_pdb_frame.add_atom(atomo, in_xyz[k]);
