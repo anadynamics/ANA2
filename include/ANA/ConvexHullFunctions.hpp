@@ -4,6 +4,7 @@
 #include <ANA/ConvexHull.hpp>
 #include <ANA/Includes.hpp>
 #include <ANA/Molecule.hpp>
+#include <ANA/PDB.hpp>
 #include <ANA/PrimitivesUtils.hpp>
 
 namespace ANA {

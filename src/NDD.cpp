@@ -14,9 +14,6 @@ int NDD_ANA(InOutOptions const &io_opts, IncludedAreaOptions const &IA_opts,
 
     ANA::carve_CH_into_cavity(hueco, CH);
 
-    // ANA::write_PDB(hueco, "cav.pdb");
-    // ANA::write_PDB(CH, "ch.pdb");
-
     ANA::NDD::ndd(hueco, CH, NDD_opts);
 
     if (io_opts._out_vol_filename == "none") {

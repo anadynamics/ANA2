@@ -6,8 +6,8 @@
 namespace ANA {
 
 double constexpr M_PI3 = 1 / 3 * M_PI;
-double constexpr delta = 0.01;
-double constexpr neg_delta = -0.01;
+double constexpr delta = 0.05;
+double constexpr neg_delta = -delta;
 double constexpr uno_bot = 1. - delta;
 double constexpr uno_top = 1. + delta;
 double constexpr zero_bot = 0. - delta;
@@ -90,12 +90,12 @@ public:
     Vector() = default;
 
     Vector(double const x, double const y, double const z) noexcept :
-        _vxyz{x, y, z}, _origin{0., 0., 0.} {}
+        _vxyz {x, y, z}, _origin {0., 0., 0.} {}
 
     Vector(double const x, double const y, double const z, double const ox,
         double const oy, double const oz) noexcept :
-        _vxyz{x, y, z},
-        _origin{ox, oy, oz} {}
+        _vxyz {x, y, z},
+        _origin {ox, oy, oz} {}
 
     Vector(CVector const v) :
         _vxyz({CGAL::to_double(v.x()), CGAL::to_double(v.y()),
@@ -159,10 +159,10 @@ class Point {
 public:
     Point() = default;
 
-    Point(double const x, double const y, double const z) : _xyz{x, y, z} {}
+    Point(double const x, double const y, double const z) : _xyz {x, y, z} {}
 
     Point(CPoint const p) :
-        _xyz{CGAL::to_double(p.x()), CGAL::to_double(p.y()),
+        _xyz {CGAL::to_double(p.x()), CGAL::to_double(p.y()),
             CGAL::to_double(p.z())} {}
 
     double operator[](int const idx) const { return _xyz[idx]; }

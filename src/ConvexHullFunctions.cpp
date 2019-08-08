@@ -41,33 +41,53 @@ void carve_CH_into_cavity(Cavity &hueco, ConvexHull const &CH) {
             // point(s) to the outer point(s). The polyhedron delimited by these
             // points will be added to the cavity.
             hueco.add_outer_cell(cell, info);
-            switch (vertices_out_cnt) {
-            case 3: {
-                auto const [p_in_0, ip1, ip2, ip3, radius_0] =
-                    get_vertices_3_out(
-                        cell, info, CH, vertices_in, vertices_out);
+            try {
+                switch (vertices_out_cnt) {
+                case 3: {
+                    auto const [p_in_0, ip1, ip2, ip3, radius_0] =
+                        get_vertices_3_out(
+                            cell, info, CH, vertices_in, vertices_out);
 
-                hueco.add_border_tetra(p_in_0, ip1, ip2, ip3, radius_0);
-                break;
-            }
-            case 2: {
-                auto const [p_in_0, p_in_1, ip1, ip2, ip3, ip4, radius_0,
-                    radius_1] = get_vertices_2_out(cell, info, CH, vertices_in,
-                    vertices_out);
+                    hueco.add_border_tetra(p_in_0, ip1, ip2, ip3, radius_0);
+                    break;
+                }
+                case 2: {
+                    auto const [p_in_0, p_in_1, ip1, ip2, ip3, ip4, radius_0,
+                        radius_1] = get_vertices_2_out(cell, info, CH,
+                        vertices_in, vertices_out);
 
-                hueco.add_border_penta_2_2(
-                    p_in_0, p_in_1, ip1, ip2, ip3, ip4, radius_0, radius_1);
-                break;
-            }
-            case 1: {
-                auto const [p_in_0, p_in_1, p_in_2, ip1, ip2, ip3, radius_0,
-                    radius_1, radius_2] = get_vertices_1_out(cell, info, CH,
-                    vertices_in, vertices_out);
+                    hueco.add_border_penta_2_2(
+                        p_in_0, p_in_1, ip1, ip2, ip3, ip4, radius_0, radius_1);
+                    break;
+                }
+                case 1: {
+                    auto const [p_in_0, p_in_1, p_in_2, ip1, ip2, ip3, radius_0,
+                        radius_1, radius_2] = get_vertices_1_out(cell, info, CH,
+                        vertices_in, vertices_out);
 
-                hueco.add_border_penta_3_1(p_in_0, p_in_1, p_in_2, ip1, ip2,
-                    ip3, radius_0, radius_1, radius_2);
-                break;
-            }
+                    hueco.add_border_penta_3_1(p_in_0, p_in_1, p_in_2, ip1, ip2,
+                        ip3, radius_0, radius_1, radius_2);
+                    break;
+                }
+                }
+            } catch (std::exception &e) {
+                std::cerr << "Writing Cavity and Convex Hull for err checking."
+                          << '\n';
+                write_PDB(hueco, "cav_err.pdb");
+                write_PDB(CH, "ch_err.pdb");
+
+                //////
+                FILE *out_file = std::fopen("aaa.pdb", "w");
+                if (out_file) {
+                    std::pair<int, int> idx_resid {1, 1};
+                    idx_resid = draw_lines(cell, out_file, idx_resid, "CEL");
+                    connect_tetrahedra(out_file, 1, idx_resid.first - 1);
+                } else {
+                    printf("Could not open %s.\n", "aaa.pdb");
+                }
+                std::fclose(out_file);
+                //////
+                // throw;
             }
         }
     }
@@ -86,9 +106,28 @@ auto get_vertices_3_out(Tetrahedron const &cell, TetraInfo const &info,
     Point const &p_out_2 = cell[vertices_out[1]];
     Point const &p_out_3 = cell[vertices_out[2]];
 
-    Point const ip1 = get_intersection_point(p_in_0, p_out_1, CH);
-    Point const ip2 = get_intersection_point(p_in_0, p_out_2, CH);
-    Point const ip3 = get_intersection_point(p_in_0, p_out_3, CH);
+    Point ip1, ip2, ip3;
+    try {
+        ip1 = get_intersection_point(p_in_0, p_out_1, CH);
+    } catch (std::exception &e) {
+        std::cerr << "get_vertices_3_out()" << '\n';
+        std::cerr << "p_in_0: " << p_in_0 << " -- p_out_1: " << p_out_1 << '\n';
+        throw;
+    }
+    try {
+        ip2 = get_intersection_point(p_in_0, p_out_2, CH);
+    } catch (std::exception &e) {
+        std::cerr << "get_vertices_3_out()" << '\n';
+        std::cerr << "p_in_0: " << p_in_0 << " -- p_out_2: " << p_out_2 << '\n';
+        throw;
+    }
+    try {
+        ip3 = get_intersection_point(p_in_0, p_out_3, CH);
+    } catch (std::exception &e) {
+        std::cerr << "get_vertices_3_out()" << '\n';
+        std::cerr << "p_in_0: " << p_in_0 << " -- p_out_3: " << p_out_3 << '\n';
+        throw;
+    }
 
     return {p_in_0, ip1, ip2, ip3, info._radius[vertices_in[0]]};
 }
@@ -104,10 +143,35 @@ auto get_vertices_2_out(Tetrahedron const cell, TetraInfo const &info,
     Point const &p_out_2 = cell[vertices_out[0]];
     Point const &p_out_3 = cell[vertices_out[1]];
 
-    Point const ip1 = get_intersection_point(p_in_0, p_out_2, CH);
-    Point const ip2 = get_intersection_point(p_in_0, p_out_3, CH);
-    Point const ip3 = get_intersection_point(p_in_1, p_out_2, CH);
-    Point const ip4 = get_intersection_point(p_in_1, p_out_3, CH);
+    Point ip1, ip2, ip3, ip4;
+    try {
+        ip1 = get_intersection_point(p_in_0, p_out_2, CH);
+    } catch (std::exception &e) {
+        std::cerr << "get_vertices_2_out()" << '\n';
+        std::cerr << "p_in_0: " << p_in_0 << " -- p_out_2: " << p_out_2 << '\n';
+        throw;
+    }
+    try {
+        ip2 = get_intersection_point(p_in_0, p_out_3, CH);
+    } catch (std::exception &e) {
+        std::cerr << "get_vertices_2_out()" << '\n';
+        std::cerr << "p_in_0: " << p_in_0 << " -- p_out_3: " << p_out_3 << '\n';
+        throw;
+    }
+    try {
+        ip3 = get_intersection_point(p_in_1, p_out_2, CH);
+    } catch (std::exception &e) {
+        std::cerr << "get_vertices_2_out()" << '\n';
+        std::cerr << "p_in_1: " << p_in_1 << " -- p_out_2: " << p_out_2 << '\n';
+        throw;
+    }
+    try {
+        ip4 = get_intersection_point(p_in_1, p_out_3, CH);
+    } catch (std::exception &e) {
+        std::cerr << "get_vertices_2_out()" << '\n';
+        std::cerr << "p_in_1: " << p_in_1 << " -- p_out_3: " << p_out_3 << '\n';
+        throw;
+    }
 
     return {p_in_0, p_in_1, ip1, ip2, ip3, ip4, info._radius[vertices_in[0]],
         info._radius[vertices_in[1]]};
@@ -124,9 +188,28 @@ auto get_vertices_1_out(Tetrahedron const cell, TetraInfo const &info,
     Point const &p_in_2 = cell[vertices_in[2]];
     Point const &p_out_3 = cell[vertices_out[0]];
 
-    Point const ip1 = get_intersection_point(p_in_0, p_out_3, CH);
-    Point const ip2 = get_intersection_point(p_in_1, p_out_3, CH);
-    Point const ip3 = get_intersection_point(p_in_2, p_out_3, CH);
+    Point ip1, ip2, ip3;
+    try {
+        ip1 = get_intersection_point(p_in_0, p_out_3, CH);
+    } catch (std::exception &e) {
+        std::cerr << "get_vertices_1_out()" << '\n';
+        std::cerr << "p_in_0: " << p_in_0 << " -- p_out_3: " << p_out_3 << '\n';
+        throw;
+    }
+    try {
+        ip2 = get_intersection_point(p_in_1, p_out_3, CH);
+    } catch (std::exception &e) {
+        std::cerr << "get_vertices_1_out()" << '\n';
+        std::cerr << "p_in_1: " << p_in_1 << " -- p_out_3: " << p_out_3 << '\n';
+        throw;
+    }
+    try {
+        ip3 = get_intersection_point(p_in_2, p_out_3, CH);
+    } catch (std::exception &e) {
+        std::cerr << "get_vertices_1_out()" << '\n';
+        std::cerr << "p_in_2: " << p_in_2 << " -- p_out_3: " << p_out_3 << '\n';
+        throw;
+    }
 
     return {p_in_0, p_in_1, p_in_2, ip1, ip2, ip3, info._radius[vertices_in[0]],
         info._radius[vertices_in[1]], info._radius[vertices_in[2]]};
@@ -142,15 +225,15 @@ Point get_intersection_point(
     if ((s[0] < zero_top and s[0] > zero_bot) &&
         (s[1] < zero_top and s[1] > zero_bot) &&
         (s[2] < zero_top and s[2] > zero_bot)) {
-        std::cout << "r: " << r << " -- q: " << q << '\n';
+        std::cerr << "r: " << r << " -- q: " << q << '\n';
         throw std::runtime_error(
             "Fatal error, get_intersection_point() could not "
             "find an intersection. IN/OUT points are the same.");
     }
 
     for (size_t t = 0; t < CH._triangles.size(); ++t) {
-        Vector const d = q - CH._triangles[t][0];
 
+        Vector const d = q - CH._triangles[t][0];
         // First, check if the ray crosses the triangle's plane.
         double const dota = dot_product(normalize(s), CH._normals[t]);
         if (dota < zero_top) {
@@ -174,8 +257,8 @@ Point get_intersection_point(
         }
     }
 
-    std::cout << "r: " << r << " -- q: " << q << '\n';
-    std::cout << "s: " << s << '\n';
+    std::cerr << "r: " << r << " -- q: " << q << '\n';
+    std::cerr << "s: " << s << '\n';
     throw std::runtime_error("Fatal error, get_intersection_point() could not "
                              "find an intersection.");
 }
