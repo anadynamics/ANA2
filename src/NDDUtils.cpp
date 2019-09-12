@@ -40,7 +40,7 @@ void ndd(
             neg_vols_ndd.push_back(neg_vol);
 
             // 2nd step: numerical derivative.
-            double const der_vol {(pos_vol - neg_vol) / mul};
+            double const der_vol{(pos_vol - neg_vol) / mul};
             vgv.push_back(der_vol);
         }
 
@@ -58,11 +58,10 @@ void ndd(
 auto initialize_scaling_factors(Modes const &modos, NDDOptions const &NDD_opts)
     -> std::vector<double> {
 
-    // If both _scaling_ndd_filename and _scale_w_freqs were set, the later will
-    // override the former.
+    // _scaling_ndd_filename overrides _scale_w_freqs if both are set.
     if (NDD_opts._scaling_ndd_filename != "none") {
 
-        auto [bufr_scaling_ftor, fsz] = slurp(NDD_opts._scaling_ndd_filename);
+        auto[bufr_scaling_ftor, fsz] = slurp(NDD_opts._scaling_ndd_filename);
         std::vector<double> scaling_factors =
             get_values_from_raw(std::string_view(bufr_scaling_ftor.get(), fsz));
 
@@ -81,7 +80,7 @@ auto initialize_scaling_factors(Modes const &modos, NDDOptions const &NDD_opts)
         std::vector<double> scaling_factors;
         scaling_factors.reserve(modos._j);
         for (std::size_t i = 0; i < modos._j; ++i) {
-            scaling_factors.push_back(static_cast<double>(i + 1) / 10);
+            scaling_factors.push_back(static_cast<double>(i + 5 * 0.5));
         }
         return scaling_factors;
     }
