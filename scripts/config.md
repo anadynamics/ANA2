@@ -182,7 +182,7 @@ NDD_modes_format
 ```
 NDD_particles_per_residue
 ```
- Number of particles used to represent each residue. ANA currently support these levels of coarse grain: 0: Full atom. NOT YET SUPPORTED. 1: 1 particle per residue. Alpha carbon representation. 6: 6 particles per residue: N;CA;C;O;CB;R (side-chain center of mass). Gly and ALA only have 4 and 5 particles respectively.
+ Number of particles used to represent each residue. ANA currently support these levels of coarse grain: 0: Full atom. NOT YET SUPPORTED. 1: 1 particle per residue (alpha carbon representation). 6: 6 particles per residue: N;CA;C;O;CB;R (side-chain center of mass). Gly and ALA only have 4 and 5 particles respectively. Be sure to check your PDB is properly formatted and atoms are properly ordered. First the heavy atoms starting with N and then the hydrogens starting with H.
  * Default: **1**
 ```
 NDD_frequences_scaling
