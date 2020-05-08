@@ -24,102 +24,12 @@ void ndd(Cavity const &hueco, ConvexHull const &CH, NDDOptions const &NDD_opts,
             double const mul = NDD_opts._size / scaling_factors[j];
 
             // In the negative direction.
-            // ConvexHull CH_neg(CH, modos._evectors[j], -mul);
-            // Cavity hueco_neg(hueco, modos._evectors[j], -mul);
-
-            if (j == 0) {
-                FILE *out_residuo = std::fopen("residuo", "w");
-                FILE *out_atomo = std::fopen("atomo", "w");
-
-                for (size_t c = 0; c < hueco._outer_cells.size(); ++c) {
-                    TetraInfo ndd_info = hueco._outer_info[c];
-                    // _resn is 1-indexed.
-                    int const resi_0_x = (ndd_info._resn[0] - 1) * 3;
-                    int const resi_1_x = (ndd_info._resn[1] - 1) * 3;
-                    int const resi_2_x = (ndd_info._resn[2] - 1) * 3;
-                    int const resi_3_x = (ndd_info._resn[3] - 1) * 3;
-
-                    if (out_residuo) {
-                        fmt::print(out_residuo, "{:9.6f}\n",
-                            modos._evectors[j][resi_0_x]);
-                        fmt::print(out_residuo, "{:9.6f}\n",
-                            modos._evectors[j][resi_0_x + 1]);
-                        fmt::print(out_residuo, "{:9.6f}\n",
-                            modos._evectors[j][resi_0_x + 2]);
-
-                        fmt::print(out_residuo, "{:9.6f}\n",
-                            modos._evectors[j][resi_1_x]);
-                        fmt::print(out_residuo, "{:9.6f}\n",
-                            modos._evectors[j][resi_1_x + 1]);
-                        fmt::print(out_residuo, "{:9.6f}\n",
-                            modos._evectors[j][resi_1_x + 2]);
-
-                        fmt::print(out_residuo, "{:9.6f}\n",
-                            modos._evectors[j][resi_2_x]);
-                        fmt::print(out_residuo, "{:9.6f}\n",
-                            modos._evectors[j][resi_2_x + 1]);
-                        fmt::print(out_residuo, "{:9.6f}\n",
-                            modos._evectors[j][resi_2_x + 2]);
-
-                        fmt::print(out_residuo, "{:9.6f}\n",
-                            modos._evectors[j][resi_3_x]);
-                        fmt::print(out_residuo, "{:9.6f}\n",
-                            modos._evectors[j][resi_3_x + 1]);
-                        fmt::print(out_residuo, "{:9.6f}\n",
-                            modos._evectors[j][resi_3_x + 2]);
-                    } else {
-                        printf("No escribe residuo.\n");
-                    }
-
-                    int const atom_0_x = ndd_info._index[0] * 3;
-                    int const atom_1_x = ndd_info._index[1] * 3;
-                    int const atom_2_x = ndd_info._index[2] * 3;
-                    int const atom_3_x = ndd_info._index[3] * 3;
-
-                    if (out_atomo) {
-                        fmt::print(out_atomo, "{:9.6f}\n",
-                            modos._atm_evectors[j][atom_0_x]);
-                        fmt::print(out_atomo, "{:9.6f}\n",
-                            modos._atm_evectors[j][atom_0_x + 1]);
-                        fmt::print(out_atomo, "{:9.6f}\n",
-                            modos._atm_evectors[j][atom_0_x + 2]);
-
-                        fmt::print(out_atomo, "{:9.6f}\n",
-                            modos._atm_evectors[j][atom_1_x]);
-                        fmt::print(out_atomo, "{:9.6f}\n",
-                            modos._atm_evectors[j][atom_1_x + 1]);
-                        fmt::print(out_atomo, "{:9.6f}\n",
-                            modos._atm_evectors[j][atom_1_x + 2]);
-
-                        fmt::print(out_atomo, "{:9.6f}\n",
-                            modos._atm_evectors[j][atom_2_x]);
-                        fmt::print(out_atomo, "{:9.6f}\n",
-                            modos._atm_evectors[j][atom_2_x + 1]);
-                        fmt::print(out_atomo, "{:9.6f}\n",
-                            modos._atm_evectors[j][atom_2_x + 2]);
-
-                        fmt::print(out_atomo, "{:9.6f}\n",
-                            modos._atm_evectors[j][atom_3_x]);
-                        fmt::print(out_atomo, "{:9.6f}\n",
-                            modos._atm_evectors[j][atom_3_x + 1]);
-                        fmt::print(out_atomo, "{:9.6f}\n",
-                            modos._atm_evectors[j][atom_3_x + 2]);
-                    } else {
-                        printf("No escribe atomo.\n");
-                    }
-                }
-                std::fclose(out_residuo);
-                std::fclose(out_atomo);
-            }
-
             ConvexHull CH_neg(CH, modos._atm_evectors[j], -mul);
             Cavity hueco_neg(hueco, modos._atm_evectors[j], -mul);
             carve_CH_into_cavity(hueco_neg, CH_neg);
             double const neg_vol = hueco_neg._volume + hueco_neg._outer_volume;
 
             // In the positive direction.
-            // ConvexHull CH_pos(CH, modos._evectors[j], mul);
-            // Cavity hueco_pos(hueco, modos._evectors[j], mul);
             ConvexHull CH_pos(CH, modos._atm_evectors[j], mul);
             Cavity hueco_pos(hueco, modos._atm_evectors[j], mul);
             carve_CH_into_cavity(hueco_pos, CH_pos);

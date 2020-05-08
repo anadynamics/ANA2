@@ -110,39 +110,6 @@ void Cavity::move_cells(std::vector<Tetrahedron> const &cells,
     double const step_size) {
 
     for (size_t c = 0; c < cells.size(); ++c) {
-        // TetraInfo ndd_info = info[c];
-        // _resn is 1-indexed.
-        // int const resi_0_x = (ndd_info._resn[0] - 1) * 3;
-        // int const resi_1_x = (ndd_info._resn[1] - 1) * 3;
-        // int const resi_2_x = (ndd_info._resn[2] - 1) * 3;
-        // int const resi_3_x = (ndd_info._resn[3] - 1) * 3;
-
-        // Point const p0{cells[c][0] +
-        //     step_size *
-        //         Vector(vector[resi_0_x], vector[resi_0_x + 1],
-        //             vector[resi_0_x + 2])};
-        // Point const p1{cells[c][1] +
-        //     step_size *
-        //         Vector(vector[resi_1_x], vector[resi_1_x + 1],
-        //             vector[resi_1_x + 2])};
-        // Point const p2{cells[c][2] +
-        //     step_size *
-        //         Vector(vector[resi_2_x], vector[resi_2_x + 1],
-        //             vector[resi_2_x + 2])};
-        // Point const p3{cells[c][3] +
-        //     step_size *
-        //         Vector(vector[resi_3_x], vector[resi_3_x + 1],
-        //             vector[resi_3_x + 2])};
-
-        // _all_cells.emplace_back(p0, p1, p2, p3);
-        // _all_info.push_back(ndd_info);
-    }
-
-    // std::cout << vector[atom_0_x] << "  " << vector[atom_0_x + 1]
-    //           << "  " << vector[atom_0_x + 2] << '\n';
-    // std::cout << cells.size() << '\n';
-
-    for (size_t c = 0; c < cells.size(); ++c) {
         TetraInfo const ndd_info = info[c];
         int const atom_0_x = ndd_info._index[0] * 3;
         int const atom_1_x = ndd_info._index[1] * 3;

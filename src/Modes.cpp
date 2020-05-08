@@ -134,10 +134,6 @@ namespace NDD {
                                      "invalid state. This shouldn't happen.");
         }
         }
-        write_matrix(_evectors, _i, _j, "evectors");
-        write_matrix(_atm_evectors, _ii, _j, "atm_evectors");
-        std::cout << _i << " " << _j << "  " << _ii << "  " << _natoms << '\n';
-
         return;
     }
 
@@ -351,7 +347,6 @@ namespace NDD {
             _atm_evectors.push_back(std::move(atm_evectors));
             _normas.push_back(sqrt(sum));
         }
-        // normalize_matrix(_atm_evectors);
         return;
     }
 
