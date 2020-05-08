@@ -232,7 +232,7 @@ int get_parameters(int ac, char *av[], ANA::InOutOptions &io_opts,
     PO::value<int>(&NDD_opts._particles_per_residue)->default_value(1),
     "Number of particles used to represent each residue. ANA currently support these levels of coarse grain:\n"
     "0: Full atom. NOT YET SUPPORTED.\n"
-    "1: 1 particle per residue. Alpha carbon representation.\n"
+    "1: 1 particle per residue (alpha carbon representation).\n"
     "6: 6 particles per residue: N;CA;C;O;CB;R (side-chain center of mass). Gly and ALA only have 4 and 5 particles respectively.\n"
     "Default: 1.\n")
 
