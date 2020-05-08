@@ -234,6 +234,8 @@ int get_parameters(int ac, char *av[], ANA::InOutOptions &io_opts,
     "0: Full atom. NOT YET SUPPORTED.\n"
     "1: 1 particle per residue (alpha carbon representation).\n"
     "6: 6 particles per residue: N;CA;C;O;CB;R (side-chain center of mass). Gly and ALA only have 4 and 5 particles respectively.\n"
+    "Be sure to check your PDB is properly formatted and atoms are properly ordered.\n"
+    "First the heavy atoms starting with N and then the hydrogens starting with H.\n"
     "Default: 1.\n")
 
     ("NDD_frequences_scaling",
