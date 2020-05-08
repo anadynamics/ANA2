@@ -1,5 +1,10 @@
 using DelimitedFiles, LinearAlgebra, FileIO, DataFrames, CSV
 
+#########################
+# Script medio chorro p/ sacar la documentación de ANA del ProgramOptions.cpp
+# No hay q poner comas (",") en el texto de config pq sino se caga todo.
+#########################
+
 function get_opciones(file::String)
 # Isolate lines corresponding to options.
     sz = length(file)
@@ -110,11 +115,6 @@ function write_md!(opciones, ops, textos, default_vars, categorias, indices)
         end
     end
 end
-
-#########################
-# Script medio chorro p/ sacar la documentación de ANA del ProgramOptions.cpp
-# No hay q poner comas (",") en el texto de config pq sino se caga todo.
-#########################
 
 io = open("../src/ProgramOptions.cpp", "r")
 file = read(io, String)

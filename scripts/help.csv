@@ -36,7 +36,7 @@ start	-	1	 Frame to begin reading at.	md_start
 step	-	1	 Step count to read trajectory frames. NetCDF format only.	md_step
 stop	-	0	 Frame to stop reading. Reads the whole trajectory when set to 0.	md_end
 NDD_modes_format	-	row	 Format of the input vectors. amber: vectors will be read as Amber PCA modes. row: vectors will be read in row major order. column: vectors will be read in column major order.	NDD_opts._modes_format
-NDD_particles_per_residue	-	1	 respectively.	NDD_opts._particles_per_residue
+NDD_particles_per_residue	-	1	 Number of particles used to represent each residue. ANA currently support these levels of coarse grain: 0: Full atom. NOT YET SUPPORTED. 1: 1 particle per residue. Alpha carbon representation. 6: 6 particles per residue: N;CA;C;O;CB;R (side-chain center of mass). Gly and ALA only have 4 and 5 particles respectively.	NDD_opts._particles_per_residue
 NDD_frequences_scaling	-	false	 If true ANA will scale the input vectors by their frequencies instead of automatically generating its own scaling factors.	NDD_opts._scale_w_freqs
 NDD_step	-	3	 Number of steps in the NDD pipeline ANA will perform. 1: ANA will not perform the derivative and instead output 2 files with the volumes of the displaced cavity in the positive and the negative direction. 2: ANA will output the VGV. 3: ANA will output the flexibility index.	NDD_opts._step
 output_type	-	grid_pdb	 How to visualize output cavities. raw_pdb: null areas as tetrahedrons. raw_cgo: null areas as tetrahedrons formed with CGO lines in a pymol script. grid_pdb: null areas filled with points. grid_cgo: null areas filled with CGO spheres in a pymol script.	io_opts._out_type

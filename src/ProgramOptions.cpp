@@ -233,7 +233,7 @@ int get_parameters(int ac, char *av[], ANA::InOutOptions &io_opts,
     "Number of particles used to represent each residue. ANA currently support these levels of coarse grain:\n"
     "0: Full atom. NOT YET SUPPORTED.\n"
     "1: 1 particle per residue. Alpha carbon representation.\n"
-    "6: 6 particles per residue: N, CA, C, O, CB and R (side-chain center of mass). Gly and ALA only have 4 and 5 particles, respectively.\n"
+    "6: 6 particles per residue: N;CA;C;O;CB;R (side-chain center of mass). Gly and ALA only have 4 and 5 particles respectively.\n"
     "Default: 1.\n")
 
     ("NDD_frequences_scaling",
