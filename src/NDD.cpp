@@ -14,7 +14,7 @@ int NDD_ANA(InOutOptions const &io_opts, IncludedAreaOptions const &IA_opts,
 
     ANA::carve_CH_into_cavity(hueco, CH);
 
-    ANA::NDD::ndd(hueco, CH, NDD_opts);
+    ANA::NDD::ndd(hueco, CH, NDD_opts, io_opts._in_filename);
 
     if (io_opts._out_vol_filename == "none") {
         printf("Volumen:  %f\n", hueco._volume + hueco._outer_volume);

@@ -95,7 +95,7 @@ ConvexHull::ConvexHull(IncludedAreaOptions const &IA_opts, SphereTag) {
     // Drawin a pseudo-sphere. The first 6 correspondon the XYZ axes, the
     // next 8 to the X-Y plane, then 8 more for the X-Z plane and 8 for the
     // Y-Z plane.
-    std::array<CPoint, 30> const incl_area_points {center + CVector(r, 0, 0),
+    std::array<CPoint, 30> const incl_area_points{center + CVector(r, 0, 0),
         center + CVector(0, r, 0), center + CVector(0, 0, r),
         center + CVector(-r, 0, 0), center + CVector(0, -r, 0),
         center + CVector(0, 0, -r), center + CVector(r * cos_30, r * sin_30, 0),
@@ -156,7 +156,7 @@ ConvexHull::ConvexHull(IncludedAreaOptions const &IA_opts, CylinderTag) {
 
     // The first 12 correspond to the first tap, the other half correspond
     // to the 2nd tap.
-    std::array<CPoint, 24> incl_area_points {center_1 + r * n1,
+    std::array<CPoint, 24> incl_area_points{center_1 + r * n1,
         center_1 + r * n2, center_1 - r * n1, center_1 - r * n2,
         center_1 + r * cos_30 * n1 + r * sin_30 * n2,
         center_1 + r * sin_30 * n1 + r * cos_30 * n2,
@@ -205,7 +205,7 @@ ConvexHull::ConvexHull(IncludedAreaOptions const &IA_opts, PrismTag) {
     n2 = n2 / std::sqrt(CGAL::to_double(n2.squared_length()));
 
     // 8 vertices of a prism.
-    std::array<CPoint, 8> incl_area_points {center_1 + width * n1 + height * n2,
+    std::array<CPoint, 8> incl_area_points{center_1 + width * n1 + height * n2,
         center_1 + width * n1 - height * n2,
         center_1 - width * n1 + height * n2,
         center_1 - width * n1 - height * n2,
@@ -235,7 +235,7 @@ ConvexHull::ConvexHull(IncludedAreaOptions const &IA_opts, FileTag) {
 void ConvexHull::add_res_info(Molecule const &protein) {
 
     for (auto const &t : _triangles) {
-        std::array<int, 3> indices {-666, -666, -666};
+        std::array<int, 3> indices{-666, -666, -666};
         for (auto const i : _included_resis) {
             for (int j = 0; j < 3; ++j) {
                 if (equal(protein._data[protein._alphaCarbons[i - 1]].first,
@@ -268,7 +268,7 @@ void ConvexHull::add_res_info(Molecule const &protein) {
 void ConvexHull::add_atm_info(Molecule const &protein) {
 
     for (auto const &t : _triangles) {
-        std::array<int, 3> indices {-666, -666, -666};
+        std::array<int, 3> indices{-666, -666, -666};
         for (auto const i : _included_resis) {
             for (int j = 0; j < 3; ++j) {
                 if (equal(protein._data[i - 1].first, t[j])) {
@@ -295,32 +295,33 @@ void ConvexHull::add_atm_info(Molecule const &protein) {
     return;
 }
 
-// Returns an updated Convex Hull displacing the input convex hull along the
-// input vector scaled by the step_size. The vector must be alfa carbon mode.
-ConvexHull::ConvexHull(ConvexHull const &CH, std::vector<double> const &evector,
+// // Constructor for NDD. Returns an updated Convex Hull displacing the input
+// convex hull along the input vector scaled by the step_size.
+ConvexHull::ConvexHull(ConvexHull const &CH, std::vector<double> const &vector,
     double const step_size) {
 
     _normals.reserve(CH._normals.size());
     _triangles.reserve(CH._triangles.size());
 
     for (size_t t = 0; t < CH._info.size(); ++t) {
+        TrianInfo const ndd_info = CH._info[t];
         // _resn is 1-indexed.
-        int const resi_0_x = (CH._info[t]._resn[0] - 1) * 3;
-        int const resi_1_x = (CH._info[t]._resn[1] - 1) * 3;
-        int const resi_2_x = (CH._info[t]._resn[2] - 1) * 3;
+        int const atom_0_x = ndd_info._index[0] * 3;
+        int const atom_1_x = ndd_info._index[1] * 3;
+        int const atom_2_x = ndd_info._index[2] * 3;
 
-        Point const p0 {CH._triangles[t][0] +
+        Point const p0{CH._triangles[t][0] +
             step_size *
-                Vector(evector[resi_0_x], evector[resi_0_x + 1],
-                    evector[resi_0_x + 2])};
-        Point const p1 {CH._triangles[t][1] +
+                Vector(vector[atom_0_x], vector[atom_0_x + 1],
+                    vector[atom_0_x + 2])};
+        Point const p1{CH._triangles[t][1] +
             step_size *
-                Vector(evector[resi_1_x], evector[resi_1_x + 1],
-                    evector[resi_1_x + 2])};
-        Point const p2 {CH._triangles[t][2] +
+                Vector(vector[atom_1_x], vector[atom_1_x + 1],
+                    vector[atom_1_x + 2])};
+        Point const p2{CH._triangles[t][2] +
             step_size *
-                Vector(evector[resi_2_x], evector[resi_2_x + 1],
-                    evector[resi_2_x + 2])};
+                Vector(vector[atom_2_x], vector[atom_2_x + 1],
+                    vector[atom_2_x + 2])};
 
         Vector const v01 = p1 - p0, v02 = p2 - p0;
 

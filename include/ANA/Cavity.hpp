@@ -30,8 +30,7 @@ public:
         double const vdw1, double const vdw2);
 
     // Constructor for NDD. Returns an updated Cavity displacing the input
-    // Cavity along the input vector scaled by the step_size. The vector must be
-    // alfa carbon mode.
+    // Cavity along the input vector scaled by the step_size.
     Cavity(Cavity const &hueco, std::vector<double> const &evector,
         double const step_size);
 

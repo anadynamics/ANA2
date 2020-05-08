@@ -9,6 +9,9 @@ namespace NDD {
 
 void write_vector(std::vector<double> vec, std::string const &filename);
 
+void write_matrix(std::vector<std::vector<double>> mtx, size_t nrows,
+    size_t ncols, std::string const &filename);
+
 // Read whole file into memory and return unique pointer to it and its size.
 auto slurp(std::string const &filename)
     -> std::tuple<std::unique_ptr<char[]>, size_t>;
@@ -18,6 +21,5 @@ auto slurp(std::string const &filename)
 auto guess_format(std::string_view texto) -> std::tuple<size_t, size_t, size_t>;
 
 auto get_values_from_raw(std::string_view const texto) -> std::vector<double>;
-
 }
 #endif // _H

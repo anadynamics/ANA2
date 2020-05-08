@@ -32,6 +32,8 @@ public:
     std::string _freqs_ndd_filename;
     std::string _scaling_ndd_filename;
     std::string _modes_format;
+    enum Particles_per_residue { FullAtom = 0, AlphaCarbon = 1, Six = 6 };
+    int _particles_per_residue = AlphaCarbon;
     bool _scale_w_freqs = false;
     std::string _out_ndd_filename;
 

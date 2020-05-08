@@ -14,7 +14,8 @@ namespace ANA::NDD {
 double constexpr cte = 5.0219059911006245e-5;
 
 // On-site NDD.
-void ndd(Cavity const &hueco, ConvexHull const &CH, NDDOptions const &NDD_opts);
+void ndd(Cavity const &hueco, ConvexHull const &CH, NDDOptions const &NDD_opts,
+    std::string const &pdb_filename);
 
 auto initialize_scaling_factors(Modes const &modos, NDDOptions const &NDD_opts)
     -> std::vector<double>;

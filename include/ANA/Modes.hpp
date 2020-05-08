@@ -18,29 +18,32 @@ namespace NDD {
         Modes() = default;
 
         // Create modes with eigenvalues.
-        Modes(std::string const &modes_filename, AmberTag);
+        Modes(NDDOptions const &NDD_opts, std::string const &pdb_filename,
+            AmberTag);
 
-        // Create modes without eigenvalues.
-        Modes(std::string const &modes_filename, RowTag);
-        // Create modes without eigenvalues.
-        Modes(std::string const &modes_filename, ColumnTag);
+        // // Create modes without eigenvalues.
+        // Modes(std::string const &modes_filename,
+        //     std::string const &pdb_filename, RowTag);
+        // // Create modes without eigenvalues.
+        // Modes(std::string const &modes_filename,
+        //     std::string const &pdb_filename, ColumnTag);
 
-        // Create modes with eigenvalues.
-        Modes(std::string const &modes_filename,
-            std::string const &evals_filename, RowTag);
-        // Create modes with eigenvalues.
-        Modes(std::string const &modes_filename,
-            std::string const &evals_filename, ColumnTag);
+        // Create modes reading from a Row Major file.
+        Modes(NDDOptions const &NDD_opts, std::string const &pdb_filename,
+            RowTag);
+        // Create modes reading from a Column Major file.
+        Modes(NDDOptions const &NDD_opts, std::string const &pdb_filename,
+            ColumnTag);
 
-        // Create full atom modes.
-        Modes(std::string const &modes_filename, AmberTag,
-            std::string const &pdb_filename);
-        // Create full atom modes.
-        Modes(std::string const &modes_filename, RowTag,
-            std::string const &pdb_filename);
-        // Create full atom modes.
-        Modes(std::string const &modes_filename, ColumnTag,
-            std::string const &pdb_filename);
+        // // Create full atom modes.
+        // Modes(std::string const &modes_filename, AmberTag,
+        //     std::string const &pdb_filename);
+        // // Create full atom modes.
+        // Modes(std::string const &modes_filename, RowTag,
+        //     std::string const &pdb_filename);
+        // // Create full atom modes.
+        // Modes(std::string const &modes_filename, ColumnTag,
+        //     std::string const &pdb_filename);
 
         void get_amber_modes_from_raw(std::string_view const texto);
 
@@ -49,6 +52,8 @@ namespace NDD {
         void get_col_major_from_raw(std::string_view const texto);
 
         void calpha_to_full_atom(std::string const &pdb_filename);
+
+        void six_to_full_atom(std::string const &pdb_filename);
 
         void normalize_evectors() {
             if (_evectors.size() != 0) {
@@ -72,13 +77,16 @@ namespace NDD {
 
         std::vector<std::vector<double>> _atm_evectors;
         std::vector<std::vector<double>> _evectors;
-        std::vector<double> _freqs_ndd_filename;
-        std::vector<double> _normas_atm;
-        size_t _i, _j, _iatm = 0;
+        std::vector<double> _evalues;
+        std::vector<double> _normas;
+        // _i: length of original eigenvectors, _j: nbr of eigenvectors, _ii:
+        // length of full atom eigenvectors.
+        size_t _i, _j, _ii, _natoms = 0;
     };
 
     // Call the proper Modes constructor.
-    Modes create_modes(NDDOptions const &NDD_opts);
+    Modes create_modes(
+        NDDOptions const &NDD_opts, std::string const &pdb_filename);
 }
 }
 #endif // _H

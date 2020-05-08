@@ -3,12 +3,12 @@
 namespace ANA::NDD {
 
 // On-site NDD.
-void ndd(
-    Cavity const &hueco, ConvexHull const &CH, NDDOptions const &NDD_opts) {
+void ndd(Cavity const &hueco, ConvexHull const &CH, NDDOptions const &NDD_opts,
+    std::string const &pdb_filename) {
 
     std::vector<double> output_volumes;
 
-    Modes const modos = create_modes(NDD_opts);
+    Modes const modos = create_modes(NDD_opts, pdb_filename);
 
     std::vector<double> scaling_factors =
         initialize_scaling_factors(modos, NDD_opts);
@@ -24,14 +24,104 @@ void ndd(
             double const mul = NDD_opts._size / scaling_factors[j];
 
             // In the negative direction.
-            ConvexHull CH_neg(CH, modos._evectors[j], -mul);
-            Cavity hueco_neg(hueco, modos._evectors[j], -mul);
+            // ConvexHull CH_neg(CH, modos._evectors[j], -mul);
+            // Cavity hueco_neg(hueco, modos._evectors[j], -mul);
+
+            if (j == 0) {
+                FILE *out_residuo = std::fopen("residuo", "w");
+                FILE *out_atomo = std::fopen("atomo", "w");
+
+                for (size_t c = 0; c < hueco._outer_cells.size(); ++c) {
+                    TetraInfo ndd_info = hueco._outer_info[c];
+                    // _resn is 1-indexed.
+                    int const resi_0_x = (ndd_info._resn[0] - 1) * 3;
+                    int const resi_1_x = (ndd_info._resn[1] - 1) * 3;
+                    int const resi_2_x = (ndd_info._resn[2] - 1) * 3;
+                    int const resi_3_x = (ndd_info._resn[3] - 1) * 3;
+
+                    if (out_residuo) {
+                        fmt::print(out_residuo, "{:9.6f}\n",
+                            modos._evectors[j][resi_0_x]);
+                        fmt::print(out_residuo, "{:9.6f}\n",
+                            modos._evectors[j][resi_0_x + 1]);
+                        fmt::print(out_residuo, "{:9.6f}\n",
+                            modos._evectors[j][resi_0_x + 2]);
+
+                        fmt::print(out_residuo, "{:9.6f}\n",
+                            modos._evectors[j][resi_1_x]);
+                        fmt::print(out_residuo, "{:9.6f}\n",
+                            modos._evectors[j][resi_1_x + 1]);
+                        fmt::print(out_residuo, "{:9.6f}\n",
+                            modos._evectors[j][resi_1_x + 2]);
+
+                        fmt::print(out_residuo, "{:9.6f}\n",
+                            modos._evectors[j][resi_2_x]);
+                        fmt::print(out_residuo, "{:9.6f}\n",
+                            modos._evectors[j][resi_2_x + 1]);
+                        fmt::print(out_residuo, "{:9.6f}\n",
+                            modos._evectors[j][resi_2_x + 2]);
+
+                        fmt::print(out_residuo, "{:9.6f}\n",
+                            modos._evectors[j][resi_3_x]);
+                        fmt::print(out_residuo, "{:9.6f}\n",
+                            modos._evectors[j][resi_3_x + 1]);
+                        fmt::print(out_residuo, "{:9.6f}\n",
+                            modos._evectors[j][resi_3_x + 2]);
+                    } else {
+                        printf("No escribe residuo.\n");
+                    }
+
+                    int const atom_0_x = ndd_info._index[0] * 3;
+                    int const atom_1_x = ndd_info._index[1] * 3;
+                    int const atom_2_x = ndd_info._index[2] * 3;
+                    int const atom_3_x = ndd_info._index[3] * 3;
+
+                    if (out_atomo) {
+                        fmt::print(out_atomo, "{:9.6f}\n",
+                            modos._atm_evectors[j][atom_0_x]);
+                        fmt::print(out_atomo, "{:9.6f}\n",
+                            modos._atm_evectors[j][atom_0_x + 1]);
+                        fmt::print(out_atomo, "{:9.6f}\n",
+                            modos._atm_evectors[j][atom_0_x + 2]);
+
+                        fmt::print(out_atomo, "{:9.6f}\n",
+                            modos._atm_evectors[j][atom_1_x]);
+                        fmt::print(out_atomo, "{:9.6f}\n",
+                            modos._atm_evectors[j][atom_1_x + 1]);
+                        fmt::print(out_atomo, "{:9.6f}\n",
+                            modos._atm_evectors[j][atom_1_x + 2]);
+
+                        fmt::print(out_atomo, "{:9.6f}\n",
+                            modos._atm_evectors[j][atom_2_x]);
+                        fmt::print(out_atomo, "{:9.6f}\n",
+                            modos._atm_evectors[j][atom_2_x + 1]);
+                        fmt::print(out_atomo, "{:9.6f}\n",
+                            modos._atm_evectors[j][atom_2_x + 2]);
+
+                        fmt::print(out_atomo, "{:9.6f}\n",
+                            modos._atm_evectors[j][atom_3_x]);
+                        fmt::print(out_atomo, "{:9.6f}\n",
+                            modos._atm_evectors[j][atom_3_x + 1]);
+                        fmt::print(out_atomo, "{:9.6f}\n",
+                            modos._atm_evectors[j][atom_3_x + 2]);
+                    } else {
+                        printf("No escribe atomo.\n");
+                    }
+                }
+                std::fclose(out_residuo);
+                std::fclose(out_atomo);
+            }
+
+            ConvexHull CH_neg(CH, modos._atm_evectors[j], -mul);
+            Cavity hueco_neg(hueco, modos._atm_evectors[j], -mul);
             carve_CH_into_cavity(hueco_neg, CH_neg);
             double const neg_vol = hueco_neg._volume + hueco_neg._outer_volume;
 
             // In the positive direction.
-            ConvexHull CH_pos(CH, modos._evectors[j], mul);
-            Cavity hueco_pos(hueco, modos._evectors[j], mul);
+            // ConvexHull CH_pos(CH, modos._evectors[j], mul);
+            // Cavity hueco_pos(hueco, modos._evectors[j], mul);
+            ConvexHull CH_pos(CH, modos._atm_evectors[j], mul);
+            Cavity hueco_pos(hueco, modos._atm_evectors[j], mul);
             carve_CH_into_cavity(hueco_pos, CH_pos);
             double const pos_vol = hueco_pos._volume + hueco_pos._outer_volume;
 
@@ -74,7 +164,7 @@ auto initialize_scaling_factors(Modes const &modos, NDDOptions const &NDD_opts)
 
         return scaling_factors;
     } else if (NDD_opts._scale_w_freqs) {
-        return modos._freqs_ndd_filename;
+        return modos._evalues;
     } else {
 
         std::vector<double> scaling_factors;
@@ -91,7 +181,7 @@ void write_result(NDDOptions const &NDD_opts, Modes const &modos,
     std::vector<double> const &pos_vols_ndd, std::vector<double> const &vgv) {
 
     switch (NDD_opts._step) {
-    case 1: {
+    case NDDOptions::Volumes: {
         std::string const filename_neg = std::to_string(NDD_opts._size) +
             "_neg_" + NDD_opts._out_ndd_filename;
         std::string const filename_pos = std::to_string(NDD_opts._size) +
@@ -101,13 +191,13 @@ void write_result(NDDOptions const &NDD_opts, Modes const &modos,
         write_vector(pos_vols_ndd, filename_pos);
         break;
     }
-    case 2: {
+    case NDDOptions::Gradient: {
         std::string const filename =
             std::to_string(NDD_opts._size) + "_" + NDD_opts._out_ndd_filename;
         write_vector(vgv, filename);
         break;
     }
-    case 3: {
+    case NDDOptions::Index: {
         barletta_index(modos, vgv);
         break;
     }
@@ -125,8 +215,8 @@ void barletta_index(Modes const &modos, std::vector<double> const &vgv) {
     // divide each squared element by the squared norm.
     double sum = 0;
     for (std::size_t j = 0; j < modos._j; ++j) {
-        sum += modos._freqs_ndd_filename[j] * modos._freqs_ndd_filename[j] *
-            vgv[j] * vgv[j] / squared_norm;
+        sum += modos._evalues[j] * modos._evalues[j] * vgv[j] * vgv[j] /
+            squared_norm;
     }
 
     double const barletta_index = 1 / (cte * sum);

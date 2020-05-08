@@ -43,7 +43,7 @@ NDD_frequencies, F
 ```
 NDD_scaling, S
 ```
- Input scaling factors for NDD. See ANA's manual to understand why they are necessary.
+ Input scaling factors for NDD. See ANA's manual to understand why you may want to use them.
 ```
 NDD_size, Z
 ```
@@ -175,20 +175,25 @@ stop
 
 ### NDD options
 ```
-NDD_step
-```
- Number of steps in the NDD pipeline ANA will perform. 1: ANA will not perform the derivative and instead output 2 files with the volumes of the displaced cavity in the positive and the negative direction. 2: ANA will output the VGV. 3: ANA will output the flexibility index.
- * Default: **3**
-```
 NDD_modes_format
 ```
  Format of the input vectors. amber: vectors will be read as Amber PCA modes. row: vectors will be read in row major order. column: vectors will be read in column major order.
  * Default: **row**
 ```
+NDD_particles_per_residue
+```
+ respectively.
+ * Default: **1**
+```
 NDD_frequences_scaling
 ```
  If true ANA will scale the input vectors by their frequencies instead of automatically generating its own scaling factors.
  * Default: **false**
+```
+NDD_step
+```
+ Number of steps in the NDD pipeline ANA will perform. 1: ANA will not perform the derivative and instead output 2 files with the volumes of the displaced cavity in the positive and the negative direction. 2: ANA will output the VGV. 3: ANA will output the flexibility index.
+ * Default: **3**
 
 ### Output options
 ```

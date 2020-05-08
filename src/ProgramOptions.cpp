@@ -63,7 +63,7 @@ int get_parameters(int ac, char *av[], ANA::InOutOptions &io_opts,
 
     ("NDD_scaling,S",
     PO::value<std::string>(&NDD_opts._scaling_ndd_filename)->default_value("none")->composing(),
-    "Input scaling factors for NDD. See ANA's manual to understand why they are necessary.\n")
+    "Input scaling factors for NDD. See ANA's manual to understand why you may want to use them.\n")
 
     ("NDD_size,Z",
     PO::value<int>(&NDD_opts._size)->default_value(1),
@@ -219,14 +219,7 @@ int get_parameters(int ac, char *av[], ANA::InOutOptions &io_opts,
 ///
 // ### NDD options
 ///
-    ("NDD_step",
-    PO::value<int>(&NDD_opts._step)->default_value(3),
-    "Number of steps in the NDD pipeline ANA will perform.\n"
-    "1: ANA will not perform the derivative and instead output 2 files with the volumes of the displaced cavity in the positive and the negative direction.\n"
-    "2: ANA will output the VGV.\n"
-    "3: ANA will output the flexibility index.\n"
-    "Default: 3.\n")
-
+    
     ("NDD_modes_format",
     PO::value<std::string>(&NDD_opts._modes_format)->default_value("row"),
     "Format of the input vectors.\n"
@@ -235,10 +228,26 @@ int get_parameters(int ac, char *av[], ANA::InOutOptions &io_opts,
     "column: vectors will be read in column major order.\n"
     "Default: row.\n")
 
+    ("NDD_particles_per_residue",
+    PO::value<int>(&NDD_opts._particles_per_residue)->default_value(1),
+    "Number of particles used to represent each residue. ANA currently support these levels of coarse grain:\n"
+    "0: Full atom. NOT YET SUPPORTED.\n"
+    "1: 1 particle per residue. Alpha carbon representation.\n"
+    "6: 6 particles per residue: N, CA, C, O, CB and R (side-chain center of mass). Gly and ALA only have 4 and 5 particles, respectively.\n"
+    "Default: 1.\n")
+
     ("NDD_frequences_scaling",
     PO::value<bool>(&NDD_opts._scale_w_freqs)->default_value(false),
     "If true ANA will scale the input vectors by their frequencies instead of automatically generating its own scaling factors.\n"
     "Default: false.\n")
+
+    ("NDD_step",
+    PO::value<int>(&NDD_opts._step)->default_value(3),
+    "Number of steps in the NDD pipeline ANA will perform.\n"
+    "1: ANA will not perform the derivative and instead output 2 files with the volumes of the displaced cavity in the positive and the negative direction.\n"
+    "2: ANA will output the VGV.\n"
+    "3: ANA will output the flexibility index.\n"
+    "Default: 3.\n")
 
 ///
 // ### Output options

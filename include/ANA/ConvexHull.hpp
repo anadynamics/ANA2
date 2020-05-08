@@ -78,10 +78,9 @@ public:
     // do this.
     void add_atm_info(Molecule const &protein);
 
-    // Returns an updated Convex Hull displacing the input convex hull along the
-    // input vector scaled by the step_size. The vector must be alfa carbon
-    // mode.
-    ConvexHull(ConvexHull const &CH, std::vector<double> const &evector,
+    // Constructor for NDD. Returns an updated Convex Hull displacing the input
+    // convex hull along the input vector scaled by the step_size.
+    ConvexHull(ConvexHull const &CH, std::vector<double> const &vector,
         double const step_size);
 
     std::vector<Triangle> _triangles;

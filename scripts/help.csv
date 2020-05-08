@@ -8,7 +8,7 @@ output_vol	o	none	 Volume output filename.	io_opts._out_vol_filename
 output_wall	w	none	 Cavity's wall atoms/residues output filename.	io_opts._out_wall_filename
 NDD_modes	M	none	 Input vectors for Non-Delaunay dynamics (NDD).	NDD_opts._modes_ndd_filename
 NDD_frequencies	F	none	 Input frequencies (in cm^-1) to calculate the flexibility index by NDD.	NDD_opts._freqs_ndd_filename
-NDD_scaling	S	none	 Input scaling factors for NDD. See ANA's manual to understand why they are necessary.	NDD_opts._scaling_ndd_filename
+NDD_scaling	S	none	 Input scaling factors for NDD. See ANA's manual to understand why you may want to use them.	NDD_opts._scaling_ndd_filename
 NDD_size	Z	1	 Scaling magnitude for the input vectors for NDD.	NDD_opts._size
 NDD_output	O	none	 Suffix for the NDD output file. The scaling magnitude will be the prefix.	NDD_opts._out_ndd_filename
 tool_check_CH	t	none	 Filename of output PDB displaying the included area.	tool_check_CH
@@ -35,9 +35,10 @@ ASA_max_dist	-	15	 Maximum distance between cell and Calpha used to keep cell. T
 start	-	1	 Frame to begin reading at.	md_start
 step	-	1	 Step count to read trajectory frames. NetCDF format only.	md_step
 stop	-	0	 Frame to stop reading. Reads the whole trajectory when set to 0.	md_end
-NDD_step	-	3	 Number of steps in the NDD pipeline ANA will perform. 1: ANA will not perform the derivative and instead output 2 files with the volumes of the displaced cavity in the positive and the negative direction. 2: ANA will output the VGV. 3: ANA will output the flexibility index.	NDD_opts._step
 NDD_modes_format	-	row	 Format of the input vectors. amber: vectors will be read as Amber PCA modes. row: vectors will be read in row major order. column: vectors will be read in column major order.	NDD_opts._modes_format
+NDD_particles_per_residue	-	1	 respectively.	NDD_opts._particles_per_residue
 NDD_frequences_scaling	-	false	 If true ANA will scale the input vectors by their frequencies instead of automatically generating its own scaling factors.	NDD_opts._scale_w_freqs
+NDD_step	-	3	 Number of steps in the NDD pipeline ANA will perform. 1: ANA will not perform the derivative and instead output 2 files with the volumes of the displaced cavity in the positive and the negative direction. 2: ANA will output the VGV. 3: ANA will output the flexibility index.	NDD_opts._step
 output_type	-	grid_pdb	 How to visualize output cavities. raw_pdb: null areas as tetrahedrons. raw_cgo: null areas as tetrahedrons formed with CGO lines in a pymol script. grid_pdb: null areas filled with points. grid_cgo: null areas filled with CGO spheres in a pymol script.	io_opts._out_type
 sphere_count	-	5	 Sphere count for grid output.	sphere_count
 min_vol_radius	-	1.4	 Radius of the sphere with the minimum volume to be taken into account.	cell_opts._minVR

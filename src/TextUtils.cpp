@@ -26,6 +26,22 @@ void write_vector(std::vector<double> vec, std::string const &filename) {
     return;
 }
 
+void write_matrix(std::vector<std::vector<double>> mtx, size_t nrows,
+    size_t ncols, std::string const &filename) {
+    FILE *out_file = std::fopen(filename.c_str(), "w");
+    if (out_file) {
+        for (size_t i = 0; i != nrows; ++i) {
+            for (size_t j = 0; j != ncols; ++j) {
+                fmt::print(out_file, " {:9.6f}", mtx[j][i]);
+            }
+            fmt::print(out_file, "\n");
+        }
+    } else {
+        printf("Could not write NDD output to: %s.\n", filename.c_str());
+    }
+    return;
+}
+
 // Read whole file into memory and return unique pointer to it and its size.
 auto slurp(std::string const &filename)
     -> std::tuple<std::unique_ptr<char[]>, size_t> {
@@ -95,8 +111,8 @@ auto guess_format(std::string_view texto)
             "format.");
     }
 
-    size_t elems_per_line {line_length / ch_elem};
-    size_t lines_per_file {(fsz - 1) / (line_length + 1)};
+    size_t elems_per_line{line_length / ch_elem};
+    size_t lines_per_file{(fsz - 1) / (line_length + 1)};
     if (malformed_line) {
         // There's a final newline at the end of the file.
         lines_per_file = fsz / (line_length + 1);
@@ -106,15 +122,15 @@ auto guess_format(std::string_view texto)
 }
 
 auto get_values_from_raw(std::string_view const texto) -> std::vector<double> {
-    auto [ch_elem, ncols, nrows] = guess_format(texto);
+    auto[ch_elem, ncols, nrows] = guess_format(texto);
     int line_length = ncols * ch_elem + 1;
     char const *cursor = texto.data();
     std::vector<double> data;
 
     data.reserve(nrows);
     for (size_t j = 0; j < nrows; ++j) {
-        char const *left {cursor};
-        char *right {const_cast<char *>(left + ch_elem)};
+        char const *left{cursor};
+        char *right{const_cast<char *>(left + ch_elem)};
         data.push_back(std::strtof(left, &right));
         cursor += line_length;
     }
