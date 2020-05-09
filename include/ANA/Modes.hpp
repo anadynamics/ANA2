@@ -21,29 +21,12 @@ namespace NDD {
         Modes(NDDOptions const &NDD_opts, std::string const &pdb_filename,
             AmberTag);
 
-        // // Create modes without eigenvalues.
-        // Modes(std::string const &modes_filename,
-        //     std::string const &pdb_filename, RowTag);
-        // // Create modes without eigenvalues.
-        // Modes(std::string const &modes_filename,
-        //     std::string const &pdb_filename, ColumnTag);
-
         // Create modes reading from a Row Major file.
         Modes(NDDOptions const &NDD_opts, std::string const &pdb_filename,
             RowTag);
         // Create modes reading from a Column Major file.
         Modes(NDDOptions const &NDD_opts, std::string const &pdb_filename,
             ColumnTag);
-
-        // // Create full atom modes.
-        // Modes(std::string const &modes_filename, AmberTag,
-        //     std::string const &pdb_filename);
-        // // Create full atom modes.
-        // Modes(std::string const &modes_filename, RowTag,
-        //     std::string const &pdb_filename);
-        // // Create full atom modes.
-        // Modes(std::string const &modes_filename, ColumnTag,
-        //     std::string const &pdb_filename);
 
         void get_amber_modes_from_raw(std::string_view const texto);
 
@@ -80,7 +63,7 @@ namespace NDD {
         std::vector<double> _evalues;
         std::vector<double> _normas;
         // _i: length of original eigenvectors, _j: nbr of eigenvectors, _ii:
-        // length of full atom eigenvectors.
+        // length of full atom eigenvectors. _ii = _natoms * 3.
         size_t _i, _j, _ii, _natoms = 0;
     };
 

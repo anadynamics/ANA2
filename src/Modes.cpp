@@ -33,24 +33,6 @@ namespace NDD {
         return;
     }
 
-    // // Create modes without eigenvalues.
-    // Modes::Modes(std::string const &modes_filename,
-    //     std::string const &pdb_filename, RowTag) {
-
-    //     auto[bufr_modes, fsz_modes] = slurp(modes_filename);
-    //     get_row_major_from_raw(std::string_view(bufr_modes.get(),
-    //     fsz_modes)); calpha_to_full_atom(pdb_filename); return;
-    // }
-
-    // // Create modes without eigenvalues.
-    // Modes::Modes(std::string const &modes_filename,
-    //     std::string const &pdb_filename, ColumnTag) {
-
-    //     auto[bufr_modes, fsz_modes] = slurp(modes_filename);
-    //     get_col_major_from_raw(std::string_view(bufr_modes.get(),
-    //     fsz_modes)); calpha_to_full_atom(pdb_filename); return;
-    // }
-
     // Create modes reading from a Row Major file.
     Modes::Modes(
         NDDOptions const &NDD_opts, std::string const &pdb_filename, RowTag) {
@@ -136,29 +118,6 @@ namespace NDD {
         }
         return;
     }
-
-    // // Create full atom modes.
-    // Modes::Modes(std::string const &modes_filename, AmberTag,
-    //     std::string const &pdb_filename) :
-    //     Modes(modes_filename, AmberTag()) {
-
-    // }
-
-    // // Create full atom modes.
-    // Modes::Modes(std::string const &modes_filename, RowTag,
-    //     std::string const &pdb_filename) :
-    //     Modes(modes_filename, RowTag()) {
-
-    //     calpha_to_full_atom(pdb_filename);
-    // }
-
-    // // Create full atom modes.
-    // Modes::Modes(std::string const &modes_filename, ColumnTag,
-    //     std::string const &pdb_filename) :
-    //     Modes(modes_filename, ColumnTag()) {
-
-    //     calpha_to_full_atom(pdb_filename);
-    // }
 
     void Modes::get_amber_modes_from_raw(std::string_view const texto) {
 
@@ -323,29 +282,21 @@ namespace NDD {
         // Also store each vector's norm.
         _atm_evectors.reserve(_j);
         for (size_t kk = 0; kk < _j; ++kk) {
-            std::vector<double> atm_evectors;
-            atm_evectors.reserve(_ii);
+            std::vector<double> atm_evector;
+            atm_evector.reserve(_ii);
             int res_number = 0;
 
             _normas.reserve(_j);
-            double sum = 0.;
-
             for (int const natoms : atoms_per_res) {
                 for (int k = 0; k < natoms; ++k) {
-                    double const elmt_x = _evectors[kk][3 * res_number];
-                    double const elmt_y = _evectors[kk][3 * res_number + 1];
-                    double const elmt_z = _evectors[kk][3 * res_number + 2];
-
-                    atm_evectors.push_back(elmt_x);
-                    atm_evectors.push_back(elmt_y);
-                    atm_evectors.push_back(elmt_z);
-                    sum += elmt_x * elmt_x + elmt_y * elmt_y + elmt_z * elmt_z;
+                    atm_evector.push_back(_evectors[kk][3 * res_number]);
+                    atm_evector.push_back(_evectors[kk][3 * res_number + 1]);
+                    atm_evector.push_back(_evectors[kk][3 * res_number + 2]);
                 }
                 ++res_number;
             }
 
-            _atm_evectors.push_back(std::move(atm_evectors));
-            _normas.push_back(sqrt(sum));
+            _atm_evectors.push_back(std::move(atm_evector));
         }
         return;
     }
@@ -355,48 +306,115 @@ namespace NDD {
         chemfiles::Trajectory in_trj(pdb_filename);
         chemfiles::Frame const in_frm = in_trj.read();
         auto const in_top = in_frm.topology();
+        _natoms = in_top.natoms();
+        // Length of full atom eigenvectors.
+        _ii = _natoms * 3;
         auto const res = in_top.residues();
-        int const nres = res.size();
-        assert(static_cast<size_t>(nres * 3) == _i &&
-            static_cast<size_t>(nres * 3 - 6) == _j);
+        size_t const nres = res.size();
+        // assert(static_cast<size_t>(nres * 3) == _i &&
+        //     static_cast<size_t>(nres * 3 - 6) == _j);
 
         // Get number of atoms per each residue.
         std::vector<int> atoms_per_res;
         atoms_per_res.reserve(nres);
+        std::vector<std::string> atm_names;
+        atm_names.reserve(_natoms);
+        int idx = 0;
         for (auto const &residue : res) {
-            int const natoms = residue.size();
-            atoms_per_res.push_back(natoms);
-            _natoms += natoms;
+            int const nres = residue.size();
+            atoms_per_res.push_back(nres);
+            int const n = residue.size() + idx;
+            for (; idx < n; ++idx) {
+                atm_names.push_back(in_top[idx].name());
+            }
         }
-
-        // Length of full atom eigenvectors.
-        _ii = _natoms * 3;
 
         // Go eigenvector by eigenvector and repeat each of its elements
         // according to atoms_per_res. Store that into _atm_evectors.
-        // Also store each vector's norm.
         _atm_evectors.reserve(_j);
         for (size_t kk = 0; kk < _j; ++kk) {
-            std::vector<double> atm_evectors;
-            atm_evectors.reserve(_ii);
-            int res_number = 0;
-
+            std::vector<double> atm_evector;
+            atm_evector.reserve(_ii);
             _normas.reserve(_j);
-            double sum = 0.;
 
-            for (int const natoms : atoms_per_res) {
-                for (int k = 0; k < natoms; ++k) {
-                    double const elmt = _evectors[kk][res_number];
-                    atm_evectors.push_back(elmt);
-                    sum += elmt * elmt;
+            int idx = 0;
+            auto beg = _evectors[kk].cbegin();
+            for (size_t resi = 0; resi < nres; ++resi) {
+
+                switch (atoms_per_res[resi]) {
+                case 4: {
+
+                    std::cout << "GLY" << '\n';
+
+                    // GLY. Just copy the elements.
+                    auto end = beg + 12;
+                    atm_evector.insert(std::end(atm_evector), beg, end);
+                    // Move beg and idx to the next residue.
+                    beg = end;
+                    idx += 12;
+                    break;
                 }
-                ++res_number;
-            }
+                case 5: {
 
-            _atm_evectors.push_back(std::move(atm_evectors));
-            _normas.push_back(sqrt(sum));
+                    std::cout << "ALA" << '\n';
+
+                    // ALA. Just copy the elements.
+                    auto end = beg + 15;
+                    atm_evector.insert(std::end(atm_evector), beg, end);
+                    // Move beg and idx to the next residue.
+                    beg = end;
+                    idx += 15;
+                    break;
+                }
+                default: {
+                    // The rest.
+
+                    std::cout << "rest" << '\n';
+
+                    //  N_x, points to the first element of the N atom, CA_x
+                    // to the first element of the CA atom and R_x to the 1st
+                    // element of the side chain's center of mass.
+                    int const N_x = idx, CA_x = idx + 3, R_x = idx + 15;
+
+                    // fin points to the 1st element of 1st the atom of the next
+                    // residue.
+                    // int const fin = idx + (3 * atoms_per_res[resi]);
+                    int const fin = idx + 18;
+
+                    // Copy the elements for the first 5 atoms.
+                    auto end = beg + 15;
+                    atm_evector.insert(std::end(atm_evector), beg, end);
+
+                    // Now, copy the element for the side chain center of mass
+                    // for the rest of the atoms of the residue, unless it's a H
+                    // (moves as N) or a HA (moves as CA).
+                    for (; idx < fin; idx += 3) {
+                        if (atm_names[idx] == "H") {
+                            atm_evector.push_back(_evectors[kk][N_x]);
+                            atm_evector.push_back(_evectors[kk][N_x + 1]);
+                            atm_evector.push_back(_evectors[kk][N_x + 2]);
+                        } else if (atm_names[idx] == "HA") {
+                            atm_evector.push_back(_evectors[kk][CA_x]);
+                            atm_evector.push_back(_evectors[kk][CA_x + 1]);
+                            atm_evector.push_back(_evectors[kk][CA_x + 2]);
+                        } else {
+                            atm_evector.push_back(_evectors[kk][R_x]);
+                            atm_evector.push_back(_evectors[kk][R_x + 1]);
+                            atm_evector.push_back(_evectors[kk][R_x + 2]);
+                        }
+                    }
+                    std::cout << "resi: " << resi << '\n';
+                    std::cout << "idx: " << idx << "  atoms_per_res[resi]: "
+                              << atoms_per_res[resi] << '\n';
+                    std::cout << "---------" << '\n';
+                    // Move beg to the next residue. idx is already == fin.
+                    beg = end + 3;
+                    break;
+                }
+                }
+            }
+            _atm_evectors.push_back(std::move(atm_evector));
         }
-        normalize_matrix(_atm_evectors);
         return;
     }
 

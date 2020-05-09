@@ -29,6 +29,12 @@ void write_vector(std::vector<double> vec, std::string const &filename) {
 void write_matrix(std::vector<std::vector<double>> mtx, size_t nrows,
     size_t ncols, std::string const &filename) {
     FILE *out_file = std::fopen(filename.c_str(), "w");
+
+    if (mtx.size() < ncols || mtx[0].size() < nrows) {
+        throw std::runtime_error("write_matrix(): Matrix dimensions are "
+                                 "smaller than nrows and ncols specified.\n");
+    }
+
     if (out_file) {
         for (size_t i = 0; i != nrows; ++i) {
             for (size_t j = 0; j != ncols; ++j) {
