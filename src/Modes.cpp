@@ -323,12 +323,13 @@ namespace NDD {
         // Get number of atoms per each residue.
         std::vector<int> atoms_per_res;
         atoms_per_res.reserve(nres);
-        std::vector<std::string> atm_names;
+        std::vector<std::string> atm_names, res_names;
         atm_names.reserve(_natoms);
         int idx = 0;
         for (auto const &residue : res) {
             int const nres = residue.size();
             atoms_per_res.push_back(nres);
+            res_names.push_back(residue.name());
             int const n = residue.size() + idx;
             for (; idx < n; ++idx) {
                 atm_names.push_back(in_top[idx].name());
@@ -347,69 +348,122 @@ namespace NDD {
             int idx = 0, atm_cnt = 0;
             auto beg = _evectors[kk].cbegin();
             for (size_t resi = 0; resi < nres; ++resi) {
-                switch (atoms_per_res[resi]) {
-                case 4: {
-                    // GLY. Just copy the elements.
-                    auto end = beg + 12;
-                    atm_evector.insert(std::end(atm_evector), beg, end);
-                    // Move idx and beg to the next residue.
-                    idx += 12;
-                    beg = end;
-                    break;
-                }
-                case 5: {
-                    // ALA. Just copy the elements.
-                    auto end = beg + 15;
-                    atm_evector.insert(std::end(atm_evector), beg, end);
-                    // Move idx and beg to the next residue.
-                    idx += 15;
-                    beg = end;
-                    break;
-                }
-                default: {
-                    // The rest.
-                    //  N_x, points to the first element of the N atom, CA_x
-                    // to the first element of the CA atom and R_x to the 1st
-                    // element of the side chain's center of mass.
-                    // These are the elements from the coarse grain eigenvector
-                    // that will be propagated to the rest of the atoms in the
-                    // full atom eigenvector.
-                    int const N_x = idx, CA_x = idx + 3, R_x = idx + 15;
-                    // Move idx and beg to the next residue.
-                    idx += 18;
-                    auto end = beg + 15;
-                    // Copy the elements for the first 5 atoms.
-                    atm_evector.insert(std::end(atm_evector), beg, end);
+                // N_x, points to the first element of the N atom, CA_x
+                // to the first element of the CA atom...
+                // These are the elements from the coarse grain
+                // eigenvector that will be propagated to the rest of
+                // the atoms in the full atom eigenvector.
+                int const N_x = idx, CA_x = idx + 3, C_x = idx + 6,
+                          O_x = idx + 9, N_x = idx + 12, R_x = idx + 15;
+                // 1st copy N CA C O
+                auto end = beg + 12;
+                atm_evector.insert(std::end(atm_evector), beg, end);
 
-                    // Now, copy the element for the side chain center of mass
-                    // for the rest of the atoms of the residue, unless it's a H
-                    // (moves as N) or a HA (moves as CA).
-                    for (int i = 5; i < atoms_per_res[resi]; ++i) {
+                // Now, copy the rest of the elements, according to each atom.
+                for (int i = 5; i < atoms_per_res[resi]; ++i) {
 
-                        if (atm_names[(atm_cnt + i)] == "H") {
-                            atm_evector.push_back(_evectors[kk][N_x]);
-                            atm_evector.push_back(_evectors[kk][N_x + 1]);
-                            atm_evector.push_back(_evectors[kk][N_x + 2]);
-                        } else if (atm_names[(atm_cnt + i)] == "HA") {
-                            atm_evector.push_back(_evectors[kk][CA_x]);
-                            atm_evector.push_back(_evectors[kk][CA_x + 1]);
-                            atm_evector.push_back(_evectors[kk][CA_x + 2]);
-                        } else {
-                            atm_evector.push_back(_evectors[kk][R_x]);
-                            atm_evector.push_back(_evectors[kk][R_x + 1]);
-                            atm_evector.push_back(_evectors[kk][R_x + 2]);
-                        }
+                    if (atm_names[(atm_cnt + i)] == "H" ||
+                        atm_names[(atm_cnt + i)] == "H1" ||
+                        atm_names[(atm_cnt + i)] == "H2" ||
+                        atm_names[(atm_cnt + i)] == "H3") {
+                        // Nitrogen hydrogen (H). The rest only show up in
+                        // the 1st residue.
+                        atm_evector.push_back(_evectors[kk][N_x]);
+                        atm_evector.push_back(_evectors[kk][N_x + 1]);
+                        atm_evector.push_back(_evectors[kk][N_x + 2]);
+                    } else if (atm_names[(atm_cnt + i)] == "HA") {
+                        atm_evector.push_back(_evectors[kk][CA_x]);
+                        atm_evector.push_back(_evectors[kk][CA_x + 1]);
+                        atm_evector.push_back(_evectors[kk][CA_x + 2]);
+                    } else {
+                        atm_evector.push_back(_evectors[kk][R_x]);
+                        atm_evector.push_back(_evectors[kk][R_x + 1]);
+                        atm_evector.push_back(_evectors[kk][R_x + 2]);
                     }
-                    // Move beg to the next residue.
-                    beg = end + 3;
-                    break;
                 }
-                    atm_cnt += atoms_per_res[resi];
-                }
+                // Move beg to the next residue.
+                beg = end + 3;
+                atm_cnt += atoms_per_res[resi];
             }
-
             _atm_evectors.push_back(std::move(atm_evector));
         }
+
+        //     switch (atoms_per_res[resi]) {
+        //     case 4: {
+        //         // GLY. Just copy the elements.
+        //         auto end = beg + 12;
+        //         atm_evector.insert(std::end(atm_evector), beg, end);
+        //         // Move idx and beg to the next residue.
+        //         idx += 12;
+        //         beg = end;
+        //         break;
+        //     }
+        //     case 5: {
+        //         // ALA. Just copy the elements.
+        //         auto end = beg + 15;
+        //         atm_evector.insert(std::end(atm_evector), beg, end);
+        //         // Move idx and beg to the next residue.
+        //         idx += 15;
+        //         beg = end;
+        //         break;
+        //     }
+        //     default: {
+        //         // The rest.
+        //         //  N_x, points to the first element of the N atom,
+        //         CA_x
+        //         // to the first element of the CA atom and R_x to the
+        //         1st
+        //         // element of the side chain's center of mass.
+        //         // These are the elements from the coarse grain
+        //         eigenvector
+        //         // that will be propagated to the rest of the atoms
+        //         in the
+        //         // full atom eigenvector.
+        //         int const N_x = idx, CA_x = idx + 3, R_x = idx + 15;
+        //         // Move idx and beg to the next residue.
+        //         idx += 18;
+        //         auto end = beg + 15;
+        //         // Copy the elements for the first 5 atoms.
+        //         atm_evector.insert(std::end(atm_evector), beg, end);
+
+        //         // Now, copy the element for the side chain center of
+        //         mass
+        //         // for the rest of the atoms of the residue, unless
+        //         it's a H
+        //         // (moves as N) or a HA (moves as CA).
+        //         for (int i = 5; i < atoms_per_res[resi]; ++i) {
+
+        //             if (atm_names[(atm_cnt + i)] == "H" ||
+        //                 atm_names[(atm_cnt + i)] == "H1" ||
+        //                 atm_names[(atm_cnt + i)] == "H2" ||
+        //                 atm_names[(atm_cnt + i)] == "H3") {
+        //                 // Nitrogen hydrogen (H). The rest only show
+        //                 up in
+        //                 // the 1st residue.
+        //                 atm_evector.push_back(_evectors[kk][N_x]);
+        //                 atm_evector.push_back(_evectors[kk][N_x +
+        //                 1]); atm_evector.push_back(_evectors[kk][N_x
+        //                 + 2]);
+        //             } else if (atm_names[(atm_cnt + i)] == "HA") {
+        //                 atm_evector.push_back(_evectors[kk][CA_x]);
+        //                 atm_evector.push_back(_evectors[kk][CA_x +
+        //                 1]); atm_evector.push_back(_evectors[kk][CA_x
+        //                 + 2]);
+        //             } else {
+        //                 atm_evector.push_back(_evectors[kk][R_x]);
+        //                 atm_evector.push_back(_evectors[kk][R_x +
+        //                 1]); atm_evector.push_back(_evectors[kk][R_x
+        //                 + 2]);
+        //             }
+        //         }
+        //         // Move beg to the next residue.
+        //         beg = end + 3;
+        //         break;
+        //     }
+        //         atm_cnt += atoms_per_res[resi];
+        //     }
+        // }
+
         return;
     }
 
@@ -426,8 +480,8 @@ namespace NDD {
         } else if (NDD_opts._modes_format == "column") {
             return {NDD_opts, pdb_filename, ColumnTag()};
         }
-        throw std::invalid_argument(
-            "No Modes format input could be parsed. This shouldn't happen.");
+        throw std::invalid_argument("No Modes format input could be "
+                                    "parsed. This shouldn't happen.");
         return {};
     }
 }
