@@ -58,6 +58,15 @@ namespace NDD {
 
         void normalize_matrix(std::vector<std::vector<double>> &mtx);
 
+        auto six_to_full_atom_helper(int resi, std::string const &resn,
+            std::vector<std::string> const &atm_names, size_t mode, int &idx,
+            int &atm_cnt, std::vector<double> &atm_evector,
+            std::vector<double>::iterator beg) -> std::vector<double>::iterator;
+
+        auto get_res_info(chemfiles::Topology const &in_top)
+            -> std::tuple<int, std::vector<std::string>, std::vector<int>,
+                std::vector<std::string>>;
+
         std::vector<std::vector<double>> _atm_evectors;
         std::vector<std::vector<double>> _evectors;
         std::vector<double> _evalues;

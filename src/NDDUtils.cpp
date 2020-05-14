@@ -10,7 +10,8 @@ void ndd(Cavity const &hueco, ConvexHull const &CH, NDDOptions const &NDD_opts,
 
     Modes const modos = create_modes(NDD_opts, pdb_filename);
 
-    // write_matrix(modos._atm_evectors, modos._ii, modos._j, "atm_evectors");
+    write_matrix(modos._atm_evectors, modos._ii, modos._j, "atm_evectors");
+    write_matrix(modos._evectors, modos._i, modos._j, "evectors");
 
     std::vector<double> scaling_factors =
         initialize_scaling_factors(modos, NDD_opts);

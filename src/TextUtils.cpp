@@ -38,7 +38,7 @@ void write_matrix(std::vector<std::vector<double>> mtx, size_t nrows,
     if (out_file) {
         for (size_t i = 0; i != nrows; ++i) {
             for (size_t j = 0; j != ncols; ++j) {
-                fmt::print(out_file, " {:9.6f}", mtx[j][i]);
+                fmt::print(out_file, " {:11.4E}", mtx[j][i]);
             }
             fmt::print(out_file, "\n");
         }
