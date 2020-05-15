@@ -307,22 +307,6 @@ namespace NDD {
         return;
     }
 
-    auto Modes::six_to_full_atom_helper(int const resi, std::string const &resn,
-        std::vector<std::string> const &atm_names, size_t mode, int &idx,
-        int &atm_cnt, std::vector<double> &atm_evector,
-        std::vector<double>::iterator beg) -> std::vector<double>::iterator {
-        // N_x, points to the first element of the N atom, CA_x
-        // to the first element of the CA atom...
-        // These are the elements from the coarse grain
-        // eigenvector that will be propagated to the rest of
-        // the atoms in the full atom eigenvector.
-        int const N_x = idx, CA_x = idx + 3, C_x = idx + 6, CB_x = idx + 12,
-                  R_x = idx + 15;
-        // Now, copy the rest of the elements, according to each atom.
-        // What's the name for the carboxylic hydrogen when the last
-        // residue is protonated?
-    }
-
     // Get residue names, their count, their atom count and the atoms names.
     auto Modes::get_res_info(chemfiles::Topology const &in_top)
         -> std::tuple<int, std::vector<std::string>, std::vector<int>,
@@ -364,7 +348,9 @@ namespace NDD {
         // Go eigenvector by eigenvector and repeat each of its elements
         // according to atoms_per_res. Store that into _atm_evectors.
         _atm_evectors.reserve(_j);
+
         for (size_t mode = 0; mode < _j; ++mode) {
+
             std::vector<double> atm_evector;
             atm_evector.reserve(_ii);
 
@@ -374,12 +360,10 @@ namespace NDD {
             int idx = 0, atm_cnt = 0;
             auto beg = _evectors[mode].begin();
             for (int resi = 0; resi < nres; ++resi) {
+
                 // 1st, copy N CA C O.
                 atm_evector.insert(std::end(atm_evector), beg, (beg + 12));
 
-                // beg = six_to_full_atom_helper(atoms_per_res[resi],
-                //     res_names[resi], atm_names, mode, idx, atm_cnt,
-                //     atm_evector, beg);
                 // N_x, points to the first element of the N atom, CA_x
                 // to the first element of the CA atom...
                 // These are the elements from the coarse grain
@@ -390,7 +374,8 @@ namespace NDD {
                 // Now, copy the rest of the elements, according to each atom.
                 // What's the name for the carboxylic hydrogen when the last
                 // residue is protonated?
-                for (int i = 4; i < resi; ++i) {
+                for (int i = 4; i < atoms_per_res[resi]; ++i) {
+
                     if (atm_names[(atm_cnt + i)] == "CB") {
                         // Beta carbon.
                         atm_evector.push_back(_evectors[mode][CB_x]);
@@ -438,16 +423,18 @@ namespace NDD {
                 // Move beg iterator to the next residue.
                 if (res_names[resi] == "GLY") {
                     beg += 12;
+                    idx += 12;
                 } else if (res_names[resi] == "ALA") {
                     beg += 15;
+                    idx += 15;
                 } else {
                     beg += 18;
+                    idx += 18;
                 }
 
                 atm_cnt += atoms_per_res[resi];
-
-                _atm_evectors.push_back(std::move(atm_evector));
             }
+            _atm_evectors.push_back(std::move(atm_evector));
         }
 
         return;
