@@ -101,11 +101,14 @@ function write_md!(opciones, ops, textos, default_vars, categorias, indices)
             write_header!(file, categorias, opciones, i)
 
             write(file, "```", "\n")
-            write(file, opciones[i])
             if (ops[i] == "-")
+                # Config options
+                write(file, opciones[i])
                 write(file, "\n")
             else
-                write(file, ", ", ops[i], "\n")
+                # Terminal options
+                write(file, "--", opciones[i])
+                write(file, ", -", ops[i], "\n")
             end
             write(file, "```", "\n")
             write(file, textos[i], "\n")

@@ -5,76 +5,76 @@ title: Configuration variables
 
 ## Terminal options
 ```
-input_struct, s
+--input_struct, -s
 ```
  Input structure. This is the only positional argument so you can type it first and skip the flag.
 ```
-input_md, d
+--input_md, -d
 ```
  Input file with MD simulation.
 ```
-config_file, c
+--config_file, -c
 ```
  Filename of the configuration file.
 ```
-include, i
+--include, -i
 ```
  Coordinates of the included area in PDB format.
 ```
-output_draw, f
+--output_draw, -f
 ```
  PDB output filename.
 ```
-output_vol, o
+--output_vol, -o
 ```
  Volume output filename.
 ```
-output_wall, w
+--output_wall, -w
 ```
  Cavity's wall atoms/residues output filename.
 ```
-NDD_modes, M
+--NDD_modes, -M
 ```
  Input vectors for Non-Delaunay dynamics (NDD).
 ```
-NDD_frequencies, F
+--NDD_frequencies, -F
 ```
  Input frequencies (in cm^-1) to calculate the flexibility index by NDD.
 ```
-NDD_scaling, S
+--NDD_scaling, -S
 ```
  Input scaling factors for NDD. See ANA's manual to understand why you may want to use them.
 ```
-NDD_size, Z
+--NDD_size, -Z
 ```
  Scaling magnitude for the input vectors for NDD.
  * Default: **1**
 ```
-NDD_output, O
+--NDD_output, -O
 ```
  Suffix for the NDD output file. The scaling magnitude will be the prefix.
 ```
-tool_check_CH, t
+--tool_check_CH, -t
 ```
  Filename of output PDB displaying the included area.
 ```
-tool_pdb_to_ch, p
+--tool_pdb_to_ch, -p
 ```
  Read the input PDB and write 'include.ANA' file with the vertices of its convex hull.
 ```
-tool_pdb_norm, n
+--tool_pdb_norm, -n
 ```
  Read the input PDB and renumber its atoms and residues. Be aware that his tool won't fix every error in your PDB. Writes the output PDB to tool_pdb_norm.
 ```
-tool_aa_to_ca, a
+--tool_aa_to_ca, -a
 ```
  Write Calpha atoms indices for the included residues to stdout.
 ```
-ver, v
+--ver, -v
 ```
  Output version number.
 ```
-help, h
+--help, -h
 ```
  Output help message.
 
