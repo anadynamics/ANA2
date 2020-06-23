@@ -1,0 +1,12 @@
+pocket_1	Frame: 1
+
+RESN |	LEU+ILE+LEU+PHE+ILE+VAL+MET+LEU+VAL+VAL+SER+LYS+MET+VAL
+RESI |	10+50+51+54+56+71+72+75+104+107+108+111+113+116
+-------------
+
+pocket_2	Frame: 1
+
+RESN |	MET+ARG+ALA+VAL
+RESI |	1+9+70+71
+-------------
+
