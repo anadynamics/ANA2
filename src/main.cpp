@@ -12,7 +12,7 @@ int main(int argc, char *argv[]) {
     ANA::InOutOptions io_opts;
 
     std::string AA_indices_proto, exclude_ca_for_ASA_indices_proto,
-        clusters_method = "facets", ASA_method = "dot_pdt", only_side_ASA,
+        clusters_method = "boxes", ASA_method = "dot_pdt", only_side_ASA,
         list_wall, list_wall_separator, tool_check_CH, tool_pdb_to_ch,
         tool_pdb_norm, tool_aa_to_ca;
 
