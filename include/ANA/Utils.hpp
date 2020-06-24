@@ -284,8 +284,12 @@ bool lb_with_indices(const std::vector<T> &v1, const std::vector<T> &indices,
     }
 
     // Found it?
-    bool const match = (v1[indices[first]] == q1);
-    return match;
+    if (first >= v1.size()) {
+        return false;
+    } else {
+        bool const match = (v1[indices[first]] == q1);
+        return match;
+    }
 }
 
 } // namespace ANA
