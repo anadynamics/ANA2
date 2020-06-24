@@ -164,12 +164,14 @@ void cluster_cells_boxes(
         current_tmp.push_back(map_aux[i]);
 
         if (lb_with_indices(id_vector_a, indices_a, map_aux[i], result)) {
-            neighbors.push_back(neighbors_a[indices_a[result]]);
 
+            neighbors.push_back(neighbors_a[indices_a[result]]);
         } else if (lb_with_indices(
                        id_vector_b, indices_b, map_aux[i], result)) {
+
             neighbors.push_back(neighbors_b[indices_b[result]]);
         } else {
+
             std::cerr << "Iso-oriented boxes clustering method. Invalid "
                          "starting cell ID."
                       << '\n';
@@ -177,13 +179,12 @@ void cluster_cells_boxes(
         }
 
         while (current_tmp.size() != 0) {
-            auto const box = current_tmp[0];
 
+            auto const box = current_tmp[0];
             // Search for intersections of this box in the "B" array.
             if (lb_with_indices(id_vector_a, indices_a, box, result)) {
                 // Keep moving further until every intersections on this array
-                // has
-                // been checked.
+                // has been checked.
                 while (id_vector_a[indices_a[result]] == box) {
 
                     new_id = id_vector_b[indices_a[result]];
@@ -1207,7 +1208,7 @@ void tool_PDB_norm(
                 // Add atom to residue.
                 res.add_atom(k);
                 // Fix element
-                std::string element {input_pdb_top[k].type()[0]};
+                std::string element{input_pdb_top[k].type()[0]};
                 // Add atom to frame and topology.
                 chemfiles::Atom atomo(input_pdb_top[k].name(), element);
                 atomo.set("is_hetatm",
