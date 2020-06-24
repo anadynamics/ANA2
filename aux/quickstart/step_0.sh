@@ -1,5 +1,5 @@
 #!/bin/bash
 
-ANA2 apo.pdb -f 1_salida
+ANA2 input_pdb.pdb -f 1_cavity
 
 exit 0

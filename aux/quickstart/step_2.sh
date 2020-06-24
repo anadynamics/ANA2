@@ -1,5 +1,5 @@
 #!/bin/bash
 
-ANA2 apo.pdb -f 2_salida -c 2.cfg -w wall_1mtn_
+ANA2 input_pdb.pdb -f 2_cavity -c 2.cfg -w wall_
 
 exit 0
