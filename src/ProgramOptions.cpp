@@ -127,13 +127,13 @@ int get_parameters(int ac, char *av[], ANA::InOutOptions &io_opts,
 
     ("sphere", 
     PO::value<std::string>(&IA_opts._sphere_proto)->default_value("none")->composing(),
-    "Read the input coordinates and write 'include_sphere.ANA' file with the requested pseudo sphere.\n")
+    "Read the input coordinates and write 'include_sphere.ANA' file with the requested pseudo sphere. Deprecated.\n")
     ("cylinder",
     PO::value<std::string>(&IA_opts._cylinder_proto)->default_value("none")->composing(),
-    "Read the input coordinates and write 'include_cylinder.ANA' file with the requested pseudo cylinder.\n")
+    "Read the input coordinates and write 'include_cylinder.ANA' file with the requested pseudo cylinder. Deprecated.\n")
     ("prism",
     PO::value<std::string>(&IA_opts._prism_proto)->default_value("none")->composing(),
-    "Read the input coordinates and write 'include_prism.ANA' file with the requested prism.\n")
+    "Read the input coordinates and write 'include_prism.ANA' file with the requested prism. Deprecated.\n")
 
 ///
 // ### Useful options for outlining the desired cavity with ANA Static
@@ -141,11 +141,11 @@ int get_parameters(int ac, char *av[], ANA::InOutOptions &io_opts,
 
     ("included_residues",
     PO::value<std::string>(&AA_indices_proto)->default_value("none"),
-    "Amino acids that line the desired cavity. Useful for discovering new cavities.\n")
+    "Amino acids that line the desired cavity. Useful for discovering new cavities. Deprecated.\n")
 
     ("minimum_number_of_vertices_to_include",
     PO::value<int>(&nbr_of_vertices_to_include)->default_value(2),
-    "Minimum number of wall atoms of the included amino acids.\n"
+    "Minimum number of wall atoms of the included amino acids. Deprecated.\n"
     "Default: 2.\n")
 
 ///
@@ -277,7 +277,7 @@ int get_parameters(int ac, char *av[], ANA::InOutOptions &io_opts,
 
     ("max_area_radius",
     PO::value<double>(&cell_opts._maxSR)->default_value(99)->composing(),
-    "Radius of the sphere with the maximum surface to be taken into account.\n"
+    "Radius of the sphere with the maximum surface to be taken into account. Deprecated.\n"
     "Default: 99.\n")
 
     ("atom_only",
@@ -298,7 +298,7 @@ int get_parameters(int ac, char *av[], ANA::InOutOptions &io_opts,
     
     ("triangulate_only_included_aas",
     PO::value<bool>(&triangulate_only_included_aas)->default_value(false),
-    "Instead of triangulating the whole molecule triangulate only the included amino acids.\n"
+    "Instead of triangulating the whole molecule triangulate only the included amino acids. Deprecated.\n"
     "Default: false.\n");
 
     // Now, map the variables

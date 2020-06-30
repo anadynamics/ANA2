@@ -20,11 +20,11 @@ help	h	-	 Output help message.	-
 included_area_residues	-	none	 Amino acids that delimit the convex hull of the included area. Numbers from 1 to 9999 separated by commas spaces or tabs.	IA_opts._resn_proto
 included_area_atoms	-	none	 Atoms that delimit the convex hull of the included area. Numbers from 1 to 9999 separated by commas spaces or tabs.	IA_opts._atom_proto
 included_area_precision	-	0	 0: keep all cells that intersect in the included area. 1: prune the intersecting cells to keep only the voids that lie inside the included area.	precision
-sphere	-	none	 Read the input coordinates and write 'include_sphere.ANA' file with the requested pseudo sphere.	IA_opts._sphere_proto
-cylinder	-	none	 Read the input coordinates and write 'include_cylinder.ANA' file with the requested pseudo cylinder.	IA_opts._cylinder_proto
-prism	-	none	 Read the input coordinates and write 'include_prism.ANA' file with the requested prism.	IA_opts._prism_proto
-included_residues	-	none	 Amino acids that line the desired cavity. Useful for discovering new cavities.	AA_indices_proto
-minimum_number_of_vertices_to_include	-	2	 Minimum number of wall atoms of the included amino acids.	nbr_of_vertices_to_include
+sphere	-	none	 Read the input coordinates and write 'include_sphere.ANA' file with the requested pseudo sphere. Deprecated.	IA_opts._sphere_proto
+cylinder	-	none	 Read the input coordinates and write 'include_cylinder.ANA' file with the requested pseudo cylinder. Deprecated.	IA_opts._cylinder_proto
+prism	-	none	 Read the input coordinates and write 'include_prism.ANA' file with the requested prism. Deprecated.	IA_opts._prism_proto
+included_residues	-	none	 Amino acids that line the desired cavity. Useful for discovering new cavities. Deprecated.	AA_indices_proto
+minimum_number_of_vertices_to_include	-	2	 Minimum number of wall atoms of the included amino acids. Deprecated.	nbr_of_vertices_to_include
 clusters_method	-	boxes	 Define the method to clusterize cells. none: don't group null areas. facets: group null areas if the tetrahedrons share facets. boxes: group null areas if the tetrahedrons bounding boxes intersect.	clusters_method
 clusters_min_size	-	2	 Minimum number of cells a cluster has to have to be included.	clusters_min_size
 ASA_discard_method	-	cm	 Method for discarding cells according to solvent exposure. none: don't. cm: determine cells surrondings using the global CM as reference. backbone: draw a convex hull between the Calphas and discard every cell with its centroid outside(inside) the hull. axes: determine cells surrondings using its centroid and cartesian axes as references.	ASA_method
@@ -42,8 +42,8 @@ NDD_step	-	3	 Number of steps in the NDD pipeline ANA will perform. 1: ANA will 
 output_type	-	grid_pdb	 How to visualize output cavities. raw_pdb: null areas as tetrahedrons. raw_cgo: null areas as tetrahedrons formed with CGO lines in a pymol script. grid_pdb: null areas filled with points. grid_cgo: null areas filled with CGO spheres in a pymol script.	io_opts._out_type
 sphere_count	-	5	 Sphere count for grid output.	sphere_count
 min_vol_radius	-	1.4	 Radius of the sphere with the minimum volume to be taken into account.	cell_opts._minVR
-max_area_radius	-	99	 Radius of the sphere with the maximum surface to be taken into account.	cell_opts._maxSR
+max_area_radius	-	99	 Radius of the sphere with the maximum surface to be taken into account. Deprecated.	cell_opts._maxSR
 atom_only	-	true	 Triangulate only ATOM records.	atom_only
 list_wall	-	none	 atom: output a file with the wall atoms. residue: output a file with the wall amino acids. none: don't.	list_wall
 separator	-	\t	 Separator character for wall residues (atoms). +: might useful for pymol.	list_wall_separator
-triangulate_only_included_aas	-	false	 Instead of triangulating the whole molecule triangulate only the included amino acids.	triangulate_only_included_aas
+triangulate_only_included_aas	-	false	 Instead of triangulating the whole molecule triangulate only the included amino acids. Deprecated.	triangulate_only_included_aas

@@ -97,25 +97,25 @@ included_area_precision
 ```
 sphere
 ```
- Read the input coordinates and write 'include_sphere.ANA' file with the requested pseudo sphere.
+ Read the input coordinates and write 'include_sphere.ANA' file with the requested pseudo sphere. Deprecated.
 ```
 cylinder
 ```
- Read the input coordinates and write 'include_cylinder.ANA' file with the requested pseudo cylinder.
+ Read the input coordinates and write 'include_cylinder.ANA' file with the requested pseudo cylinder. Deprecated.
 ```
 prism
 ```
- Read the input coordinates and write 'include_prism.ANA' file with the requested prism.
+ Read the input coordinates and write 'include_prism.ANA' file with the requested prism. Deprecated.
 
 ### Useful options for outlining the desired cavity with ANA Static
 ```
 included_residues
 ```
- Amino acids that line the desired cavity. Useful for discovering new cavities.
+ Amino acids that line the desired cavity. Useful for discovering new cavities. Deprecated.
 ```
 minimum_number_of_vertices_to_include
 ```
- Minimum number of wall atoms of the included amino acids.
+ Minimum number of wall atoms of the included amino acids. Deprecated.
  * Default: **2**
 
 #### Clusters options
@@ -216,7 +216,7 @@ min_vol_radius
 ```
 max_area_radius
 ```
- Radius of the sphere with the maximum surface to be taken into account.
+ Radius of the sphere with the maximum surface to be taken into account. Deprecated.
  * Default: **99**
 ```
 atom_only
@@ -235,5 +235,5 @@ separator
 ```
 triangulate_only_included_aas
 ```
- Instead of triangulating the whole molecule triangulate only the included amino acids.
+ Instead of triangulating the whole molecule triangulate only the included amino acids. Deprecated.
  * Default: **false**
