@@ -2,7 +2,8 @@ from pymol.cgo import *
 from pymol import cmd
 
 cmd.set("cartoon_fancy_helices", 1)
-cmd.set("cartoon_transparency", 0.7)
+cmd.set("cartoon_transparency", 0.5)
+cmd.set("sphere_transparency", 0.7)
 cmd.set("ray_trace_mode",  0)
 cmd.set("two_sided_lighting", "on")
 cmd.set("reflect", 0.9)
@@ -10,7 +11,7 @@ cmd.set("ambient", 0.1)
 cmd.set('''ray_opaque_background''', '''off''')
 
 cmd.load("4xcp_hv.pdb")
-cmd.color("red", "4xcp_hv")
+cmd.color("chocolate", "4xcp_hv")
 cmd.load("lig_hv_cavity_1.pdb")
 cmd.color("salmon", "lig_hv_cavity_1")
 
