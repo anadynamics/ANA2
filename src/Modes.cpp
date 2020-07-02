@@ -275,14 +275,6 @@ namespace NDD {
         // Length of full atom eigenvectors.
         _ii = _natoms * 3;
 
-        FILE *natoms_file = std::fopen("natoms", "w");
-        if (natoms_file) {
-            for (auto const &residue : atoms_per_res) {
-                fmt::print(natoms_file, "{}\n", residue);
-            }
-        }
-        std::fclose(natoms_file);
-
         // Go eigenvector by eigenvector and repeat each of its elements
         // according to atoms_per_res. Store that into _atm_evectors.
         // Also store each vector's norm.
