@@ -260,8 +260,13 @@ namespace NDD {
         auto const in_top = in_frm.topology();
         auto const res = in_top.residues();
         int const nres = res.size();
-        assert(static_cast<size_t>(nres * 3) == _i &&
-            static_cast<size_t>(nres * 3 - 6) == _j);
+
+        if (!(static_cast<size_t>(nres * 3) == _i)) {
+            std::cerr << "_i: " << _i << " -- _j: " << _j
+                      << " -- nres: " << nres << '\n';
+            throw std::runtime_error("Number of residues do not match "
+                                     "length of vectors. Aborting.");
+        }
 
         // Get number of atoms per each residue.
         std::vector<int> atoms_per_res;
