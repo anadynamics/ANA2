@@ -24,7 +24,8 @@ void write_result(NDDOptions const &NDD_opts, Modes const &modos,
     std::vector<double> const &neg_vols_ndd,
     std::vector<double> const &pos_vols_ndd, std::vector<double> const &vgv);
 
-void barletta_index(Modes const &modos, std::vector<double> const &vgv);
+void barletta_index(Modes const &modos, NDDOptions const &NDD_opts,
+    std::vector<double> const &vgv);
 
 } // namespace NDD:: ANA
 

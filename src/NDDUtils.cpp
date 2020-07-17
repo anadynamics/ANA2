@@ -108,29 +108,45 @@ void write_result(NDDOptions const &NDD_opts, Modes const &modos,
         break;
     }
     case NDDOptions::Index: {
-        barletta_index(modos, vgv);
+        barletta_index(modos, NDD_opts, vgv);
         break;
     }
     }
     return;
 }
 
-void barletta_index(Modes const &modos, std::vector<double> const &vgv) {
+void barletta_index(Modes const &modos, NDDOptions const &NDD_opts,
+    std::vector<double> const &vgv) {
     // VGV needs to be normalized before calculating the flexibility index.
     double squared_norm = 0;
     for (std::size_t j = 0; j < modos._j; ++j) {
         squared_norm += vgv[j] * vgv[j];
     }
-    // Instead of dividing each VGV element by the vector's norm, just
-    // divide each squared element by the squared norm.
-    double sum = 0;
-    for (std::size_t j = 0; j < modos._j; ++j) {
-        sum += modos._evalues[j] * modos._evalues[j] * vgv[j] * vgv[j] /
-            squared_norm;
-    }
 
-    double const barletta_index = 1 / (cte * sum);
-    printf("Flexibility:  %.10f\n", barletta_index);
+    if (NDD_opts._modes_format == "amber") {
+        // Assuming eigenvalues are in units of 1/cm (PCA)
+        // Instead of dividing each VGV element by the vector's norm, just
+        // divide each squared element by the squared norm.
+        double sum = 0;
+        for (std::size_t j = 0; j < modos._j; ++j) {
+            sum += modos._evalues[j] * modos._evalues[j] * vgv[j] * vgv[j] /
+                squared_norm;
+        }
+
+        double const barletta_index = 1 / (cte * sum);
+        printf("Flexibility:  %.10f\n", barletta_index);
+    } else {
+        // Assuming eigenvalues are in units of 1/s^2 (NMA)
+        // Instead of dividing each VGV element by the vector's norm, just
+        // divide each squared element by the squared norm.
+        double sum = 0;
+        for (std::size_t j = 0; j < modos._j; ++j) {
+            sum += modos._evalues[j] * vgv[j] * vgv[j] / squared_norm;
+        }
+
+        double const barletta_index = 1 / sum;
+        printf("Flexibility:  %.10f\n", barletta_index);
+    }
 
     return;
 }
