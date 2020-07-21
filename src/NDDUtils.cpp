@@ -123,6 +123,7 @@ void barletta_index(Modes const &modos, NDDOptions const &NDD_opts,
         squared_norm += vgv[j] * vgv[j];
     }
 
+    double barletta_index;
     if (NDD_opts._modes_format == "amber") {
         // Assuming eigenvalues are in units of 1/cm (PCA)
         // Instead of dividing each VGV element by the vector's norm, just
@@ -133,8 +134,7 @@ void barletta_index(Modes const &modos, NDDOptions const &NDD_opts,
                 squared_norm;
         }
 
-        double const barletta_index = TO_CM1 * sum;
-        printf("Flexibility:  %.10f\n", barletta_index);
+        barletta_index = TO_CM1 * sum;
     } else {
         // Assuming eigenvalues are in units of 1/s^2 (NMA)
         // Instead of dividing each VGV element by the vector's norm, just
@@ -144,10 +144,10 @@ void barletta_index(Modes const &modos, NDDOptions const &NDD_opts,
             sum += modos._evalues[j] * vgv[j] * vgv[j] / squared_norm;
         }
 
-        double const barletta_index = sum;
-        printf("Flexibility:  %.10f\n", barletta_index);
+        barletta_index = sum;
     }
 
+    printf("Rigidity:  %.10f\n", barletta_index);
     return;
 }
 
