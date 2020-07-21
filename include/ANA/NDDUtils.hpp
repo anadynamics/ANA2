@@ -12,6 +12,7 @@
 namespace ANA::NDD {
 
 double constexpr cte = 5.0219059911006245e-5;
+double constexpr TO_CM1 = 3.548143227025099e-4;
 
 // On-site NDD.
 void ndd(Cavity const &hueco, ConvexHull const &CH, NDDOptions const &NDD_opts,

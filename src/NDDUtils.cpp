@@ -133,7 +133,7 @@ void barletta_index(Modes const &modos, NDDOptions const &NDD_opts,
                 squared_norm;
         }
 
-        double const barletta_index = 1 / (cte * sum);
+        double const barletta_index = TO_CM1 * sum;
         printf("Flexibility:  %.10f\n", barletta_index);
     } else {
         // Assuming eigenvalues are in units of 1/s^2 (NMA)
@@ -144,7 +144,7 @@ void barletta_index(Modes const &modos, NDDOptions const &NDD_opts,
             sum += modos._evalues[j] * vgv[j] * vgv[j] / squared_norm;
         }
 
-        double const barletta_index = 1 / sum;
+        double const barletta_index = sum;
         printf("Flexibility:  %.10f\n", barletta_index);
     }
 
