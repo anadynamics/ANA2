@@ -34,8 +34,8 @@ target_sources(ANA2
         src/NDD.cpp
         src/NDDUtils.cpp
         src/PDB.cpp
-        src/ProgramOptions.cpp
         src/PrimitivesUtils.cpp
+        src/ProgramOptions.cpp
         src/Read.cpp
         src/Static.cpp
         src/TextUtils.cpp
@@ -45,8 +45,8 @@ target_sources(ANA2
 
         include/ANA/Cavity.hpp
         include/ANA/CGALUtils.hpp
-        include/ANA/ConvexHull.hpp
         include/ANA/ConvexHullFunctions.hpp
+        include/ANA/ConvexHull.hpp
         include/ANA/Includes.hpp
         include/ANA/MD.hpp
         include/ANA/Modes.hpp
