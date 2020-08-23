@@ -7,11 +7,11 @@ namespace ANA {
 
 double constexpr M_PI3 = 1 / 3 * M_PI;
 double constexpr delta = 0.05;
-double constexpr neg_delta = -delta;
-double constexpr uno_bot = 1. - delta;
-double constexpr uno_top = 1. + delta;
-double constexpr zero_bot = 0. - delta;
-double constexpr zero_top = 0. + delta;
+double const neg_delta = -delta;
+double const uno_bot = 1. - delta;
+double const uno_top = 1. + delta;
+double const zero_bot = 0. - delta;
+double const zero_top = 0. + delta;
 using std::size_t;
 
 class CCTetrahedron {
