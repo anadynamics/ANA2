@@ -1,0 +1,25 @@
+---
+Language: Cpp
+BasedOnStyle: WebKit 
+PenaltyBreakComment: 1
+AlignAfterOpenBracket: false
+ColumnLimit: 80
+ContinuationIndentWidth: 4
+IndentWidth: 4
+PointerAlignment: Right 
+Standard: Cpp11
+
+BreakBeforeBraces: Custom
+BraceWrapping:
+    AfterEnum: false
+    AfterStruct: false
+    SplitEmptyFunction: false
+    AfterClass: false
+    AfterFunction: false
+
+AlwaysBreakTemplateDeclarations: true
+BreakConstructorInitializers: AfterColon
+Cpp11BracedListStyle: true
+# SpaceBeforeCpp11BracedList: false
+BreakBeforeBinaryOperators: None
+...
