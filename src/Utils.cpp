@@ -1255,4 +1255,12 @@ std::vector<size_t> sort_indices(const std::vector<size_t> &v) {
     return idx;
 }
 
+// Helper function to determine if an input trajectory is in Amber NetCDF format.
+bool is_amber_nc(std::string const in_md_filename) {
+    std::string const in_md_format =
+        in_md_filename.substr(in_md_filename.length() - 2, 2);
+     
+    return (in_md_format == "nc");
+}
+
 } // namespace ANA

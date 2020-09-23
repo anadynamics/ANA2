@@ -267,6 +267,8 @@ template <typename T, typename K>
 bool lb_with_indices(const std::vector<T> &v1, const std::vector<T> &indices,
     const T q1, K &first) {
 
+
+
     static_assert(std::is_integral<K>::value);
     K count = v1.size(), step, current;
     first = 0;
@@ -291,6 +293,9 @@ bool lb_with_indices(const std::vector<T> &v1, const std::vector<T> &indices,
         return match;
     }
 }
+
+// Helper function to determine if an input trajectory is in Amber NetCDF format.
+bool is_amber_nc(std::string const in_md_filename);
 
 } // namespace ANA
 #endif // _H

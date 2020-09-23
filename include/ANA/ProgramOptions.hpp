@@ -1,6 +1,7 @@
 #ifndef ANA_PROGRAM_OPTIONS_H
 #define ANA_PROGRAM_OPTIONS_H
 #include <ANA/Options.hpp>
+#include <ANA/Utils.hpp>
 #include <boost/program_options.hpp>
 #include <fstream>
 #include <iostream>

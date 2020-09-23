@@ -4,6 +4,7 @@
 #include <ANA/Options.hpp>
 #include <ANA/ProgramOptions.hpp>
 #include <ANA/Static.hpp>
+#include <ANA/Utils.hpp>
 
 int main(int argc, char *argv[]) {
     ANA::IncludedAreaOptions IA_opts;
@@ -73,6 +74,8 @@ int main(int argc, char *argv[]) {
 
         } else {
 
+            // Handle input trajectory file format.
+            bool const in_md_nc = ANA::is_amber_nc(io_opts._in_md_filename);
             chemfiles::Trajectory in_traj(io_opts._in_md_filename);
             int frame_cnt = 1;
             // Set end.
@@ -92,7 +95,12 @@ int main(int argc, char *argv[]) {
                     break;
                 }
                 // Read next frame.
-                chemfiles::Frame in_frame = in_traj.read_step(current_step);
+                chemfiles::Frame in_frame;
+                if (in_md_nc) {
+                    in_frame = in_traj.read_step(current_step);
+                } else {
+                    in_frame = in_traj.read();
+                }
                 // Update CH
                 ANA::read_MD(in_frame, requested_CH, IA_opts._sphere_proto,
                     IA_opts._cylinder_proto, IA_opts._prism_proto, hetatm_atoms,

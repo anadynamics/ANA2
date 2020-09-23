@@ -340,7 +340,7 @@ int get_parameters(int ac, char *av[], ANA::InOutOptions &io_opts,
   }
 
   if (triangulate_only_included_aas == true && AA_indices_proto == "none") {
-      std::cerr << "ERROR: 'triangulate_only_included_aas' is TRUE, but "
+      std::cerr << "Input error: 'triangulate_only_included_aas' is TRUE, but "
       "'included_amino_acids' was not set." << "\n\n";
       return 1;
   }
@@ -350,6 +350,14 @@ int get_parameters(int ac, char *av[], ANA::InOutOptions &io_opts,
     std::cerr << "Input warning: Both 'included_area_residues' and "
     "'included_area_atoms' were set. Using the former. " << "\n\n";
   }
+
+  if (is_amber_nc(io_opts._in_md_filename) && md_step != 1)
+  {
+    std::cerr << "Input error: NetCDF is the only trajectory format that supports "
+    "a \"step\" value other than 1." << '\n';
+    return 1;
+  }
+  
 
 
   bool const defined_included_area = (IA_opts._resn_proto != "none") || 

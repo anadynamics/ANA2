@@ -44,14 +44,7 @@ int MD_ANA(std::string const &in_filename, std::string const &in_md_filename,
     std::vector<std::vector<int>> list_intersecting_total(nbr_of_frames);
 
     // Handle input trajectory file format.
-    std::string in_md_format =
-        in_md_filename.substr(in_md_filename.length() - 2, 2);
-    bool const in_md_nc = (in_md_format == "nc");
-    if (md_step != 1 && !in_md_nc) {
-        std::cerr << "Warning: netcdf is the only format that supports an "
-                     "\"md_step\" value other than 1. Reading every step."
-                  << '\n';
-    }
+    bool const in_md_nc = is_amber_nc(in_md_filename);
 
     // Remove ".pdb" and create file.
     std::string filename = in_filename.substr(0, in_filename.size() - 4);
