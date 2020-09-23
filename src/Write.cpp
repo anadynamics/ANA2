@@ -314,8 +314,6 @@ void draw_grid_pdb(const NDD_Matrix &list_of_pockets,
         chemfiles::Frame ana_void_frame;
         atom_cnt_list[i] = make_grid_pdb(list_of_pockets[i], ana_void_top,
             ana_void_frame, sphere_count, res_cnt);
-        // Add a bond so pymol does not assign a topology.
-        ana_void_top.add_bond(1, 2);
 
         if (precision == 1) {
             atom_cnt_list[i] = make_grid_pdb_polyhedrons(ana_void_top,
@@ -323,6 +321,9 @@ void draw_grid_pdb(const NDD_Matrix &list_of_pockets,
                 list_of_polys[i], sphere_count, atom_cnt_list[i], res_cnt);
         }
         res_cnt_list[i] = res_cnt;
+
+        // Add a bond so pymol does not assign a topology.
+        ana_void_top.add_bond(1, 2);
 
         // Store the frame and topologies, for later addition of extra atoms.
         list_ana_void_frame[i] = std::move(ana_void_frame);

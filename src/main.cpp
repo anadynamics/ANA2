@@ -147,7 +147,7 @@ int main(int argc, char *argv[]) {
         std::sort(include_CH_atoms.begin(), include_CH_atoms.end());
 
         std::cout << "\t\t/// Calpha indices ///" << '\n';
-        std::cout << "include_area_residues = ";
+        std::cout << "included_area_atoms = ";
         for (auto const &each : include_CH_atoms) {
             std::cout << each + 1 << " ";
         }
