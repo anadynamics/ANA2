@@ -357,7 +357,7 @@ int get_parameters(int ac, char *av[], ANA::InOutOptions &io_opts,
     "a \"step\" value other than 1." << '\n';
     return 1;
   }
-  
+
 
 
   bool const defined_included_area = (IA_opts._resn_proto != "none") || 
