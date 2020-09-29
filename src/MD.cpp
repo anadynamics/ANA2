@@ -170,11 +170,16 @@ int MD_ANA(std::string const &in_filename, std::string const &in_md_filename,
     // Now, if requested, write the output.
     std::cerr << "Writing output..." << '\n';
     if (out_filename != "none") {
+        std::string const pock_out_filename =
+            get_output_pocket_filename(out_filename);
+
         if (out_type == "raw_pdb") {
-            ANA::draw_raw_PDB(voids_md, polys_md, out_filename, max_atom_cnt);
+            ANA::draw_raw_PDB(
+                voids_md, polys_md, pock_out_filename, max_atom_cnt);
         } else if (out_type == "grid_pdb") {
             ANA::draw_grid_pdb(voids_md, polys_md, in_vtces_radii,
-                list_intersecting_total, sphere_count, precision, out_filename);
+                list_intersecting_total, sphere_count, precision,
+                pock_out_filename);
         }
     }
 

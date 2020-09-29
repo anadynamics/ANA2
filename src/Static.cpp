@@ -48,7 +48,7 @@ int static_ANA(InOutOptions const &io_opts, std::string &AA_indices_proto,
     ANA::get_all_voids(T, cavity_cells, cell_opts);
 
     if (!requested_CH) {
-
+        // Discover pockets
         if (triangulate_only_included_aas == false && AA_indices[0] != 0) {
             ANA::keep_included_aa_cells(cavity_cells, AA_indices,
                 nbr_of_vertices_to_include, cavity_included_cells);
@@ -79,7 +79,38 @@ int static_ANA(InOutOptions const &io_opts, std::string &AA_indices_proto,
         } else {
             null_areas_mtx.push_back(cavity_void_cells);
         }
+
+        if (out_filename != "none") {
+            if (out_type == "raw_pdb") {
+                // Get ready to write the pockets in different .pdbs
+                int pock_cnt = 1;
+                for (NA_Vector const &null_areas_vtor : null_areas_mtx) {
+
+                    std::string const pock_out_filename =
+                        get_output_pocket_filename(out_filename, pock_cnt);
+
+                    ANA::draw_raw_PDB(
+                        null_areas_vtor, border_poly, pock_out_filename);
+                    ++pock_cnt;
+                }
+            } else if (out_type == "grid_pdb") {
+                // Get ready to write the pockets in different .pdbs
+                int pock_cnt = 1;
+                for (NA_Vector const &null_areas_vtor : null_areas_mtx) {
+
+                    std::string const pock_out_filename =
+                        get_output_pocket_filename(out_filename, pock_cnt);
+
+                    ANA::draw_grid_pdb(null_areas_vtor, in_vtces_radii,
+                        intersecting_total, border_poly, pock_out_filename,
+                        sphere_count, precision);
+                    ++pock_cnt;
+                }
+            }
+        }
+
     } else {
+        // Included area was specified.
         if (precision == 1) {
             discard_CH_0(cavity_cells, CH_triangs, cavity_void_cells,
                 cavity_intersecting_cells, intersecting_bool,
@@ -90,35 +121,24 @@ int static_ANA(InOutOptions const &io_opts, std::string &AA_indices_proto,
         } else { // assume precision = 0
             discard_CH_0(cavity_cells, CH_triangs, cavity_void_cells);
         }
-        null_areas_mtx.push_back(cavity_void_cells);
-    }
+        // null_areas_mtx.push_back(cavity_void_cells);
 
-    if (out_filename != "none") {
-        if (out_type == "raw_pdb") {
-            int pock_cnt = 1;
-            for (NA_Vector const &null_areas_vtor : null_areas_mtx) {
-                // Get ready to write the pockets in different .pdbs
-                std::string pock_out_filename = out_filename;
-                pock_out_filename.append("_");
-                pock_out_filename.append(std::to_string(pock_cnt));
-                pock_out_filename.append(".pdb");
+        if (out_filename != "none") {
+            if (out_type == "raw_pdb") {
+                std::string const pock_out_filename =
+                    get_output_pocket_filename(out_filename);
 
                 ANA::draw_raw_PDB(
-                    null_areas_vtor, border_poly, pock_out_filename);
-                ++pock_cnt;
-            }
-        } else if (out_type == "grid_pdb") {
-            int pock_cnt = 1;
-            for (NA_Vector const &null_areas_vtor : null_areas_mtx) {
-                // Get ready to write the pockets in different .pdbs
-                std::string pock_out_filename = out_filename;
-                pock_out_filename.append("_");
-                pock_out_filename.append(std::to_string(pock_cnt));
-                pock_out_filename.append(".pdb");
-                ANA::draw_grid_pdb(null_areas_vtor, in_vtces_radii,
+                    cavity_void_cells, border_poly, pock_out_filename);
+
+            } else if (out_type == "grid_pdb") {
+
+                std::string const pock_out_filename =
+                    get_output_pocket_filename(out_filename);
+
+                ANA::draw_grid_pdb(cavity_void_cells, in_vtces_radii,
                     intersecting_total, border_poly, pock_out_filename,
                     sphere_count, precision);
-                ++pock_cnt;
             }
         }
     }
