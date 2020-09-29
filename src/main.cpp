@@ -70,7 +70,9 @@ int main(int argc, char *argv[]) {
             ANA::Molecule const protein =
                 ANA::Molecule(io_opts._in_filename, atom_only);
             ANA::ConvexHull const CH = create_convex_hull(protein, IA_opts);
-            ANA::write_PDB(CH, tool_check_CH + ".pdb");
+            std::string const output_ch_filename =
+                ANA::get_output_pocket_filename(tool_check_CH);
+            ANA::write_PDB(CH, output_ch_filename);
 
         } else {
 
@@ -83,8 +85,9 @@ int main(int argc, char *argv[]) {
                 md_end = in_traj.nsteps();
             }
             // Set output file.
-            tool_check_CH.append(".pdb");
-            auto out_traj = chemfiles::Trajectory(tool_check_CH, 'w');
+            std::string const output_ch_filename =
+                ANA::get_output_pocket_filename(tool_check_CH);
+            auto out_traj = chemfiles::Trajectory(output_ch_filename, 'w');
 
             while (!in_traj.done()) {
                 // Set next step.

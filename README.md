@@ -24,6 +24,7 @@ https://anadynamics.netlify.com/docs/quickstart.html
 
 * 1.0.1
     * Volume output can be redirected to a file.
+    * ANA now appends ".pdb" to output PDB files if the user didn't do it already.
 
 * Road to 2.0.0
     * Major refactoring.
