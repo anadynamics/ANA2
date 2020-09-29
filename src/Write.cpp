@@ -1314,7 +1314,7 @@ void open_vol_file(std::string const &out_vol) {
     }
     return;
 }
-// Final function to output volume. NA_Matrix (static) version.
+// Final function to output volume. NA_Matrix (static no CH) version.
 void write_output_volume(NA_Matrix const &null_areas_vt_mt, double poly_vol) {
 
     int pock_cnt = 1;
@@ -1335,7 +1335,7 @@ void write_output_volume(NA_Matrix const &null_areas_vt_mt, double poly_vol) {
     return;
 }
 
-// Final function to output volume. NA_Vector (NDD) version.
+// Final function to output volume. NA_Vector (NDD, or static with CH) version.
 void write_output_volume(
     NA_Vector const &null_areas_vtor, double const poly_vol) {
 

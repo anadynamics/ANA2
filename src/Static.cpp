@@ -80,6 +80,7 @@ int static_ANA(InOutOptions const &io_opts, std::string &AA_indices_proto,
             null_areas_mtx.push_back(cavity_void_cells);
         }
 
+        // Write cavity file, if requested.
         if (out_filename != "none") {
             if (out_type == "raw_pdb") {
                 // Get ready to write the pockets in different .pdbs
@@ -108,6 +109,8 @@ int static_ANA(InOutOptions const &io_opts, std::string &AA_indices_proto,
                 }
             }
         }
+        // Write volume file. If not requested, print volume to sdtoud.
+        ANA::write_output_volume(null_areas_mtx, poly_vol);
 
     } else {
         // Included area was specified.
@@ -121,8 +124,8 @@ int static_ANA(InOutOptions const &io_opts, std::string &AA_indices_proto,
         } else { // assume precision = 0
             discard_CH_0(cavity_cells, CH_triangs, cavity_void_cells);
         }
-        // null_areas_mtx.push_back(cavity_void_cells);
 
+        // Write cavity file, if requested.
         if (out_filename != "none") {
             if (out_type == "raw_pdb") {
                 std::string const pock_out_filename =
@@ -141,6 +144,8 @@ int static_ANA(InOutOptions const &io_opts, std::string &AA_indices_proto,
                     sphere_count, precision);
             }
         }
+        // Write volume file. If not requested, print volume to sdtoud.
+        ANA::write_output_volume(cavity_void_cells, poly_vol);
     }
 
     if (list_wall == "atom") {
@@ -162,8 +167,6 @@ int static_ANA(InOutOptions const &io_opts, std::string &AA_indices_proto,
             ++pock_cnt;
         }
     }
-
-    ANA::write_output_volume(null_areas_mtx, poly_vol);
 
     return 0;
 }
