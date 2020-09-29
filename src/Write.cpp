@@ -166,10 +166,9 @@ void draw_raw_PDB(NA_Vector const &list_of_pockets, const Poly_Vector &polys,
 
 // Draw pockets in .PDB format. MD version, whole trajectory.
 void draw_raw_PDB(const NDD_Matrix &list_of_pockets,
-    const Poly_Matrix &list_of_polys, std::string &out_filename,
+    const Poly_Matrix &list_of_polys, std::string const &out_filename,
     int const max_atom_cnt) {
 
-    out_filename.append(".pdb");
     auto out_traj = chemfiles::Trajectory(out_filename, 'w');
 
     for (size_t i = 0; i < list_of_pockets.size(); i++) {
@@ -297,7 +296,8 @@ void draw_grid_pdb(const NDD_Matrix &list_of_pockets,
     const Poly_Matrix &list_of_polys,
     const std::vector<std::array<double, 3>> &in_vtces_radii,
     const std::vector<std::vector<int>> &list_intersecting_total,
-    int const sphere_count, int const precision, std::string &out_filename) {
+    int const sphere_count, int const precision,
+    std::string const &out_filename) {
 
     // Write PDB header.
     int frame_nbr = list_of_pockets.size(), max_atom_cnt = 0;
@@ -305,7 +305,6 @@ void draw_grid_pdb(const NDD_Matrix &list_of_pockets,
 
     std::vector<chemfiles::Frame> list_ana_void_frame(frame_nbr);
     std::vector<chemfiles::Topology> list_ana_void_top(frame_nbr);
-    out_filename.append(".pdb");
     auto out_traj = chemfiles::Trajectory(out_filename, 'w');
 
     for (int i = 0; i < frame_nbr; i++) {
@@ -734,7 +733,8 @@ int make_grid_pdb_polyhedrons(chemfiles::Topology &ana_void_top,
 void draw_grid_pdb(NA_Vector const &pocket,
     const std::vector<std::array<double, 3>> &in_vtces_radii,
     const std::vector<int> &intersecting_total, const Poly_Vector &polys,
-    std::string &out_filename, int const sphere_count, int const precision) {
+    std::string const &out_filename, int const sphere_count,
+    int const precision) {
     // Write PDB header.
     int res_cnt = 0;
     chemfiles::Topology ana_void_top;

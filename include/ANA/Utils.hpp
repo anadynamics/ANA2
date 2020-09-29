@@ -267,8 +267,6 @@ template <typename T, typename K>
 bool lb_with_indices(const std::vector<T> &v1, const std::vector<T> &indices,
     const T q1, K &first) {
 
-
-
     static_assert(std::is_integral<K>::value);
     K count = v1.size(), step, current;
     first = 0;
@@ -294,8 +292,14 @@ bool lb_with_indices(const std::vector<T> &v1, const std::vector<T> &indices,
     }
 }
 
-// Helper function to determine if an input trajectory is in Amber NetCDF format.
+// Helper function to determine if an input trajectory is in Amber NetCDF
+// format.
 bool is_amber_nc(std::string const in_md_filename);
+
+// Output files are always in PDB format. If the user didn't append ".pdb"
+// at the end, ANA will do it.
+std::string get_output_pocket_filename(
+    std::string const &out_filename, int const pocket_cnt = 0);
 
 } // namespace ANA
 #endif // _H

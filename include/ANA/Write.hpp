@@ -19,7 +19,7 @@ void draw_raw_PDB(NA_Vector const &list_of_pockets, const Poly_Vector &polys,
 
 // Draw pockets in .PDB format. MD version, whole trajectory.
 void draw_raw_PDB(const NDD_Matrix &list_of_pockets,
-    const Poly_Matrix &list_of_polys, std::string &out_filename,
+    const Poly_Matrix &list_of_polys, std::string const &out_filename,
     int const max_atom_cnt);
 
 // Draw pockets as dots in a PDB. MD version, whole trajectory.
@@ -27,7 +27,8 @@ void draw_grid_pdb(const NDD_Matrix &list_of_pockets,
     const Poly_Matrix &list_of_polys,
     const std::vector<std::array<double, 3>> &in_vtces_radii,
     const std::vector<std::vector<int>> &intersecting_total,
-    int const sphere_count, int const precision, std::string &out_filename);
+    int const sphere_count, int const precision,
+    std::string const &out_filename);
 
 // Draw cells as dots in a PDB. Using "NDD_Vector" data structure.
 int make_grid_pdb(NDD_Vector const &cells_to_draw,
@@ -46,7 +47,8 @@ int make_grid_pdb_polyhedrons(chemfiles::Topology &ana_void_top,
 void draw_grid_pdb(NA_Vector const &pocket,
     const std::vector<std::array<double, 3>> &in_vtces_radii,
     const std::vector<int> &intersecting_total, const Poly_Vector &polys,
-    std::string &out_filename, int const sphere_count, int const precision);
+    std::string const &out_filename, int const sphere_count,
+    int const precision);
 
 // Draw cells as dots in a PDB. Using CGAL Cell data structure. Static version.
 int make_grid_pdb(NA_Vector const &cells_to_draw,
@@ -160,8 +162,8 @@ void open_vol_file(std::string const &out_vol);
 // Final function to output volume. NA_Vector (MD) version.
 void write_output_volume(NA_Vector const &null_areas_vtor,
     double const poly_vol, int const frame_cnt);
-}
-namespace ANA {
+// }
+// namespace ANA {
 namespace NDD {
     // Write file with volumes of each input PDB
     inline void ndd_write_out_file(const std::vector<double> &output_volumes,
@@ -185,5 +187,6 @@ namespace NDD {
     }
 
 } // namespace NDD
+
 } // namespace ANA
 #endif // _H

@@ -64,7 +64,7 @@ public:
         NA_Vector &neighbors_b) :
         _id_vector_a(&id_vector_a),
         _id_vector_b(&id_vector_b), _neighbors_a(&neighbors_a),
-        _neighbors_b(&neighbors_b) {}
+        _neighbors_b(&neighbors_b) { }
 
     void operator()(const Box &a, const Box &b) {
         // New boxes. Store their indices and their cells.
@@ -1208,7 +1208,7 @@ void tool_PDB_norm(
                 // Add atom to residue.
                 res.add_atom(k);
                 // Fix element
-                std::string element{input_pdb_top[k].type()[0]};
+                std::string element {input_pdb_top[k].type()[0]};
                 // Add atom to frame and topology.
                 chemfiles::Atom atomo(input_pdb_top[k].name(), element);
                 atomo.set("is_hetatm",
@@ -1255,12 +1255,47 @@ std::vector<size_t> sort_indices(const std::vector<size_t> &v) {
     return idx;
 }
 
-// Helper function to determine if an input trajectory is in Amber NetCDF format.
+// Helper function to determine if an input trajectory is in Amber NetCDF
+// format.
 bool is_amber_nc(std::string const in_md_filename) {
-    std::string const in_md_format =
+    std::string const out_filename_extension =
         in_md_filename.substr(in_md_filename.length() - 2, 2);
-     
-    return (in_md_format == "nc");
+
+    return (out_filename_extension == "nc");
+}
+
+// Output files are always in PDB format. If the user didn't append ".pdb"
+// at the end, ANA will do it.
+std::string get_output_pocket_filename(
+    std::string const &out_filename, int const pocket_cnt) {
+
+    if (pocket_cnt != 0) {
+        std::string const pock_out_filename =
+            out_filename + "_" + std::to_string(pocket_cnt) + ".pdb";
+        return pock_out_filename;
+
+    } else {
+        bool lacks_pdb_extension = false;
+
+        if (out_filename.length() < 5) {
+            lacks_pdb_extension = true;
+        } else {
+            std::string const out_filename_extension =
+                out_filename.substr(out_filename.length() - 4, 4);
+            if (out_filename_extension != ".pdb") {
+                lacks_pdb_extension = true;
+            }
+        }
+
+        if (lacks_pdb_extension) {
+            std::string const pock_out_filename = out_filename + ".pdb";
+            return pock_out_filename;
+
+        } else {
+            std::string const pock_out_filename = out_filename;
+            return pock_out_filename;
+        }
+    }
 }
 
 } // namespace ANA
