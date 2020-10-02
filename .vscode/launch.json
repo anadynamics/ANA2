@@ -10,18 +10,18 @@
             "request": "launch",
             "program": "${workspaceFolder}/build/ANA2",
             "args": [
-                "md7_numerado.pdb",
-                "-c",
-                "hueco.cfg",
-                "-d",
-                "50.xtc",
-                "-f",
-                "cavidad_xtc",
-                "-o",
-                "vol_xtc"
+                "as.pdb",
+                "-n",
+                "sa"
+                // "-d",
+                // "50.xtc",
+                // "-f",
+                // "cavidad_xtc",
+                // "-o",
+                // "vol_xtc"
             ],
             "stopAtEntry": false,
-            "cwd": "/home/pbarletta/Downloads",
+            "cwd": "/home/pbarletta/labo/20/cph_obp/run/apo/pca/10",
             "environment": [],
             "externalConsole": false,
             "MIMode": "gdb",

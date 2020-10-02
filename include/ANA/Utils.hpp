@@ -301,5 +301,9 @@ bool is_amber_nc(std::string const in_md_filename);
 std::string get_output_pocket_filename(
     std::string const &out_filename, int const pocket_cnt = 0);
 
+// PDBs without END recordas are a common user error, so I wrapped the
+// chemfiles function in this util function.
+std::size_t get_nsteps(chemfiles::Trajectory const &in_trj);
+
 } // namespace ANA
 #endif // _H

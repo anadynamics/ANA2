@@ -125,8 +125,10 @@ int main(int argc, char *argv[]) {
 
     // Tool for normalizing PDB, by renumbering its atoms and residues.
     if (tool_pdb_norm != "none") {
-        tool_pdb_norm.append(".pdb");
-        ANA::tool_PDB_norm(io_opts._in_filename, tool_pdb_norm);
+        // Set output file.
+        std::string const output_pdb_filename =
+            ANA::get_output_pocket_filename(tool_pdb_norm);
+        ANA::tool_PDB_norm(io_opts._in_filename, output_pdb_filename);
         return 0;
     }
 

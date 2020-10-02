@@ -1183,15 +1183,15 @@ void tool_PDB_to_CH(
 
 // Tool for normalizing PDB, by renumbering its atoms and residues.
 void tool_PDB_norm(
-    std::string const &in_filename, std::string const &tool_pdb_norm) {
+    std::string const &in_filename, std::string const &out_pdb_fn) {
 
     std::vector<chemfiles::Residue> res_vec;
     std::vector<int> resid_vec;
 
     // Read PDB
     chemfiles::Trajectory input_pdb_traj(in_filename);
-    chemfiles::Trajectory output_pdb_traj(tool_pdb_norm, 'w');
-    auto nsteps = input_pdb_traj.nsteps();
+    chemfiles::Trajectory output_pdb_traj(out_pdb_fn, 'w');
+    auto const nsteps = get_nsteps(input_pdb_traj);
 
     for (size_t i = 0; i < nsteps; i++) {
         auto input_pdb_frame = input_pdb_traj.read();
@@ -1296,6 +1296,19 @@ std::string get_output_pocket_filename(
             return pock_out_filename;
         }
     }
+}
+
+// PDBs without END recordas are a common user error, so I wrapped the
+// chemfiles function in this util function.
+std::size_t get_nsteps(chemfiles::Trajectory const &in_trj) {
+
+    std::size_t const nsteps = in_trj.nsteps();
+    if (nsteps == 0) {
+        std::cerr << "ERROR: input structure/trajectory has 0 frames, if it's "
+                     "a PDB, you 're probably missing the END record."
+                  << '\n';
+    }
+    return nsteps;
 }
 
 } // namespace ANA
