@@ -351,7 +351,7 @@ int get_parameters(int ac, char *av[], ANA::InOutOptions &io_opts,
     "'included_area_atoms' were set. Using the former. " << "\n\n";
   }
 
-  if (is_amber_nc(io_opts._in_md_filename) && md_step != 1)
+  if (!is_amber_nc(io_opts._in_md_filename) && md_step != 1)
   {
     std::cerr << "Input error: NetCDF is the only trajectory format that supports "
     "a \"step\" value other than 1." << '\n';
