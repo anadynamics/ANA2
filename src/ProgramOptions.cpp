@@ -75,7 +75,7 @@ int get_parameters(int ac, char *av[], ANA::InOutOptions &io_opts,
 
     ("tool_check_CH,t",
     PO::value<std::string>(&tool_check_CH)->default_value("none")->composing(),
-    "Filename of output PDB displaying the included area.\n")
+    "Filename of output PDB displaying the included area. ANA will exit after writing this file and no other calculation will be performed.\n")
     
     ("tool_pdb_to_ch,p",
     PO::value<std::string>(&tool_pdb_to_ch)->default_value("none")->composing(),

@@ -56,7 +56,7 @@ title: Configuration variables
 ```
 --tool_check_CH, -t
 ```
- Filename of output PDB displaying the included area.
+ Filename of output PDB displaying the included area. ANA will exit after writing this file and no other calculation will be performed.
 ```
 --tool_pdb_to_ch, -p
 ```
