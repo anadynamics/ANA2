@@ -305,5 +305,9 @@ std::string get_output_pocket_filename(
 // chemfiles function in this util function.
 std::size_t get_nsteps(chemfiles::Trajectory const &in_trj);
 
+// Construct an atom with a proper element so the PDB element column is correct
+// If atom's element is not present, extract the element from the atom name.
+chemfiles::Atom get_atom_w_element(chemfiles::Atom const &in_atm);
+
 } // namespace ANA
 #endif // _H

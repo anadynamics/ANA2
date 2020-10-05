@@ -1207,12 +1207,12 @@ void tool_PDB_norm(
             for (auto const &k : residuo) {
                 // Add atom to residue.
                 res.add_atom(k);
-                // Fix element
-                std::string element {input_pdb_top[k].type()[0]};
+
+                // Create proper atom and fix element, if necessary.
+                chemfiles::Atom const atomo =
+                    get_atom_w_element(input_pdb_top[k]);
+
                 // Add atom to frame and topology.
-                chemfiles::Atom atomo(input_pdb_top[k].name(), element);
-                atomo.set("is_hetatm",
-                    input_pdb_top[k].get("is_hetatm").value_or(true));
                 output_pdb_frame.add_atom(atomo, in_xyz[k]);
                 output_pdb_top.add_atom(std::move(atomo));
             }
@@ -1309,6 +1309,40 @@ std::size_t get_nsteps(chemfiles::Trajectory const &in_trj) {
                   << '\n';
     }
     return nsteps;
+}
+
+// Construct an atom with a proper element so the PDB element column is correct
+// If atom's element is not present, extract the element from the atom name.
+chemfiles::Atom get_atom_w_element(chemfiles::Atom const &in_atm) {
+
+    // Chemfiles calls 'type' the element.
+    if (in_atm.type() == "") {
+        std::string const pre_element = in_atm.name();
+        try {
+            // All atom names first letters represent the element, except for
+            // some ILE, VAL and THR hydrogens, which start with a number and
+            // then comes the element.
+            std::stoi(pre_element);
+        } catch (const std::invalid_argument &e) {
+            // Atom's first character is a letter, so it must be the element.
+            chemfiles::Atom out_atm(in_atm.name(), pre_element.substr(0, 1));
+            out_atm.set("is_hetatm", in_atm.get("is_hetatm").value_or(true));
+            return out_atm;
+        }
+        // Atom's first character is a number, so the 2nd char must be the
+        // element.
+        chemfiles::Atom out_atm(in_atm.name(), pre_element.substr(1, 1));
+        out_atm.set("is_hetatm", in_atm.get("is_hetatm").value_or(true));
+        return out_atm;
+    } else {
+        // Atom has a non-empty element. Assume it's correct.
+        chemfiles::Atom out_atm(in_atm.name(), in_atm.type());
+        out_atm.set("is_hetatm", in_atm.get("is_hetatm").value_or(true));
+        return out_atm;
+    }
+
+    std::cerr << "ERROR: get_atom_w_element() should never reach this point."
+              << '\n';
 }
 
 } // namespace ANA

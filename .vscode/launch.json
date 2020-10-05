@@ -10,7 +10,7 @@
             "request": "launch",
             "program": "${workspaceFolder}/build/ANA2",
             "args": [
-                "as.pdb",
+                "md7.pdb",
                 "-n",
                 "sa"
                 // "-d",
@@ -21,7 +21,7 @@
                 // "vol_xtc"
             ],
             "stopAtEntry": false,
-            "cwd": "/home/pbarletta/labo/20/cph_obp/run/apo/pca/10",
+            "cwd": "/home/pbarletta/Downloads",
             "environment": [],
             "externalConsole": false,
             "MIMode": "gdb",
