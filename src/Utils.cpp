@@ -1315,8 +1315,19 @@ std::size_t get_nsteps(chemfiles::Trajectory const &in_trj) {
 // If atom's element is not present, extract the element from the atom name.
 chemfiles::Atom get_atom_w_element(chemfiles::Atom const &in_atm) {
 
+    auto const elemento = in_atm.full_name().value_or("nada");
     // Chemfiles calls 'type' the element.
-    if (in_atm.type() == "") {
+    if (elemento == "Carbon" || elemento == "Hydrogen" ||
+        elemento == "Oxygen" || elemento == "Nitrogen" ||
+        elemento == "Phosphorus") {
+
+        // Atom has a non-empty element. Assume it's correct.
+        chemfiles::Atom out_atm(in_atm.name(), in_atm.type());
+        out_atm.set("is_hetatm", in_atm.get("is_hetatm").value_or(true));
+        return out_atm;
+
+    } else {
+
         std::string const pre_element = in_atm.name();
         try {
             // All atom names first letters represent the element, except for
@@ -1332,11 +1343,6 @@ chemfiles::Atom get_atom_w_element(chemfiles::Atom const &in_atm) {
         // Atom's first character is a number, so the 2nd char must be the
         // element.
         chemfiles::Atom out_atm(in_atm.name(), pre_element.substr(1, 1));
-        out_atm.set("is_hetatm", in_atm.get("is_hetatm").value_or(true));
-        return out_atm;
-    } else {
-        // Atom has a non-empty element. Assume it's correct.
-        chemfiles::Atom out_atm(in_atm.name(), in_atm.type());
         out_atm.set("is_hetatm", in_atm.get("is_hetatm").value_or(true));
         return out_atm;
     }
