@@ -348,7 +348,7 @@ void discard_ASA_CACH(std::vector<CPoint> const &Calpha_xyz,
     NA_Vector &output_cells) {
 
     Polyhedron CH;
-    std::vector<CVector> CH_normals;
+    std::vector<CVector> CH_normal0;
     std::vector<CPoint> CH_vtces;
 
     // Get the convex hull determined by the Calphas
@@ -369,7 +369,7 @@ void discard_ASA_CACH(std::vector<CPoint> const &Calpha_xyz,
         CVector v2 = p2 - p1;
         CVector normal = CGAL::cross_product(v2, v1);
         normal = normal / std::sqrt(CGAL::to_double(normal.squared_length()));
-        CH_normals.push_back(normal);
+        CH_normal0.push_back(normal);
         CH_vtces.push_back(he_ite->vertex()->point());
     }
 
@@ -384,7 +384,7 @@ void discard_ASA_CACH(std::vector<CPoint> const &Calpha_xyz,
             CVector test_vtor = test_point - CH_vtces[j];
             test_vtor = test_vtor /
                 std::sqrt(CGAL::to_double(test_vtor.squared_length()));
-            double test_dot_pdt = CGAL::to_double(test_vtor * CH_normals[j]);
+            double test_dot_pdt = CGAL::to_double(test_vtor * CH_normal0[j]);
             if (test_dot_pdt < 0) {
                 // This centroid lies outside the Calpha convex hull
                 vtx_inside_bool = true;
@@ -663,7 +663,7 @@ double refine_cell_volume(
 void discard_CH_0(NA_Vector const &in_cells, Triang_Vector const &CH_triangs,
     NA_Vector &out_cells) {
 
-    std::vector<CVector> CH_normals;
+    std::vector<CVector> CH_normal0;
     std::vector<CPoint> CH_vtces;
     // CTriangle normals point inwards. Only inside points will give a positive
     // dot product against all normals
@@ -672,7 +672,7 @@ void discard_CH_0(NA_Vector const &in_cells, Triang_Vector const &CH_triangs,
         CVector v2 = triangle.vertex(2) - triangle.vertex(1);
         CVector normal = CGAL::cross_product(v2, v1);
         normal = normal / std::sqrt(CGAL::to_double(normal.squared_length()));
-        CH_normals.push_back(normal);
+        CH_normal0.push_back(normal);
         CH_vtces.push_back(triangle.vertex(1));
     }
 
@@ -687,7 +687,7 @@ void discard_CH_0(NA_Vector const &in_cells, Triang_Vector const &CH_triangs,
                 test_vtor = test_vtor /
                     std::sqrt(CGAL::to_double(test_vtor.squared_length()));
                 double test_dot_pdt =
-                    CGAL::to_double(test_vtor * CH_normals[j]);
+                    CGAL::to_double(test_vtor * CH_normal0[j]);
 
                 if (test_dot_pdt < 0) {
                     vtx_inside_bool = true;
@@ -713,7 +713,7 @@ void discard_CH_0(NA_Vector const &in_cells, Triang_Vector const &CH_triangs,
     std::vector<std::array<bool, 4>> &intersecting_bool,
     std::vector<int> &intersecting_total) {
 
-    std::vector<CVector> CH_normals;
+    std::vector<CVector> CH_normal0;
     std::vector<CPoint> CH_vtces;
     // CTriangle normals point inwards. Only inside points will give a positive
     // dot product against all normals.
@@ -722,7 +722,7 @@ void discard_CH_0(NA_Vector const &in_cells, Triang_Vector const &CH_triangs,
         CVector v2 = triangle.vertex(2) - triangle.vertex(1);
         CVector normal = CGAL::cross_product(v2, v1);
         normal = normal / std::sqrt(CGAL::to_double(normal.squared_length()));
-        CH_normals.push_back(normal);
+        CH_normal0.push_back(normal);
         CH_vtces.push_back(triangle.vertex(1));
     }
 
@@ -739,7 +739,7 @@ void discard_CH_0(NA_Vector const &in_cells, Triang_Vector const &CH_triangs,
                 test_vtor = test_vtor /
                     std::sqrt(CGAL::to_double(test_vtor.squared_length()));
                 double test_dot_pdt =
-                    CGAL::to_double(test_vtor * CH_normals[j]);
+                    CGAL::to_double(test_vtor * CH_normal0[j]);
                 if (test_dot_pdt < 0) {
                     vtx_inside_bool[i] = true;
                     ++total;

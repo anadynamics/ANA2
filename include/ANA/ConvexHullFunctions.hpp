@@ -12,14 +12,29 @@ namespace ANA {
 // Discard voids outside the convex hull.
 void carve_CH_into_cavity(Cavity &hueco, ConvexHull const &CH);
 
-// Check if p_test is on the same side v is pointing, with respect to p.
-inline bool is_vtx_inside(
-    Point const &test_point, Point const &p, Vector const v) {
+// Cicles through every CH triangle and its normals to find which vertices are
+// IN/OUT.
+auto is_cell_inside(Tetrahedron const &cell, ConvexHull const &CH)
+    -> std::tuple<int, std::vector<int>, std::vector<int>>;
 
-    Vector test_vtor = normalize(test_point - p);
-    double const test_dot_pdt = dot_product(test_vtor, v);
-    return test_dot_pdt < zero_bot;
+// Get dot product between triangle normal and diff vector between test_point
+// and p.
+inline double which_side(
+    Point const &test_point, Point const &p, Vector const &normal) {
+
+    Vector const diff_vtor = normalize(test_point - p);
+    return dot_product(diff_vtor, normal);
 }
+
+// Check if test_point is on the same side v is pointing, with respect to p.
+// CH triangles normals are pointing outwards.
+// If the dot product gives a value between zero_bot and zero_bot_3, check again
+// with the other 2 triangle points. If they don't add up to 3*zero_bot_3, then
+// it's out. This is to prevent numerical errors from vertices too close to CH
+// surface.
+auto is_vtx_inside(Point const &test_point, Triangle const &triangle,
+    Vector const &normal_0, Vector const &normal_1, Vector const &normal_2)
+    -> bool;
 
 // Returns the intersection point between the segment that joins the 2 input
 // points and the convex hull.

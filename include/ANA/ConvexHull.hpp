@@ -9,12 +9,12 @@
 
 namespace ANA {
 
-struct ResidueTag {};
-struct AtomTag {};
-struct SphereTag {};
-struct CylinderTag {};
-struct PrismTag {};
-struct FileTag {};
+struct ResidueTag { };
+struct AtomTag { };
+struct SphereTag { };
+struct CylinderTag { };
+struct PrismTag { };
+struct FileTag { };
 
 class ConvexHull {
 public:
@@ -49,7 +49,9 @@ public:
 
         auto const triangles = CH.size_of_facets();
         _triangles.reserve(triangles);
-        _normals.reserve(triangles);
+        _normal_0.reserve(triangles);
+        _normal_1.reserve(triangles);
+        _normal_2.reserve(triangles);
 
         auto f_end = CH.facets_end();
         for (auto f_ite = CH.facets_begin(); f_ite != f_end; ++f_ite) {
@@ -61,8 +63,13 @@ public:
             he_ite++;
             Point const p2(he_ite->vertex()->point());
             Vector const v01 = p1 - p0, v02 = p2 - p0;
+            Vector const v10 = p0 - p1, v12 = p2 - p1;
+            Vector const v20 = p0 - p2, v21 = p1 - p2;
 
-            _normals.emplace_back(normalize(cross_product(v01, v02)));
+            _normal_0.emplace_back(normalize(cross_product(v01, v02)));
+            _normal_1.emplace_back(normalize(cross_product(v10, v12)));
+            _normal_2.emplace_back(normalize(cross_product(v20, v21)));
+
             _v01.push_back(v01);
             _v02.push_back(v02);
             _triangles.emplace_back(p0, p1, p2);
@@ -84,7 +91,7 @@ public:
         double const step_size);
 
     std::vector<Triangle> _triangles;
-    std::vector<Vector> _normals, _v01, _v02;
+    std::vector<Vector> _normal_0, _normal_1, _normal_2, _v01, _v02;
     bool _dynamic = false;
     // Used in case the CH was constructed from residues or atoms.
     std::vector<int> _included_resis, _included_atoms;

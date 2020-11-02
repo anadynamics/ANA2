@@ -6,28 +6,14 @@ namespace ANA {
 void carve_CH_into_cavity(Cavity &hueco, ConvexHull const &CH) {
 
     for (size_t k = 0; k < hueco._all_cells.size(); ++k) {
-        Tetrahedron &cell = hueco._all_cells[k];
-        TetraInfo &info = hueco._all_info[k];
+        Tetrahedron const &cell = hueco._all_cells[k];
+        TetraInfo const &info = hueco._all_info[k];
 
-        std::vector<int> vertices_out, vertices_in;
-        // Only inside points will give a >0 dot product against all normals.
-        for (std::size_t i = 0; i < 4; ++i) {
-            bool vtx_is_inside = true;
-            Point const test_point(cell[i]);
+        // Find which vertices are in and which are out of the CH. Also get the
+        // total count of the out vertices.
+        auto [vertices_out_cnt, vertices_in, vertices_out] =
+            is_cell_inside(cell, CH);
 
-            for (std::size_t j = 0; j < CH._triangles.size(); ++j) {
-                vtx_is_inside = is_vtx_inside(
-                    test_point, CH._triangles[j][0], CH._normals[j]);
-                if (!vtx_is_inside) {
-                    vertices_out.push_back(i);
-                    break;
-                }
-            }
-            if (vtx_is_inside) {
-                vertices_in.push_back(i);
-            }
-        }
-        int const vertices_out_cnt = vertices_out.size();
         if (vertices_out_cnt == 0) {
             // cell is entirely contained in the included area.
             hueco.add_inner_cell(cell, info);
@@ -74,6 +60,67 @@ void carve_CH_into_cavity(Cavity &hueco, ConvexHull const &CH) {
     }
 
     return;
+}
+
+// Check if test_point is on the same side v is pointing, with respect to p.
+// CH triangles normals are pointing outwards.
+// If the dot product gives a value between zero_bot and zero_bot_3, check again
+// with the other 2 triangle points. If they don't add up to 3*zero_bot_3, then
+// it's out. This is to prevent numerical errors from vertices too close to CH
+// surface.
+auto is_vtx_inside(Point const &test_point, Triangle const &triangle,
+    Vector const &normal_0, Vector const &normal_1, Vector const &normal_2)
+    -> bool {
+
+    double const test_dot_pdt0 = which_side(test_point, triangle[0], normal_0);
+    bool const very_much_in = test_dot_pdt0 < zero_bot_3;
+
+    if (!very_much_in) {
+
+        bool const just_below_triangle = test_dot_pdt0 < zero_bot;
+
+        if (just_below_triangle) {
+            // It's in, but if it's too close to the surface, its cell will give
+            // problems when calculating intersections againts the CH. This is
+            // to be safe.
+            double const test_dot_pdt1 =
+                which_side(test_point, triangle[1], normal_1);
+            double const test_dot_pdt2 =
+                which_side(test_point, triangle[2], normal_2);
+
+            bool const somewhat_in = (test_dot_pdt0 + test_dot_pdt1 +
+                                         test_dot_pdt2) < (3 * zero_bot_3);
+
+            return somewhat_in;
+        }
+    }
+    return very_much_in;
+}
+
+// Cicles through every CH triangle and its normals to find which vertices
+// are IN/OUT.
+auto is_cell_inside(Tetrahedron const &cell, ConvexHull const &CH)
+    -> std::tuple<int, std::vector<int>, std::vector<int>> {
+
+    std::vector<int> vertices_out, vertices_in;
+    // Only inside points will give a >0 dot product against all normals.
+    for (std::size_t i = 0; i < 4; ++i) {
+        bool vtx_is_inside = true;
+        Point const test_point(cell[i]);
+
+        for (std::size_t j = 0; j < CH._triangles.size(); ++j) {
+            vtx_is_inside = is_vtx_inside(test_point, CH._triangles[j],
+                CH._normal_0[j], CH._normal_1[j], CH._normal_2[j]);
+            if (!vtx_is_inside) {
+                vertices_out.push_back(i);
+                break;
+            }
+        }
+        if (vtx_is_inside) {
+            vertices_in.push_back(i);
+        }
+    }
+    return {vertices_out.size(), vertices_in, vertices_out};
 }
 
 // Get intersection points between the cell and the included area.
@@ -153,7 +200,7 @@ Point get_intersection_point(
 
         Vector const d = q - CH._triangles[t][0];
         // First, check if the ray crosses the triangle's plane.
-        double const dota = dot_product(normalize(s), CH._normals[t]);
+        double const dota = dot_product(normalize(s), CH._normal_0[t]);
         if (dota < zero_top) {
             continue;
         }

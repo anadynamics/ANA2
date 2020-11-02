@@ -95,7 +95,7 @@ ConvexHull::ConvexHull(IncludedAreaOptions const &IA_opts, SphereTag) {
     // Drawin a pseudo-sphere. The first 6 correspondon the XYZ axes, the
     // next 8 to the X-Y plane, then 8 more for the X-Z plane and 8 for the
     // Y-Z plane.
-    std::array<CPoint, 30> const incl_area_points{center + CVector(r, 0, 0),
+    std::array<CPoint, 30> const incl_area_points {center + CVector(r, 0, 0),
         center + CVector(0, r, 0), center + CVector(0, 0, r),
         center + CVector(-r, 0, 0), center + CVector(0, -r, 0),
         center + CVector(0, 0, -r), center + CVector(r * cos_30, r * sin_30, 0),
@@ -125,9 +125,7 @@ ConvexHull::ConvexHull(IncludedAreaOptions const &IA_opts, SphereTag) {
 
     try {
         run_convex_hull(incl_area_points);
-    } catch (std::runtime_error const &e) {
-        throw;
-    } catch (...) {
+    } catch (std::runtime_error const &e) { throw; } catch (...) {
         throw("Uknown error when triangulating convex hull. Aborting.");
     }
 }
@@ -156,7 +154,7 @@ ConvexHull::ConvexHull(IncludedAreaOptions const &IA_opts, CylinderTag) {
 
     // The first 12 correspond to the first tap, the other half correspond
     // to the 2nd tap.
-    std::array<CPoint, 24> incl_area_points{center_1 + r * n1,
+    std::array<CPoint, 24> incl_area_points {center_1 + r * n1,
         center_1 + r * n2, center_1 - r * n1, center_1 - r * n2,
         center_1 + r * cos_30 * n1 + r * sin_30 * n2,
         center_1 + r * sin_30 * n1 + r * cos_30 * n2,
@@ -178,9 +176,7 @@ ConvexHull::ConvexHull(IncludedAreaOptions const &IA_opts, CylinderTag) {
 
     try {
         run_convex_hull(incl_area_points);
-    } catch (std::runtime_error const &e) {
-        throw;
-    } catch (...) {
+    } catch (std::runtime_error const &e) { throw; } catch (...) {
         throw("Uknown error when triangulating convex hull. Aborting.");
     }
 }
@@ -205,7 +201,7 @@ ConvexHull::ConvexHull(IncludedAreaOptions const &IA_opts, PrismTag) {
     n2 = n2 / std::sqrt(CGAL::to_double(n2.squared_length()));
 
     // 8 vertices of a prism.
-    std::array<CPoint, 8> incl_area_points{center_1 + width * n1 + height * n2,
+    std::array<CPoint, 8> incl_area_points {center_1 + width * n1 + height * n2,
         center_1 + width * n1 - height * n2,
         center_1 - width * n1 + height * n2,
         center_1 - width * n1 - height * n2,
@@ -216,9 +212,7 @@ ConvexHull::ConvexHull(IncludedAreaOptions const &IA_opts, PrismTag) {
 
     try {
         run_convex_hull(incl_area_points);
-    } catch (std::runtime_error const &e) {
-        throw;
-    } catch (...) {
+    } catch (std::runtime_error const &e) { throw; } catch (...) {
         throw("Uknown error when triangulating convex hull. Aborting.");
     }
 }
@@ -235,7 +229,7 @@ ConvexHull::ConvexHull(IncludedAreaOptions const &IA_opts, FileTag) {
 void ConvexHull::add_res_info(Molecule const &protein) {
 
     for (auto const &t : _triangles) {
-        std::array<int, 3> indices{-666, -666, -666};
+        std::array<int, 3> indices {-666, -666, -666};
         for (auto const i : _included_resis) {
             for (int j = 0; j < 3; ++j) {
                 if (equal(protein._data[protein._alphaCarbons[i - 1]].first,
@@ -268,7 +262,7 @@ void ConvexHull::add_res_info(Molecule const &protein) {
 void ConvexHull::add_atm_info(Molecule const &protein) {
 
     for (auto const &t : _triangles) {
-        std::array<int, 3> indices{-666, -666, -666};
+        std::array<int, 3> indices {-666, -666, -666};
         for (auto const i : _included_resis) {
             for (int j = 0; j < 3; ++j) {
                 if (equal(protein._data[i - 1].first, t[j])) {
@@ -300,7 +294,9 @@ void ConvexHull::add_atm_info(Molecule const &protein) {
 ConvexHull::ConvexHull(ConvexHull const &CH, std::vector<double> const &vector,
     double const step_size) {
 
-    _normals.reserve(CH._normals.size());
+    _normal_0.reserve(CH._normal_0.size());
+    _normal_1.reserve(CH._normal_0.size());
+    _normal_2.reserve(CH._normal_0.size());
     _triangles.reserve(CH._triangles.size());
 
     for (size_t t = 0; t < CH._info.size(); ++t) {
@@ -310,22 +306,27 @@ ConvexHull::ConvexHull(ConvexHull const &CH, std::vector<double> const &vector,
         int const atom_1_x = ndd_info._index[1] * 3;
         int const atom_2_x = ndd_info._index[2] * 3;
 
-        Point const p0{CH._triangles[t][0] +
+        Point const p0 {CH._triangles[t][0] +
             step_size *
                 Vector(vector[atom_0_x], vector[atom_0_x + 1],
                     vector[atom_0_x + 2])};
-        Point const p1{CH._triangles[t][1] +
+        Point const p1 {CH._triangles[t][1] +
             step_size *
                 Vector(vector[atom_1_x], vector[atom_1_x + 1],
                     vector[atom_1_x + 2])};
-        Point const p2{CH._triangles[t][2] +
+        Point const p2 {CH._triangles[t][2] +
             step_size *
                 Vector(vector[atom_2_x], vector[atom_2_x + 1],
                     vector[atom_2_x + 2])};
 
         Vector const v01 = p1 - p0, v02 = p2 - p0;
+        Vector const v10 = p0 - p1, v12 = p2 - p1;
+        Vector const v20 = p0 - p2, v21 = p1 - p2;
 
-        _normals.emplace_back(normalize(cross_product(v01, v02)));
+        _normal_0.emplace_back(normalize(cross_product(v01, v02)));
+        _normal_1.emplace_back(normalize(cross_product(v10, v12)));
+        _normal_2.emplace_back(normalize(cross_product(v20, v21)));
+
         _v01.push_back(v01);
         _v02.push_back(v02);
         _triangles.emplace_back(p0, p1, p2);
