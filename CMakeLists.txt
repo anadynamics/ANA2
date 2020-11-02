@@ -92,7 +92,7 @@ target_include_directories(ANA2
 #cotire(ANA2)
 
 target_compile_options(ANA2 PRIVATE -Wall -Wextra -Wpedantic)
-target_compile_features(ANA2 PRIVATE cxx_std_17)
+#target_compile_features(ANA2 PRIVATE cxx_std_17)
 
 option (FORCE_COLORED_OUTPUT "Always produce ANSI-colored output (GNU/Clang only)." ON)
 if (${FORCE_COLORED_OUTPUT})

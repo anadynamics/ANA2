@@ -10,18 +10,18 @@
             "request": "launch",
             "program": "${workspaceFolder}/build/ANA2",
             "args": [
-                "md7.pdb",
-                "-n",
-                "sa"
-                // "-d",
-                // "50.xtc",
-                // "-f",
-                // "cavidad_xtc",
-                // "-o",
-                // "vol_xtc"
+                "../pdbs/2lao_3.pdb",
+                "-c",
+                "../cavidad/lro_3.cfg",
+                "-M",
+                "../eigenvectors/2lao-modos-3",
+                "-F",
+                "../frq/3_frq_2lao",
+                "-Z",
+                "5"
             ],
             "stopAtEntry": false,
-            "cwd": "/home/pbarletta/Downloads",
+            "cwd": "/home/pbarletta/labo/20/bisana/run/2lao-1lst/ndd",
             "environment": [],
             "externalConsole": false,
             "MIMode": "gdb",
