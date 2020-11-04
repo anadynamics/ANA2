@@ -40,6 +40,10 @@ public:
         double const step_size);
 
     friend void write_PDB(Cavity const &hueco, std::string const &filename);
+    friend void debug_write_PDB_1(
+        Cavity const &hueco, std::string const &filename);
+    friend void debug_write_PDB_2(
+        Cavity const &hueco, std::string const &filename);
 
     std::vector<Tetrahedron> _all_cells, _inner_cells, _outer_cells;
     std::vector<TetraInfo> _all_info, _inner_info, _outer_info;
