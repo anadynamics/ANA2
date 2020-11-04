@@ -9,6 +9,7 @@ Cavity::Cavity(Molecule const &molecule, CellFilteringOptions const cell_opts) {
     Finite_cells_iterator fc_ite_end = triangulation.finite_cells_end();
     for (auto fc_ite = triangulation.finite_cells_begin(); fc_ite != fc_ite_end;
          ++fc_ite) {
+
         if (volume(fc_ite) > cell_opts._min_CV) {
             auto const v0 = fc_ite->vertex(0);
             auto const v1 = fc_ite->vertex(1);
@@ -116,19 +117,19 @@ void Cavity::move_cells(std::vector<Tetrahedron> const &cells,
         int const atom_2_x = ndd_info._index[2] * 3;
         int const atom_3_x = ndd_info._index[3] * 3;
 
-        Point const p0{cells[c][0] +
+        Point const p0 {cells[c][0] +
             step_size *
                 Vector(vector[atom_0_x], vector[atom_0_x + 1],
                     vector[atom_0_x + 2])};
-        Point const p1{cells[c][1] +
+        Point const p1 {cells[c][1] +
             step_size *
                 Vector(vector[atom_1_x], vector[atom_1_x + 1],
                     vector[atom_1_x + 2])};
-        Point const p2{cells[c][2] +
+        Point const p2 {cells[c][2] +
             step_size *
                 Vector(vector[atom_2_x], vector[atom_2_x + 1],
                     vector[atom_2_x + 2])};
-        Point const p3{cells[c][3] +
+        Point const p3 {cells[c][3] +
             step_size *
                 Vector(vector[atom_3_x], vector[atom_3_x + 1],
                     vector[atom_3_x + 2])};
