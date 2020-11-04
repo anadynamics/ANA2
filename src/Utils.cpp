@@ -1347,8 +1347,8 @@ chemfiles::Atom get_atom_w_element(chemfiles::Atom const &in_atm) {
         return out_atm;
     }
 
-    std::cerr << "ERROR: get_atom_w_element() should never reach this point."
-              << '\n';
+    throw std::runtime_error(
+        "ERROR: get_atom_w_element() should never reach this point.");
 }
 
 } // namespace ANA
