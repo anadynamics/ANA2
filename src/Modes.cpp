@@ -7,7 +7,7 @@ namespace NDD {
     Modes::Modes(
         NDDOptions const &NDD_opts, std::string const &pdb_filename, AmberTag) {
 
-        auto[bufr_modes, fsz_modes] = slurp(NDD_opts._modes_ndd_filename);
+        auto [bufr_modes, fsz_modes] = slurp(NDD_opts._modes_ndd_filename);
         get_amber_modes_from_raw(std::string_view(bufr_modes.get(), fsz_modes));
 
         // Now, if these are coarse grain modes, turn them into full atom ones.
@@ -37,12 +37,12 @@ namespace NDD {
     Modes::Modes(
         NDDOptions const &NDD_opts, std::string const &pdb_filename, RowTag) {
         // Get modes
-        auto[bufr_modes, fsz_modes] = slurp(NDD_opts._modes_ndd_filename);
+        auto [bufr_modes, fsz_modes] = slurp(NDD_opts._modes_ndd_filename);
         get_row_major_from_raw(std::string_view(bufr_modes.get(), fsz_modes));
 
         // Get frequencies (eigenvalues) if available.
         if (NDD_opts._freqs_ndd_filename != "none") {
-            auto[bufr_freqs, fsz_evals] = slurp(NDD_opts._freqs_ndd_filename);
+            auto [bufr_freqs, fsz_evals] = slurp(NDD_opts._freqs_ndd_filename);
             _evalues = get_values_from_raw(
                 std::string_view(bufr_freqs.get(), fsz_evals));
             if (_evalues.size() != _j) {
@@ -83,12 +83,12 @@ namespace NDD {
     Modes::Modes(NDDOptions const &NDD_opts, std::string const &pdb_filename,
         ColumnTag) {
         // Get modes
-        auto[bufr_modes, fsz_modes] = slurp(NDD_opts._modes_ndd_filename);
+        auto [bufr_modes, fsz_modes] = slurp(NDD_opts._modes_ndd_filename);
         get_col_major_from_raw(std::string_view(bufr_modes.get(), fsz_modes));
 
         // Get frequencies (eigenvalues) if available.
         if (NDD_opts._freqs_ndd_filename != "none") {
-            auto[bufr_freqs, fsz_evals] = slurp(NDD_opts._freqs_ndd_filename);
+            auto [bufr_freqs, fsz_evals] = slurp(NDD_opts._freqs_ndd_filename);
             _evalues = get_values_from_raw(
                 std::string_view(bufr_freqs.get(), fsz_evals));
 
@@ -183,7 +183,7 @@ namespace NDD {
     }
 
     void Modes::get_row_major_from_raw(std::string_view const texto) {
-        auto[ch_elem, ncols, nrows] = guess_format(texto);
+        auto [ch_elem, ncols, nrows] = guess_format(texto);
         _j = nrows;
         _i = ncols;
         int line_length = ncols * ch_elem + 1;
@@ -195,8 +195,8 @@ namespace NDD {
             vector.reserve(_i);
 
             for (size_t i = 0; i < _i; ++i) {
-                char const *left{cursor + i * ch_elem};
-                char *right{const_cast<char *>(left + ch_elem)};
+                char const *left {cursor + i * ch_elem};
+                char *right {const_cast<char *>(left + ch_elem)};
 
                 vector.push_back(std::strtof(left, &right));
             }
@@ -209,7 +209,7 @@ namespace NDD {
     }
 
     void Modes::get_col_major_from_raw(std::string_view const texto) {
-        auto[ch_elem, ncols, nrows] = guess_format(texto);
+        auto [ch_elem, ncols, nrows] = guess_format(texto);
         _j = ncols;
         _i = nrows;
         int line_length = ncols * ch_elem + 1;
@@ -218,8 +218,8 @@ namespace NDD {
         _evectors.resize(_j);
         for (size_t i = 0; i < _i; ++i) {
             for (size_t j = 0; j < _j; ++j) {
-                char const *left{cursor + j * ch_elem};
-                char *right{const_cast<char *>(left + ch_elem)};
+                char const *left {cursor + j * ch_elem};
+                char *right {const_cast<char *>(left + ch_elem)};
 
                 _evectors[j].push_back(std::strtof(left, &right));
             }
@@ -284,23 +284,36 @@ namespace NDD {
         // according to atoms_per_res. Store that into _atm_evectors.
         // Also store each vector's norm.
         _atm_evectors.reserve(_j);
+        _normas.reserve(_j);
         for (size_t kk = 0; kk < _j; ++kk) {
             std::vector<double> atm_evector;
             atm_evector.reserve(_ii);
             int res_number = 0;
 
-            _normas.reserve(_j);
+            double sum = 0;
             for (int const natoms : atoms_per_res) {
                 for (int k = 0; k < natoms; ++k) {
-                    atm_evector.push_back(_evectors[kk][3 * res_number]);
-                    atm_evector.push_back(_evectors[kk][3 * res_number + 1]);
-                    atm_evector.push_back(_evectors[kk][3 * res_number + 2]);
+                    // atom XYZ coordinates.
+                    double const xx = _evectors[kk][3 * res_number];
+                    double const yy = _evectors[kk][3 * res_number + 1];
+                    double const zz = _evectors[kk][3 * res_number + 2];
+
+                    atm_evector.push_back(xx);
+                    atm_evector.push_back(yy);
+                    atm_evector.push_back(zz);
+
+                    // vector squared displacement under this vector
+                    sum += (xx * xx) + (yy * yy) + (zz * zz);
                 }
                 ++res_number;
             }
-
+            // Can use it afterwards to normalize the vector.
+            _normas.push_back(sqrt(sum));
             _atm_evectors.push_back(std::move(atm_evector));
         }
+
+        // Use norms to normalize vectors.
+        normalize_matrix(_atm_evectors);
         return;
     }
 
@@ -339,17 +352,16 @@ namespace NDD {
         chemfiles::Frame const in_frm = in_trj.read();
         auto const in_top = in_frm.topology();
 
-        auto const[nres, res_names, atoms_per_res, atm_names] =
+        auto const [nres, res_names, atoms_per_res, atm_names] =
             get_res_info(in_top);
 
         // Go eigenvector by eigenvector and repeat each of its elements
         // according to atoms_per_res. Store that into _atm_evectors.
         _atm_evectors.reserve(_j);
-
+        _normas.reserve(_j);
         for (size_t mode = 0; mode < _j; ++mode) {
 
             std::vector<double> atm_evector;
-            atm_evector.reserve(_ii);
 
             // atm_cont and atoms_per_res help to keep track of the
             // atm_vector. idx and beg do the same for the coarse grain
@@ -434,6 +446,9 @@ namespace NDD {
             _atm_evectors.push_back(std::move(atm_evector));
         }
 
+        // Generate norms to normalize vectors. I don't calculate norms before
+        // this to simplify the code.
+        normalize_matrix(_atm_evectors);
         return;
     }
 
