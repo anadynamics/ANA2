@@ -62,41 +62,6 @@ void carve_CH_into_cavity(Cavity &hueco, ConvexHull const &CH) {
     return;
 }
 
-// Check if test_point is on the same side v is pointing, with respect to p.
-// CH triangles normals are pointing outwards.
-// If the dot product gives a value between zero_bot and zero_bot_3, check again
-// with the other 2 triangle points. If they don't add up to 3*zero_bot_3, then
-// it's out. This is to prevent numerical errors from vertices too close to CH
-// surface.
-auto is_vtx_inside(Point const &test_point, Triangle const &triangle,
-    Vector const &normal_0, Vector const &normal_1, Vector const &normal_2)
-    -> bool {
-
-    double const test_dot_pdt0 = which_side(test_point, triangle[0], normal_0);
-    bool const very_much_in = test_dot_pdt0 < zero_bot_3;
-
-    if (!very_much_in) {
-
-        bool const just_below_triangle = test_dot_pdt0 < zero_bot;
-
-        if (just_below_triangle) {
-            // It's in, but if it's too close to the surface, its cell will give
-            // problems when calculating intersections againts the CH. This is
-            // to be safe.
-            double const test_dot_pdt1 =
-                which_side(test_point, triangle[1], normal_1);
-            double const test_dot_pdt2 =
-                which_side(test_point, triangle[2], normal_2);
-
-            bool const somewhat_in = (test_dot_pdt0 + test_dot_pdt1 +
-                                         test_dot_pdt2) < (3 * zero_bot_3);
-
-            return somewhat_in;
-        }
-    }
-    return very_much_in;
-}
-
 // Cicles through every CH triangle and its normals to find which vertices
 // are IN/OUT.
 auto is_cell_inside(Tetrahedron const &cell, ConvexHull const &CH)
@@ -106,11 +71,11 @@ auto is_cell_inside(Tetrahedron const &cell, ConvexHull const &CH)
     // Only inside points will give a >0 dot product against all normals.
     for (std::size_t i = 0; i < 4; ++i) {
         bool vtx_is_inside = true;
-        Point const test_point(cell[i]);
+        Point const &test_point = cell[i];
 
         for (std::size_t j = 0; j < CH._triangles.size(); ++j) {
-            vtx_is_inside = is_vtx_inside(test_point, CH._triangles[j],
-                CH._normal_0[j], CH._normal_1[j], CH._normal_2[j]);
+            vtx_is_inside =
+                is_vtx_inside(test_point, CH._triangles[j][0], CH._normal_0[j]);
             if (!vtx_is_inside) {
                 vertices_out.push_back(i);
                 break;
@@ -121,6 +86,21 @@ auto is_cell_inside(Tetrahedron const &cell, ConvexHull const &CH)
         }
     }
     return {vertices_out.size(), vertices_in, vertices_out};
+}
+
+// Check if test_point is on the same side v is pointing, with respect to p.
+// CH triangles normals are pointing outwards.
+// If the vertex is close to a CH triangle, it will be moved along the
+// triangle's normal
+auto is_vtx_inside(
+    Point const &test_point, Point const &p_0, Vector const &normal_0) -> bool {
+
+    Vector const diff_vtor = normalize(test_point - p_0);
+    double const test_dot_pdt0 = dot_product(diff_vtor, normal_0);
+
+    bool const atroden = test_dot_pdt0 < 0.;
+
+    return atroden;
 }
 
 // Get intersection points between the cell and the included area.
@@ -183,22 +163,49 @@ auto get_vertices_1_out(Tetrahedron const cell, TetraInfo const &info,
 // Returns the intersection point between the segment that joins the 2 input
 // points and the convex hull.
 Point get_intersection_point(
-    Point const &r, Point const &q, ConvexHull const &CH) {
+    Point const &p_in, Point const &p_out, ConvexHull const &CH) {
 
-    Vector const s = q - r;
-    // Check they are note the same.
+    try {
+        auto const intersection_point =
+            try_get_intersection_point(p_in, p_out, CH);
+        return intersection_point;
+
+    } catch (const std::logic_error &le) {
+        // Move the point that's outside the CH along each triangle normal until
+        // it works.
+        for (size_t i = 0; i < CH._triangles.size(); i++) {
+            try {
+                auto const intersection_point = try_get_intersection_point(
+                    p_in, p_out + CH._normal_0[i], CH);
+                return intersection_point;
+            } catch (...) { }
+        }
+        // It didn't work.
+        throw std::runtime_error(
+            "Fatal error, get_intersection_point() could not find an "
+            "intersection even after perturbing the out point.");
+    }
+}
+
+// Returns the intersection point between the segment that joins the 2 input
+// points and the convex hull.
+Point try_get_intersection_point(
+    Point const &p_in, Point const &p_out, ConvexHull const &CH) {
+
+    Vector const s = p_out - p_in;
+    // Check they are not the same.
     if ((s[0] < zero_top and s[0] > zero_bot) &&
         (s[1] < zero_top and s[1] > zero_bot) &&
         (s[2] < zero_top and s[2] > zero_bot)) {
-        std::cerr << "r: " << r << " -- q: " << q << '\n';
+        std::cerr << "p_in: " << p_in << " -- p_out: " << p_out << '\n';
         throw std::runtime_error(
-            "Fatal error, get_intersection_point() could not "
+            "Fatal error, try_get_intersection_point() could not "
             "find an intersection. IN/OUT points are the same.");
     }
 
     for (size_t t = 0; t < CH._triangles.size(); ++t) {
 
-        Vector const d = q - CH._triangles[t][0];
+        Vector const d = p_out - CH._triangles[t][0];
         // First, check if the ray crosses the triangle's plane.
         double const dota = dot_product(normalize(s), CH._normal_0[t]);
         if (dota < zero_top) {
@@ -222,10 +229,10 @@ Point get_intersection_point(
         }
     }
 
-    std::cerr << "r: " << r << " -- q: " << q << '\n';
-    std::cerr << "s: " << s << '\n';
-    throw std::runtime_error("Fatal error, get_intersection_point() could not "
-                             "find an intersection.");
+    // SHOULD OUTPUT THIS WHEN IN DEBUG RELEASE
+    // std::cerr << "p_in: " << p_in << " -- p_out: " << p_out << '\n';
+    // std::cerr << "s: " << s << '\n';
+    throw std::logic_error("");
 }
 
 } // namespace ANA
