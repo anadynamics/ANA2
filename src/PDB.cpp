@@ -2,7 +2,9 @@
 
 namespace ANA {
 
+//
 // CGAL types.
+//
 
 void write_PDB(Delaunay const &T, std::string const &filename) {
 
@@ -50,7 +52,9 @@ auto draw(CPoint const &punto, FILE *out_file, std::pair<int, int> idx_resid,
     return idx_resid.first;
 }
 
+//
 // Own types.
+//
 
 void write_PDB(ConvexHull const &CH, std::string const &filename) {
 
@@ -204,6 +208,52 @@ void connect_pentahedra_3_1(
         fmt::print(out_file, "CONECT {:>4} {:>4} {:>4}\n", m, l, j);
         fmt::print(out_file, "CONECT {:>4} {:>4}\n", j, k);
     }
+    return;
+}
+
+// Draws all cells. Useful when debugging an error in carve_CH_into_cavity()
+void debug_write_PDB_1(Cavity const &hueco, std::string const &filename) {
+
+    FILE *out_file = std::fopen(filename.c_str(), "w");
+    if (out_file) {
+        std::pair<int, int> idx_resid {1, 1};
+
+        for (auto const &cell : hueco._all_cells) {
+            idx_resid = draw_lines(cell, out_file, idx_resid, "INT");
+        }
+
+        connect_tetrahedra(out_file, 1, idx_resid.first);
+
+    } else {
+        printf("Could not open %s.\n", filename.c_str());
+    }
+    std::fclose(out_file);
+
+    return;
+}
+
+// Draws inner and outer cells. Useful when debugging an error in
+// carve_CH_into_cavity()
+void debug_write_PDB_2(Cavity const &hueco, std::string const &filename) {
+
+    FILE *out_file = std::fopen(filename.c_str(), "w");
+    if (out_file) {
+        std::pair<int, int> idx_resid {1, 1};
+
+        for (auto const &cell : hueco._inner_cells) {
+            idx_resid = draw_lines(cell, out_file, idx_resid, "ALL");
+        }
+        for (auto const &cell : hueco._outer_cells) {
+            idx_resid = draw_lines(cell, out_file, idx_resid, "ALL");
+        }
+
+        connect_tetrahedra(out_file, 1, idx_resid.first);
+
+    } else {
+        printf("Could not open %s.\n", filename.c_str());
+    }
+    std::fclose(out_file);
+
     return;
 }
 

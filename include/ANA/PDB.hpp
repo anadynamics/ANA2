@@ -61,5 +61,10 @@ void connect_pentahedra_2_2(
 
 void connect_pentahedra_3_1(
     FILE *out_file, int const first_atm, int const last_atm);
+
+void debug_write_PDB_1(Cavity const &hueco, std::string const &filename);
+
+void debug_write_PDB_2(Cavity const &hueco, std::string const &filename);
+
 } // namespace ANA
 #endif
