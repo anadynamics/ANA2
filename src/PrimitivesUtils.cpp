@@ -29,7 +29,7 @@ double sphere_sector_vol(Point const &p0, Point const &p1, Point const &p2,
     // Add the 2 volumes that represent the space occupied by the atom with
     // coordinates p0.
     double const volume = mini_tetrahedron_vol + spherical_cap_volume;
-    if (isnan(volume)) {
+    if (isnan(volume) || !(volume > 0)) {
         return 0.;
     } else {
         return volume;
