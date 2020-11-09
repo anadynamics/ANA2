@@ -1,2 +1,26 @@
 std::cout << volume(cell) << " - " << cell[0] << " " << cell[1]
                       << " " << cell[2] << " " << cell[3] << " " << '\n';
+
+
+ if (j == 3349) {
+                std::cout << "----- POSITIVO -----" << '\n';
+            }
+ if (j == 3349) {
+               
+                std::cout << "----- LISTO -----" << '\n';
+
+                debug_write_PDB_1(hueco_neg, "full_neg_cav.pdb");
+                debug_write_PDB_2(hueco_neg, "inout_neg_cav.pdb");
+                write_PDB(hueco_neg, "3349_neg_cav.pdb");
+
+                debug_write_PDB_1(hueco_pos, "full_pos_cav.pdb");
+                debug_write_PDB_2(hueco_pos, "inout_pos_cav.pdb");
+                write_PDB(hueco_pos, "3349_pos_cav.pdb");
+
+                std::cout << " -  vol: " << hueco._volume + hueco._outer_volume
+                          << " - neg vol: "
+                          << hueco_neg._volume + hueco_neg._outer_volume
+                          << " - pos vol: "
+                          << hueco_pos._volume + hueco_pos._outer_volume
+                          << '\n';
+            }
