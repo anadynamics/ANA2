@@ -219,7 +219,7 @@ void debug_write_PDB_1(Cavity const &hueco, std::string const &filename) {
         std::pair<int, int> idx_resid {1, 1};
 
         for (auto const &cell : hueco._all_cells) {
-            idx_resid = draw_lines(cell, out_file, idx_resid, "INT");
+            idx_resid = draw_lines(cell, out_file, idx_resid, "ALL");
         }
 
         connect_tetrahedra(out_file, 1, idx_resid.first);
@@ -241,10 +241,10 @@ void debug_write_PDB_2(Cavity const &hueco, std::string const &filename) {
         std::pair<int, int> idx_resid {1, 1};
 
         for (auto const &cell : hueco._inner_cells) {
-            idx_resid = draw_lines(cell, out_file, idx_resid, "ALL");
+            idx_resid = draw_lines(cell, out_file, idx_resid, "INN");
         }
         for (auto const &cell : hueco._outer_cells) {
-            idx_resid = draw_lines(cell, out_file, idx_resid, "ALL");
+            idx_resid = draw_lines(cell, out_file, idx_resid, "OUT");
         }
 
         connect_tetrahedra(out_file, 1, idx_resid.first);
