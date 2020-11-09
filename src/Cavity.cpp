@@ -94,7 +94,8 @@ void Cavity::add_border_penta_3_1(Point const &p0, Point const &p1,
 }
 
 // Constructor for NDD. Returns an updated Cavity displacing the input Cavity
-// along the input vector scaled by the step_size.
+// along the input vector scaled by the step_size. New Cavity object will hold
+// _inner_cells and _outer_cells from the old cavity object in _all_cells.
 Cavity::Cavity(Cavity const &hueco, std::vector<double> const &vector,
     double const step_size) {
 

@@ -30,7 +30,9 @@ public:
         double const vdw1, double const vdw2);
 
     // Constructor for NDD. Returns an updated Cavity displacing the input
-    // Cavity along the input vector scaled by the step_size.
+    // Cavity along the input vector scaled by the step_size. New Cavity object
+    // will hold _inner_cells and _outer_cells from the old cavity object in
+    // _all_cells.
     Cavity(Cavity const &hueco, std::vector<double> const &evector,
         double const step_size);
 
