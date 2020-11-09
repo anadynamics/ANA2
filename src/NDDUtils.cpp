@@ -86,11 +86,11 @@ auto initialize_scaling_factors(Modes const &modos, NDDOptions const &NDD_opts)
             // After that, they're all non-collective. Flatten the scaling
             // factor.
             for (std::size_t i = 10; i < modos._j; ++i) {
-                scaling_factors.push_back(10.);
+                scaling_factors.push_back(50.);
             }
         } else {
             for (std::size_t i = 0; i < modos._j; ++i) {
-                scaling_factors.push_back(static_cast<double>(i) + 5.);
+                scaling_factors.push_back(static_cast<double>(i) + 50.);
             }
         }
 
