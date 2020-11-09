@@ -37,6 +37,8 @@ text file with vectors and move the inpud pdb atoms forward and backwards along
 those vectors.
         * ANA will output either, the volumes of the perturbed cavities, the
 numerical derivative, or the flexibility coefficient for that cavity.
+        * Default scaling_factors are better adjusted to prevent cavity changes from
+high frequency modes from being overestimated.
     * Deprecated:
         * Cell filtering by facet area.
     * Deprecations for NDD:
