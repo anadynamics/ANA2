@@ -9,7 +9,7 @@ output_wall	w	none	 Cavity's wall atoms/residues output filename.	io_opts._out_w
 NDD_modes	M	none	 Input vectors for Non-Delaunay dynamics (NDD).	NDD_opts._modes_ndd_filename
 NDD_frequencies	F	none	 Input frequencies (in cm^-1) to calculate the flexibility index by NDD.	NDD_opts._freqs_ndd_filename
 NDD_scaling	S	none	 Input scaling factors for NDD. See ANA's manual to understand why you may want to use them.	NDD_opts._scaling_ndd_filename
-NDD_size	Z	1	 Scaling magnitude for the input vectors for NDD.	NDD_opts._size
+NDD_size	Z	1	 Scaling magnitude for the input vectors for NDD. Usual appropriate values lie between 4 and 7.	NDD_opts._size
 NDD_output	O	none	 Suffix for the NDD output file. The scaling magnitude will be the prefix.	NDD_opts._out_ndd_filename
 tool_check_CH	t	none	 Filename of output PDB displaying the included area. ANA will exit after writing this file and no other calculation will be performed.	tool_check_CH
 tool_pdb_to_ch	p	none	 Read the input PDB and write 'include.ANA' file with the vertices of its convex hull.	tool_pdb_to_ch

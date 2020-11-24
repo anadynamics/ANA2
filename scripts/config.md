@@ -47,7 +47,7 @@ title: Configuration variables
 ```
 --NDD_size, -Z
 ```
- Scaling magnitude for the input vectors for NDD.
+ Scaling magnitude for the input vectors for NDD. Usual appropriate values lie between 4 and 7.
  * Default: **1**
 ```
 --NDD_output, -O

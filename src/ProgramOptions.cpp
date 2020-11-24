@@ -67,7 +67,7 @@ int get_parameters(int ac, char *av[], ANA::InOutOptions &io_opts,
 
     ("NDD_size,Z",
     PO::value<int>(&NDD_opts._size)->default_value(1),
-    "Scaling magnitude for the input vectors for NDD. Default: 1.\n")
+    "Scaling magnitude for the input vectors for NDD. Usual appropriate values lie between 4 and 7. Default: 1.\n")
 
     ("NDD_output,O",
     PO::value<std::string>(&NDD_opts._out_ndd_filename)->default_value("none")->composing(),
