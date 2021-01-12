@@ -9,9 +9,9 @@ using std::size_t;
 namespace ANA {
 namespace NDD {
 
-    struct AmberTag {};
-    struct ColumnTag {};
-    struct RowTag {};
+    struct AmberTag { };
+    struct ColumnTag { };
+    struct RowTag { };
 
     class Modes {
     public:
@@ -38,6 +38,8 @@ namespace NDD {
 
         void six_to_full_atom(std::string const &pdb_filename);
 
+        // In case _evectors are to be renormalized. ANA already does it when it
+        // first reads from raw.
         void normalize_evectors() {
             if (_evectors.size() != 0) {
                 normalize_matrix(_evectors);
