@@ -232,9 +232,9 @@ namespace NDD {
     void Modes::normalize_matrix(std::vector<std::vector<double>> &mtx) {
         if (_normas.size() == _j) {
             // Vector norms are already calculated.
-            for (auto &vector : mtx) {
-                for (size_t ii = 0; ii != _i; ++ii) {
-                    vector[ii] = vector[ii] / _normas[ii];
+            for (size_t j = 0; j != _j; ++j) {
+                for (size_t ii = 0; ii != _ii; ++ii) {
+                    mtx[j][ii] = mtx[j][ii] / _normas[j];
                 }
             }
         } else {
@@ -445,6 +445,8 @@ namespace NDD {
             }
             _atm_evectors.push_back(std::move(atm_evector));
         }
+        // Length of full atom eigenvectors.
+        _ii = _atm_evectors[0].size();
 
         // Generate norms to normalize vectors. I don't calculate norms before
         // this to simplify the code.
