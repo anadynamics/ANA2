@@ -10,23 +10,25 @@
             "request": "launch",
             "program": "${workspaceFolder}/build/ANA2",
             "args": [
-                "../pdbs/4ake_4.pdb",
+                "het_1f96_1.pdb",
                 "-c",
-                "../cavidad/1_kin.cfg",
+                "ecf.cfg",
                 "-M",
-                "../eigenvectors/4_modes_4ake",
+                "1_modos_1f96",
                 "-F",
-                "../frq/4_frq_4ake",
+                "1_frq_1f96",
                 "-Z",
                 "5",
                 "-O",
                 "vgv"
             ],
             "stopAtEntry": false,
-            "cwd": "/home/pbarletta/labo/20/bisana/run/4ake-2eck/ndd",
+            "cwd": "/home/pbarletta/labo/20/bisana/run/carmn_1f96/test",
             "environment": [],
             "externalConsole": false,
             "MIMode": "gdb",
+            // "visualizerFile": "${workspaceFolder}/.vscode/natvis.natvis",
+            // "showDisplayString": true
             "setupCommands": [
                 {
                     "description": "Enable pretty-printing for gdb",

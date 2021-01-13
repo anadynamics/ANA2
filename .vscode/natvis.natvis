@@ -1,0 +1,7 @@
+<Type Name="ANA::Cavity&lt;*&gt;">
+    <DisplayString {{ all={_all_cells.size()} }}</DisplayString>
+    <Expand>
+        <Item Name="_volume">_volume</Item>
+        <Item Name="_outer_volume">_outer_volume</Item>
+    </Expand>
+</Type>
