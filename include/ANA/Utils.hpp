@@ -229,7 +229,7 @@ std::vector<size_t> sort_indices(const std::vector<size_t> &v);
 
 // Helper function to use binary search to find the lowest bound of a query in
 // a sorted vector in ascending order. It returns true if a match is found,
-// and tores the index of the element that satisfies the lower bound condition
+// and stores the index of the element that satisfies the lower bound condition
 // in the variable "first".
 template <typename T, typename K>
 bool lb(const std::vector<T> &v1, const T q1, K &first) {
