@@ -264,8 +264,8 @@ namespace NDD {
         if (!(static_cast<size_t>(nres * 3) == _i)) {
             std::cerr << "_i: " << _i << " -- _j: " << _j
                       << " -- nres: " << nres << '\n';
-            throw std::runtime_error("Number of residues do not match "
-                                     "length of vectors. Aborting.");
+            throw std::runtime_error("Number of residues does not match length "
+                                     "of vectors. Aborting.");
         }
 
         // Get number of atoms per each residue.
