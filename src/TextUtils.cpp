@@ -62,7 +62,7 @@ auto slurp(std::string const &filename)
         ifs.close();
         return {std::move(buffer), fsz};
     } else {
-        throw std::runtime_error("Could not read Amber vectors.");
+        throw std::runtime_error("Could not read vectors and or frequencies.");
     }
 }
 
@@ -117,8 +117,8 @@ auto guess_format(std::string_view texto)
             "format.");
     }
 
-    size_t elems_per_line{line_length / ch_elem};
-    size_t lines_per_file{(fsz - 1) / (line_length + 1)};
+    size_t elems_per_line {line_length / ch_elem};
+    size_t lines_per_file {(fsz - 1) / (line_length + 1)};
     if (malformed_line) {
         // There's a final newline at the end of the file.
         lines_per_file = fsz / (line_length + 1);
@@ -128,15 +128,15 @@ auto guess_format(std::string_view texto)
 }
 
 auto get_values_from_raw(std::string_view const texto) -> std::vector<double> {
-    auto[ch_elem, ncols, nrows] = guess_format(texto);
+    auto [ch_elem, ncols, nrows] = guess_format(texto);
     int line_length = ncols * ch_elem + 1;
     char const *cursor = texto.data();
     std::vector<double> data;
 
     data.reserve(nrows);
     for (size_t j = 0; j < nrows; ++j) {
-        char const *left{cursor};
-        char *right{const_cast<char *>(left + ch_elem)};
+        char const *left {cursor};
+        char *right {const_cast<char *>(left + ch_elem)};
         data.push_back(std::strtof(left, &right));
         cursor += line_length;
     }
