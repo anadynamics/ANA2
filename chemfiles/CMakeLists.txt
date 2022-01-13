@@ -1,19 +1,32 @@
-cmake_minimum_required(VERSION 2.8.11)
+cmake_minimum_required(VERSION 3.5)
 set(CMAKE_USER_MAKE_RULES_OVERRIDE "cmake/InitRules.cmake")
 
-project(chemfiles C CXX)
+if (POLICY CMP0042)
+    cmake_policy(SET CMP0042 NEW) # OSX RPATH handling
+endif()
+if (POLICY CMP0054)
+    # Only interpret ``if()`` arguments as variables or keywords when unquoted.
+    cmake_policy(SET CMP0054 NEW)
+endif()
+if (POLICY CMP0063)
+    # Use of `<LANG>_VISIBILITY_PRESET` in OBJECT libraries
+    cmake_policy(SET CMP0063 NEW)
+endif()
 
+project(chemfiles VERSION 0.8.0 LANGUAGES C CXX)
 set(CMAKE_MODULE_PATH "${CMAKE_MODULE_PATH};${PROJECT_SOURCE_DIR}/cmake")
-cmake_policy(VERSION 2.8.11)
-if (${CMAKE_VERSION} VERSION_GREATER 3.0.0)
-    cmake_policy(SET CMP0042 OLD) # OSX RPATH handling
-endif()
+set(INCLUDE_INSTALL_DIR "include")
 
-if(CMAKE_VERSION VERSION_LESS 2.8.12)
-    set(INCLUDE_INSTALL_DIR "${CMAKE_PREFIX}/include")
-else()
-    set(INCLUDE_INSTALL_DIR "include")
-endif()
+#cmake_policy(VERSION 2.9)
+#if (${CMAKE_VERSION} VERSION_GREATER 3.0.0)
+#    cmake_policy(SET CMP0042 OLD) # OSX RPATH handling
+#endif()
+#
+#if(CMAKE_VERSION VERSION_LESS 2.8.12)
+#    set(INCLUDE_INSTALL_DIR "${CMAKE_PREFIX}/include")
+#else()
+
+    #endif()
 
 #----------------------------------------------------------------------------------------#
 set(CMAKE_CXX_STANDARD 11)
